@@ -4,9 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:march_tales_app/shared/states/MyAppState.dart';
 
 class QuoteButtons extends StatelessWidget {
+  // const QuoteButtons({
+  //   Key? key,
+  // }) : super(key: key);
   const QuoteButtons({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

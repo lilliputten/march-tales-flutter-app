@@ -8,9 +8,11 @@ import 'MyApp.dart';
 class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
+    final client = super.createHttpClient(context);
+    client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+    client.connectionTimeout = const Duration(seconds: 10);
+    return client;
   }
 }
 

@@ -1,11 +1,16 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+// import 'dart:developer';
+
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/shared/states/MyAppState.dart';
 import 'package:march_tales_app/shared/widgets/HistoryListView.dart';
+
+final logger = Logger();
 
 // @see https://docs.flutter.dev/cookbook/networking/fetch-data
 class GeneratorPage extends StatelessWidget {
@@ -13,6 +18,9 @@ class GeneratorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
+    // var projectInfo = appState.projectInfo;
+
+    // logger.t('projectInfo: $projectInfo');
 
     IconData icon;
     if (appState.favorites.contains(pair)) {
@@ -60,9 +68,9 @@ class GeneratorPage extends StatelessWidget {
 
 class BigCard extends StatelessWidget {
   const BigCard({
-    Key? key,
+    super.key,
     required this.pair,
-  }) : super(key: key);
+  });
 
   final WordPair pair;
 

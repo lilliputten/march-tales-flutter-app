@@ -1,10 +1,10 @@
-# sample-flutter-app
+# march-tales-app
 
-A smple Flutter project.
+March tales mobile flutter application.
 
-- Project info: flaming-quotes v.0.0.1 / 2024.12.29 17:59:04 +0300
+- Project info: march-tales-app v.0.0.0 / 2025.01.22 21:10:52 +0300
 
-## Getting Started
+## Getting Started with Flutter
 
 This project is a starting point for a Flutter application.
 

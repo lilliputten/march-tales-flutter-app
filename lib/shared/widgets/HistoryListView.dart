@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:march_tales_app/shared/states/MyAppState.dart';
 
 class HistoryListView extends StatefulWidget {
-  const HistoryListView({Key? key}) : super(key: key);
+  const HistoryListView({super.key});
 
   @override
   State<HistoryListView> createState() => _HistoryListViewState();

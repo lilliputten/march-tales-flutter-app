@@ -1,11 +1,61 @@
+import 'dart:developer';
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+import 'package:march_tales_app/core/config/AppConfig.dart';
+import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
+import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 
 import 'package:march_tales_app/features/Quote/helpers/fetchQuote.dart';
 import 'package:march_tales_app/features/Quote/types/Quote.dart';
+import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'package:march_tales_app/core/server/ServerSession.dart';
+
+final formatter = YamlFormatter();
+final logger = Logger();
 
 class MyAppState extends ChangeNotifier {
-  /// Word pair & hostory (a demo)
+  /// App info
+  String? projectInfo;
+
+  void setProjectInfo(String? info) {
+    projectInfo = info;
+    notifyListeners();
+  }
+
+  /// Tracks list
+
+  List<Track> tracks = [];
+
+  void loadTracks({int offset = 0}) async {
+    final String url =
+        '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks';
+    try {
+      var uri = Uri.parse(url);
+      if (offset != 0) {
+        uri = uri.replace(queryParameters: {
+          'offset': offset.toString(),
+          // ...queryParams,
+        });
+      }
+      logger.t('Starting loading tracks: ${uri}');
+      var jsonData = await serverSession.get(uri);
+      // logger.t('Loaded tracks data: ${formatter.format(jsonData)}');
+      tracks = List<dynamic>.from(jsonData['results'])
+          .map((data) => Track.fromJson(data))
+          .toList();
+      logger.t('Loaded tracks: ${formatter.format(tracks)}');
+      notifyListeners();
+    } catch (err, stacktrace) {
+      final String msg = 'Error fetching tracks with an url $url: $err';
+      logger.e(msg, error: err, stackTrace: stacktrace);
+      debugger();
+      showErrorToast(msg);
+      throw Exception(msg);
+    }
+  }
+
+  /// Word pair & history (a demo)
   var current = WordPair.random();
   var history = <WordPair>[];
 

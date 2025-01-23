@@ -15,7 +15,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // TODO: Put page index to store?
-  var selectedIndex = 0;
+  var selectedIndex = 1;
 
   // // Networking
   // // late Future<Album> futureAlbum;

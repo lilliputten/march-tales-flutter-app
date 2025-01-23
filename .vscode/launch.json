@@ -5,6 +5,18 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Dart: current file",
+      "type": "dart",
+      "request": "launch",
+      "program": "${file}"
+    },
+    {
+      "name": "Dart: Run all Tests",
+      "type": "dart",
+      "request": "launch",
+      "program": "./test/"
+    },
+    {
       "name": "Flutter",
       "request": "launch",
       "type": "dart",
