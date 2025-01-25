@@ -25,6 +25,10 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Active player
+
+  bool hasActivePlayer = true;
+
   /// Tracks list
 
   List<Track> tracks = [];

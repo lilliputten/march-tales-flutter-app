@@ -2,48 +2,67 @@
 
 import 'package:flutter/material.dart';
 
+import 'TracksPage.dart';
 import 'FavoritesPage.dart';
 import 'GeneratorPage.dart';
 import 'QuotePage.dart';
+import 'SettingsPage.dart';
+import 'components/PlayerBox.dart';
+import 'components/TopMenuBox.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-// @see https://docs.flutter.dev/cookbook/networking/fetch-data
+class Page {
+  final Widget Function() widget;
+  final String label;
+  final Icon icon;
+  const Page({
+    required this.widget,
+    required this.label,
+    required this.icon,
+  });
+}
+
+final pages = [
+  // Page(widget: () => QuotePage(), label: 'Quote', icon: Icon(Icons.generating_tokens_outlined)),
+  Page(
+    widget: () => TracksPage(),
+    label: 'Tracks',
+    icon: Icon(Icons.audiotrack_outlined),
+  ),
+  Page(
+    widget: () => FavoritesPage(),
+    label: 'Favorites',
+    icon: Icon(Icons.favorite_border),
+  ),
+  Page(
+    widget: () => GeneratorPage(),
+    label: 'Generator',
+    icon: Icon(Icons.generating_tokens_outlined),
+  ),
+  Page(
+    widget: () => SettingsPage(),
+    label: 'Settings',
+    icon: Icon(Icons.settings),
+  ),
+];
 
 class _MyHomePageState extends State<MyHomePage> {
   // TODO: Put page index to store?
-  var selectedIndex = 1;
-
-  // // Networking
-  // // late Future<Album> futureAlbum;
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // futureAlbum = fetchAlbum();
-  // }
+  var selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
 
-    Widget page;
-    switch (selectedIndex) {
-      case 0:
-        page = QuotePage();
-      case 1:
-        page = GeneratorPage();
-      case 2:
-        page = FavoritesPage();
-      default:
-        throw UnimplementedError('no widget for $selectedIndex');
-    }
-
+    final widget = pages[selectedIndex].widget;
+    final Widget page = widget();
     // The container for the current page, with its background color
     // and subtle switching animation.
-    var mainArea = ColoredBox(
+    final pageArea = ColoredBox(
       color: colorScheme.surfaceContainerHighest,
       child: AnimatedSwitcher(
         duration: Duration(milliseconds: 200),
@@ -54,20 +73,19 @@ class _MyHomePageState extends State<MyHomePage> {
     // TODO: Generate navigation items from list
     bottomNavigation() {
       return BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.webhook),
-            label: 'Network',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.generating_tokens_outlined),
-            label: 'Generator',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border),
-            label: 'Favorites',
-          ),
-        ],
+        type: BottomNavigationBarType.fixed, // Fixed
+
+        backgroundColor: Colors.black,
+        selectedItemColor: colorScheme.primary,
+        unselectedItemColor: Colors.grey,
+
+        // showUnselectedLabels: true,
+        // showSelectedLabels: false,
+
+        items: pages
+            .map((page) =>
+                BottomNavigationBarItem(icon: page.icon, label: page.label))
+            .toList(),
         currentIndex: selectedIndex,
         onTap: (value) {
           setState(() {
@@ -77,52 +95,27 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
 
-    sideNavigation(constraints) {
-      return NavigationRail(
-        extended: constraints.maxWidth >= 600,
-        destinations: [
-          NavigationRailDestination(
-            icon: Icon(Icons.webhook),
-            label: Text('Network'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.generating_tokens_outlined),
-            label: Text('Generator'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.favorite_border),
-            label: Text('Favorites'),
-          ),
-        ],
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (value) {
-          setState(() {
-            selectedIndex = value;
-          });
-        },
-      );
-    }
-
     return Scaffold(
+      // appBar: Text('appBar'),
+      bottomNavigationBar: bottomNavigation(),
+      // bottomSheet: Text('bottomSheet'),
+      drawer: Text('drawer'),
+      // currentIndex: selectedIndex,
+      // onTap: (int i){setState((){index = i;});},
+      // fixedColor: Colors.white,
       body: LayoutBuilder(
         builder: (context, constraints) {
-          if (constraints.maxWidth < 450) {
-            // Use a more mobile-friendly layout with BottomNavigationBar
-            // on narrow screens.
-            return Column(
-              children: [
-                Expanded(child: mainArea),
-                SafeArea(child: bottomNavigation())
-              ],
-            );
-          } else {
-            return Row(
-              children: [
-                SafeArea(child: sideNavigation(constraints)),
-                Expanded(child: mainArea),
-              ],
-            );
-          }
+          return Column(
+            children: [
+              TopMenuBox(),
+              Expanded(child: pageArea),
+              PlayerBox(),
+              // SafeArea(
+              //   bottom: true,
+              //   child: bottomNavigation(),
+              // ),
+            ],
+          );
         },
       ),
     );

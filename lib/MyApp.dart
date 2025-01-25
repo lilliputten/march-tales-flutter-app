@@ -32,7 +32,9 @@ class MyApp extends StatelessWidget {
           logger.d(
               '[ChangeNotifierProvider:create:initFuture.then]: $projectInfo, $initData');
           appState.setProjectInfo(projectInfo);
-          appState.loadTracks(offset: 0, limit: 2); // TODO: Get these parameters from constants/config
+          appState.loadTracks(
+              offset: 0,
+              limit: 2); // TODO: Get these parameters from constants/config
         });
         // logger.d('[ChangeNotifierProvider:create]: $initFuture');
         return appState;

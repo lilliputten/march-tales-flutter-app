@@ -106,7 +106,7 @@ class Track {
 
   @override
   String toString() {
-      return 'Track ${id} (${title})';
+    return 'Track ${id} (${title})';
   }
 
   factory Track.fromJson(Map<String, dynamic> json) {
