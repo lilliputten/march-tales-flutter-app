@@ -11,6 +11,8 @@ import 'package:march_tales_app/features/Quote/types/Quote.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 
+const int defaultTracksDownloadLimit = 5;
+
 final formatter = YamlFormatter();
 final logger = Logger();
 
@@ -27,7 +29,8 @@ class MyAppState extends ChangeNotifier {
 
   List<Track> tracks = [];
 
-  void loadTracks({int offset = 0}) async {
+  void loadTracks(
+      {int offset = 0, int limit = defaultTracksDownloadLimit}) async {
     final String url =
         '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks';
     try {
@@ -38,13 +41,20 @@ class MyAppState extends ChangeNotifier {
           // ...queryParams,
         });
       }
+      if (limit != 0) {
+        uri = uri.replace(queryParameters: {
+          'limit': limit.toString(),
+        });
+      }
       logger.t('Starting loading tracks: ${uri}');
-      var jsonData = await serverSession.get(uri);
+      final jsonData = await serverSession.get(uri);
       // logger.t('Loaded tracks data: ${formatter.format(jsonData)}');
-      tracks = List<dynamic>.from(jsonData['results'])
+      final loadedTracks = List<dynamic>.from(jsonData['results'])
           .map((data) => Track.fromJson(data))
           .toList();
-      logger.t('Loaded tracks: ${formatter.format(tracks)}');
+      logger.t('Loaded tracks:\n${formatter.format(loadedTracks)}');
+      tracks = loadedTracks;
+      // debugger();
       notifyListeners();
     } catch (err, stacktrace) {
       final String msg = 'Error fetching tracks with an url $url: $err';

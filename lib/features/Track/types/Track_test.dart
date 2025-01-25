@@ -28,7 +28,9 @@ void main() {
       "audio_size": 1031154,
       "preview_picture": "http://localhost:8000/media/samples/ny-800x450.jpg",
       "for_members": false,
-      "played_count": 0
+      "played_count": 0,
+      "published_at": "2025-01-11",
+      "youtube_url": "",
     };
     try {
       final result = Track.fromJson(data);

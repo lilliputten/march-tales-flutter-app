@@ -84,6 +84,8 @@ class Track {
   final String preview_picture;
   final bool for_members;
   final int played_count;
+  final String published_at;
+  final String youtube_url;
 
   const Track({
     required this.id,
@@ -98,7 +100,14 @@ class Track {
     required this.preview_picture,
     required this.for_members,
     required this.played_count,
+    required this.published_at,
+    required this.youtube_url,
   });
+
+  @override
+  String toString() {
+      return 'Track ${id} (${title})';
+  }
 
   factory Track.fromJson(Map<String, dynamic> json) {
     try {
@@ -119,6 +128,8 @@ class Track {
         preview_picture: json['preview_picture'].toString(),
         for_members: json['for_members'],
         played_count: json['played_count'],
+        published_at: json['published_at'].toString(),
+        youtube_url: json['youtube_url'].toString(),
       );
     } catch (err, stacktrace) {
       final String msg = 'Can not parse Track data: $err';

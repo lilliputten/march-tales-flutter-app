@@ -9,8 +9,10 @@ class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     final client = super.createHttpClient(context);
+    // Try to allow fetching urls with expired certificate (eg, for `https://api.quotable.io/random`)
     client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
+    // Set request timeout
     client.connectionTimeout = const Duration(seconds: 10);
     return client;
   }
@@ -36,7 +38,7 @@ void main() {
   // Check enviroment variables
   checkEnvironmentVariables();
 
-  // Try to allow fetching urls with expired certificate (https://api.quotable.io/random)
+  // Setup http request options
   HttpOverrides.global = MyHttpOverrides();
 
   // Start app

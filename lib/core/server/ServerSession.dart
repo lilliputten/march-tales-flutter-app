@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 final defaultHeaders = {
   'credentials': 'include',
-  'content-language': 'en',
+  'content-language': 'en', // TODO: Use current locale language
   'accept': 'application/json',
   'content-type': 'application/json',
 };

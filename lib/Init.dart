@@ -3,6 +3,8 @@
 // import 'dart:developer';
 // import 'package:flutter/material.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:developer';
+
 import 'package:logger/logger.dart';
 // import 'package:yaml/yaml.dart' as yaml;
 // import 'dart:html';
@@ -49,7 +51,7 @@ class Init {
     // final String url = 'http://10.0.2.2:8000/_allauth/app/v1/config';
     final String url =
         '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tick';
-    logger.t('[Init:_loadTick] Starting loading tick data: $url');
+    logger.t('[Init:_loadTick] Starting loading tick data: ${url}');
     dynamic jsonData;
     try {
       jsonData = await serverSession.get(Uri.parse(url));
@@ -61,11 +63,11 @@ class Init {
       // debugger();
       throw Exception(msg);
     }
-    logger.t('[Init:_loadTick] done: jsonData: $jsonData');
+    logger.t('[Init:_loadTick] done: jsonData: ${jsonData}');
     projectInfo = jsonData!['PROJECT_INFO'];
     try {
       final reg = RegExp(r'^(\S+) v\.(\S+) / (.*)$');
-      logger.t('[Init:_loadTick] done: projectInfo: $projectInfo');
+      logger.t('[Init:_loadTick] done: projectInfo: ${projectInfo}');
       if (projectInfo != null) {
         final Iterable<RegExpMatch> found = reg.allMatches(projectInfo!);
         final matches = found.elementAt(0);
@@ -75,8 +77,8 @@ class Init {
       }
       return '_loadTick: ok';
     } catch (err, stacktrace) {
-      final String msg = 'Can not parse received tick data: $err';
-      logger.e('[Init:_loadTick] error $msg',
+      final String msg = 'Can not parse received tick data: ${err}';
+      logger.e('[Init:_loadTick] error ${msg}',
           error: err, stackTrace: stacktrace);
       // debugger();
       showErrorToast(msg);
