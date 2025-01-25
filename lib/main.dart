@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:i18n_extension/i18n_extension.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/config/AppConfig.dart';
+import 'main.i18n.dart';
 import 'MyApp.dart';
 
 /// Try to allow fetching urls with expired certificate (https://api.quotable.io/random)
@@ -34,7 +37,9 @@ void checkEnvironmentVariables() {
   }
 }
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   // Check enviroment variables
   checkEnvironmentVariables();
 
@@ -42,5 +47,23 @@ void main() {
   HttpOverrides.global = MyHttpOverrides();
 
   // Start app
-  runApp(MyApp());
+  // runApp(MyApp());
+  runApp(
+    I18n(
+      // initialLocale: await I18n.loadLocale(),
+      initialLocale: 'ru'.asLocale,
+      autoSaveLocale: true,
+      supportedLocales: [
+        const Locale('en'),
+        const Locale('ru'),
+        // const Locale('es', 'ES'), // Could also be 'es-ES'.asLocale,
+      ],
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      child: MyApp(),
+    ),
+  );
 }

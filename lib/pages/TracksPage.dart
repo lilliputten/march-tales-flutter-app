@@ -1,10 +1,14 @@
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+// import 'package:i18n_extension/default.i18n.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+// import 'package:i18n_extension/i18n_extension.dart';
+
+// import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:march_tales_app/shared/states/MyAppState.dart';
-import 'package:march_tales_app/shared/widgets/HistoryListView.dart';
+
+import 'TracksPage.i18n.dart';
 
 final logger = Logger();
 
@@ -15,15 +19,7 @@ class TracksPage extends StatelessWidget {
     var appState = context.watch<MyAppState>();
     var tracks = appState.tracks;
     // var projectInfo = appState.projectInfo;
-
     // logger.t('projectInfo: $projectInfo');
-
-    // IconData icon;
-    // if (appState.favorites.contains(pair)) {
-    //   icon = Icons.favorite;
-    // } else {
-    //   icon = Icons.favorite_border;
-    // }
 
     return Center(
       child: Column(
@@ -32,7 +28,8 @@ class TracksPage extends StatelessWidget {
           SizedBox(height: 10),
           Expanded(
             flex: 4,
-            child: Text('TracksPage'),
+            // child: Text(AppLocalizations.of(context)!.helloWorld),
+            child: Text('Tracks list'.i18n),
           ),
           SizedBox(height: 10),
         ],

@@ -1,10 +1,8 @@
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/shared/states/MyAppState.dart';
-import 'package:march_tales_app/shared/widgets/HistoryListView.dart';
 
 final logger = Logger();
 

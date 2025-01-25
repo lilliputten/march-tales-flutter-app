@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'TracksPage.dart';
 import 'FavoritesPage.dart';
 import 'GeneratorPage.dart';
-import 'QuotePage.dart';
+// import 'QuotePage.dart';
 import 'SettingsPage.dart';
 import 'components/PlayerBox.dart';
 import 'components/TopMenuBox.dart';
