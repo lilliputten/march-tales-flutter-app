@@ -42,6 +42,7 @@ class MyApp extends StatelessWidget {
         return appState;
       },
       child: MaterialApp(
+        restorationScopeId: 'app',
         title: 'The March Cat Tales',
         debugShowCheckedModeBanner: false,
         locale: I18n.locale,
@@ -49,7 +50,7 @@ class MyApp extends StatelessWidget {
         supportedLocales: I18n.supportedLocales,
 
         // onGenerateTitle: (context) => I18n.of(context)!.appTitle,
-        onGenerateTitle: (context) => appTitle.i18n,
+        // onGenerateTitle: (context) => appTitle.i18n,
         // home: MyHomePage(),
         home: FutureBuilder(
           future: initFuture,

@@ -51,7 +51,7 @@ class Init {
     // final String url = 'http://10.0.2.2:8000/_allauth/app/v1/config';
     final String url =
         '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tick';
-    logger.t('[Init:_loadTick] Starting loading tick data: ${url}');
+    // logger.t('[Init:_loadTick] Starting loading tick data: ${url}');
     dynamic jsonData;
     try {
       jsonData = await serverSession.get(Uri.parse(url));
@@ -63,11 +63,11 @@ class Init {
       // debugger();
       throw Exception(msg);
     }
-    logger.t('[Init:_loadTick] done: jsonData: ${jsonData}');
+    // logger.t('[Init:_loadTick] done: jsonData: ${jsonData}');
     projectInfo = jsonData!['PROJECT_INFO'];
     try {
       final reg = RegExp(r'^(\S+) v\.(\S+) / (.*)$');
-      logger.t('[Init:_loadTick] done: projectInfo: ${projectInfo}');
+      // logger.t('[Init:_loadTick] done: projectInfo: ${projectInfo}');
       if (projectInfo != null) {
         final Iterable<RegExpMatch> found = reg.allMatches(projectInfo!);
         final matches = found.elementAt(0);
@@ -90,14 +90,14 @@ class Init {
     // final String url = 'http://10.0.2.2:8000/_allauth/app/v1/config';
     final String url =
         '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_AUTH_PREFIX}/config';
-    logger.t('[Init:_loadConfig] Starting loading settings: $url');
+    // logger.t('[Init:_loadConfig] Starting loading settings: $url');
     try {
       final jsonData = await serverSession.get(Uri.parse(url));
-      logger.t('[Init:_loadConfig] done: jsonData: $jsonData');
+      // logger.t('[Init:_loadConfig] done: jsonData: $jsonData');
       // configStatus = jsonData!['status'];
       authConfig = jsonData!['data'];
-      logger.t('[Init:_loadConfig] done: authConfig: $authConfig');
-      logger.t('[Init:_loadConfig] finished loading settings');
+      // logger.t('[Init:_loadConfig] done: authConfig: $authConfig');
+      // logger.t('[Init:_loadConfig] finished loading settings');
       return '_loadConfig: ok';
     } catch (err, stacktrace) {
       final String msg = 'Can not fetch url $url: $err';

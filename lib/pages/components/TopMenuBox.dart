@@ -9,7 +9,6 @@ class TopMenuBox extends StatelessWidget {
   Widget build(BuildContext context) {
     // final appState = context.watch<MyAppState>();
     var colorScheme = Theme.of(context).colorScheme;
-    // var theme = Theme.of(context);
 
     return ColoredBox(
       color: colorScheme.primary,
@@ -19,7 +18,6 @@ class TopMenuBox extends StatelessWidget {
           children: [
             SizedBox(height: 10),
             Text('TopMenu'),
-            // BigCard(pair: pair),
             SizedBox(height: 10),
           ],
         ),

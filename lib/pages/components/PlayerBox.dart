@@ -25,7 +25,6 @@ class PlayerBox extends StatelessWidget {
           children: [
             SizedBox(height: 10),
             Text('PlayerBox'),
-            // BigCard(pair: pair),
             SizedBox(height: 10),
           ],
         ),

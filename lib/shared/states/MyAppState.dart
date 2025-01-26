@@ -50,7 +50,7 @@ class MyAppState extends ChangeNotifier {
           'limit': limit.toString(),
         });
       }
-      logger.t('Starting loading tracks: ${uri}');
+      // logger.t('Starting loading tracks: ${uri}');
       final jsonData = await serverSession.get(uri);
       // logger.t('Loaded tracks data: ${formatter.format(jsonData)}');
       final loadedTracks = List<dynamic>.from(jsonData['results'])

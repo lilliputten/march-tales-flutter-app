@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 import 'TracksPage.dart';
 import 'FavoritesPage.dart';
@@ -8,12 +9,12 @@ import 'GeneratorPage.dart';
 // import 'QuotePage.dart';
 import 'SettingsPage.dart';
 import 'components/PlayerBox.dart';
-import 'components/TopMenuBox.dart';
+// import 'components/TopMenuBox.dart';
 
-class MyHomePage extends StatefulWidget {
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
+// import 'package:march_tales_app/sharedTranslations.i18n.dart';
+import 'MyHomePage.i18n.dart';
+
+final logger = Logger();
 
 class Page {
   final Widget Function() widget;
@@ -30,35 +31,58 @@ final pages = [
   // Page(widget: () => QuotePage(), label: 'Quote', icon: Icon(Icons.generating_tokens_outlined)),
   Page(
     widget: () => TracksPage(),
-    label: 'Tracks',
+    label: 'Tracks'.i18n,
     icon: Icon(Icons.audiotrack_outlined),
   ),
   Page(
     widget: () => FavoritesPage(),
-    label: 'Favorites',
+    label: 'Favorites'.i18n,
     icon: Icon(Icons.favorite_border),
   ),
   Page(
     widget: () => GeneratorPage(),
-    label: 'Generator',
+    label: 'Generator'.i18n,
     icon: Icon(Icons.generating_tokens_outlined),
   ),
   Page(
     widget: () => SettingsPage(),
-    label: 'Settings',
+    label: 'Settings'.i18n,
     icon: Icon(Icons.settings),
   ),
 ];
 
-class _MyHomePageState extends State<MyHomePage> {
-  // TODO: Put page index to store?
-  var selectedIndex = 0;
+class MyHomePage extends StatefulWidget {
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage>
+    with RestorationMixin<MyHomePage> {
+  // @see https://api.flutter.dev/flutter/widgets/RestorableInt-class.html
+  final RestorableInt _selectedIndex = RestorableInt(0);
+
+  @override
+  String get restorationId => 'MyHomePage';
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_selectedIndex, 'selectedIndex');
+  }
+
+  @override
+  void dispose() {
+    _selectedIndex.dispose();
+    super.dispose();
+  }
+
+  // int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    var colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
-    final widget = pages[selectedIndex].widget;
+    // final widget = pages[_selectedIndex].widget;
+    final widget = pages[_selectedIndex.value].widget;
     final Widget page = widget();
     // The container for the current page, with its background color
     // and subtle switching animation.
@@ -70,7 +94,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
-    // TODO: Generate navigation items from list
+    logger.t('_MyHomePageState: Widget: ${_selectedIndex}');
+
     bottomNavigation() {
       return BottomNavigationBar(
         type: BottomNavigationBarType.fixed, // Fixed
@@ -86,38 +111,45 @@ class _MyHomePageState extends State<MyHomePage> {
             .map((page) =>
                 BottomNavigationBarItem(icon: page.icon, label: page.label))
             .toList(),
-        currentIndex: selectedIndex,
+        // currentIndex: _selectedIndex,
+        currentIndex: _selectedIndex.value,
         onTap: (value) {
           setState(() {
-            selectedIndex = value;
+            // _selectedIndex = value;
+            _selectedIndex.value = value;
           });
         },
       );
     }
 
-    return Scaffold(
-      // appBar: Text('appBar'),
+    return /* RestorationScope(
+      restorationId: 'MyHomePage_Widget',
+      child: */
+        Scaffold(
+      appBar: AppBar(
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+        // title: SelectableText(appTitle.i18n),
+        title: Text(appTitle.i18n),
+        // title: Text('The March Cat Tales'.i18n),
+        // actions
+      ),
       bottomNavigationBar: bottomNavigation(),
       // bottomSheet: Text('bottomSheet'),
-      drawer: Text('drawer'),
-      // currentIndex: selectedIndex,
+      drawer: Text('Drawer'), // TODO: Side navigation panel
       // onTap: (int i){setState((){index = i;});},
-      // fixedColor: Colors.white,
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Column(
             children: [
-              TopMenuBox(),
+              // TopMenuBox(),
               Expanded(child: pageArea),
               PlayerBox(),
-              // SafeArea(
-              //   bottom: true,
-              //   child: bottomNavigation(),
-              // ),
             ],
           );
         },
       ),
+      // ),
     );
   }
 }
