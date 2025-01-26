@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
@@ -11,7 +9,6 @@ import 'SettingsPage.dart';
 import 'components/PlayerBox.dart';
 // import 'components/TopMenuBox.dart';
 
-// import 'package:march_tales_app/sharedTranslations.i18n.dart';
 import 'MyHomePage.i18n.dart';
 
 final logger = Logger();
@@ -51,6 +48,8 @@ final pages = [
   ),
 ];
 
+const defaultPageIndex = 0;
+
 class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -59,7 +58,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with RestorationMixin<MyHomePage> {
   // @see https://api.flutter.dev/flutter/widgets/RestorableInt-class.html
-  final RestorableInt _selectedIndex = RestorableInt(0);
+  final RestorableInt _selectedIndex = RestorableInt(defaultPageIndex);
 
   @override
   String get restorationId => 'MyHomePage';
@@ -94,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage>
       ),
     );
 
-    logger.t('_MyHomePageState: Widget: ${_selectedIndex}');
+    logger.t('_MyHomePageState: selectedIndex: ${_selectedIndex.value}');
 
     bottomNavigation() {
       return BottomNavigationBar(
@@ -129,9 +128,7 @@ class _MyHomePageState extends State<MyHomePage>
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
-        // title: SelectableText(appTitle.i18n),
         title: Text(appTitle.i18n),
-        // title: Text('The March Cat Tales'.i18n),
         // actions
       ),
       bottomNavigationBar: bottomNavigation(),

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:i18n_extension/default.i18n.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-// import 'package:i18n_extension/i18n_extension.dart';
-
-// import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:march_tales_app/shared/states/MyAppState.dart';
 

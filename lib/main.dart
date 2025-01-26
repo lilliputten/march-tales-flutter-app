@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/config/AppConfig.dart';
 import 'MyApp.dart';
+import 'supportedLocales.dart';
 
 /// Try to allow fetching urls with expired certificate (https://api.quotable.io/random)
 class MyHttpOverrides extends HttpOverrides {
@@ -51,13 +52,9 @@ void main() async {
       restorationId: 'root',
       child: I18n(
         initialLocale: await I18n.loadLocale(),
-        // initialLocale: 'ru'.asLocale,
+        // initialLocale: 'ru'.asLocale, // DEBUG
         autoSaveLocale: true,
-        supportedLocales: [
-          const Locale('en'),
-          const Locale('ru'),
-          // const Locale('es', 'ES'), // Could also be 'es-ES'.asLocale,
-        ],
+        supportedLocales: supportedLocales,
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
