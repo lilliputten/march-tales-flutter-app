@@ -1,20 +1,8 @@
-// dart format width=123
-
-// import 'dart:developer';
-// import 'package:flutter/material.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
-import 'dart:developer';
-
 import 'package:logger/logger.dart';
-// import 'package:yaml/yaml.dart' as yaml;
-// import 'dart:html';
-// import 'dart:convert';
-// import 'package:http/http.dart' as http;
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
-// import 'package:march_tales_app/core/helpers/parseJsonResponse.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 
 final formatter = YamlFormatter();
@@ -94,7 +82,6 @@ class Init {
     try {
       final jsonData = await serverSession.get(Uri.parse(url));
       // logger.t('[Init:_loadConfig] done: jsonData: $jsonData');
-      // configStatus = jsonData!['status'];
       authConfig = jsonData!['data'];
       // logger.t('[Init:_loadConfig] done: authConfig: $authConfig');
       // logger.t('[Init:_loadConfig] finished loading settings');
@@ -110,7 +97,6 @@ class Init {
   }
 
   // static _registerServices() async {
-  //   // TODO: register services?
   //   final response = await http.get(
   //     Uri.parse(url),
   //     headers: {

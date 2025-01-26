@@ -20,13 +20,9 @@ class PlayerBox extends StatelessWidget {
     return ColoredBox(
       color: colorScheme.primary,
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(height: 10),
-            Text('PlayerBox'),
-            SizedBox(height: 10),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          child: Text('--Player--'),
         ),
       ),
     );

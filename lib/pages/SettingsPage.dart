@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
-import 'package:march_tales_app/supportedLocales.dart';
 import 'package:provider/provider.dart';
+import 'package:logger/logger.dart';
+import 'package:march_tales_app/core/server/ServerSession.dart';
+import 'package:march_tales_app/shared/states/MyAppState.dart';
+import 'package:march_tales_app/supportedLocales.dart';
 import 'package:i18n_extension/i18n_extension.dart';
 
-import 'package:march_tales_app/shared/states/MyAppState.dart';
-
-import 'TracksPage.i18n.dart';
+import 'SettingsPage.i18n.dart';
 
 final logger = Logger();
 
@@ -25,7 +25,7 @@ class SettingsPage extends StatelessWidget {
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              child: settingsWidget(context),
+              child: SettingsWidget(),
             ),
           ),
         ),
@@ -34,49 +34,65 @@ class SettingsPage extends StatelessWidget {
   }
 }
 
-// TODO: Move to language helpers
-getLanguagesList() {
-  final List<DropdownMenuItem<String>> list = [];
-  localeNames.forEach((k, v) {
-    final item = DropdownMenuItem<String>(
-      value: k,
-      child: Text(v),
+// Widget languageSelector(BuildContext context) {
+class LanguageSelector extends StatelessWidget {
+  // TODO: Move to language helpers?
+  getLanguagesList(String currentLanguageCode) {
+    final List<DropdownMenuItem<String>> list = [];
+    localeNames.forEach((code, text) {
+      final item = DropdownMenuItem<String>(
+        value: code,
+        enabled: code != currentLanguageCode,
+        child: Text(text),
+      );
+      list.add(item);
+    });
+    return list;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final appState = context.watch<MyAppState>();
+    final colorScheme = Theme.of(context).colorScheme;
+    final currentLanguageCode = context.locale.toString();
+    final items = getLanguagesList(currentLanguageCode);
+    return DropdownButtonFormField<String>(
+      iconDisabledColor: Colors.white,
+      decoration: InputDecoration(
+        filled: true,
+        labelText: 'Application language'.i18n,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
+      ),
+      value: currentLanguageCode,
+      elevation: 16,
+      style: TextStyle(color: colorScheme.primary),
+      onChanged: (String? locale) {
+        if (locale != null) {
+          // TODO: Update the language in an app state
+          serverSession.updateLocale(locale);
+          // Update locale in the context store
+          appState.updateLocale(locale);
+          // Set system locale
+          context.locale = Locale(locale);
+        }
+      },
+      // selectedItemBuilder
+      items: items,
     );
-    list.add(item);
-  });
-  return list;
+  }
 }
 
-Widget languageSelector(BuildContext context) {
-  final colorScheme = Theme.of(context).colorScheme;
-  final currentLang = context.locale;
-  final items = getLanguagesList();
-  return DropdownButtonFormField<String>(
-    decoration: InputDecoration(
-      filled: true,
-      labelText: 'Application language'.i18n,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
-    ),
-    value: currentLang.toString(),
-    elevation: 16,
-    style: TextStyle(color: colorScheme.primary),
-    onChanged: (String? value) {
-      if (value != null) {
-        context.locale = Locale(value);
-      }
-    },
-    items: items,
-  );
-}
-
-Widget settingsWidget(BuildContext context) {
-  return Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        languageSelector(context),
-      ],
-    ),
-  );
+class SettingsWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          LanguageSelector(),
+        ],
+      ),
+    );
+  }
 }

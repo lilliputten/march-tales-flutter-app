@@ -10,3 +10,5 @@ const localeNames = {
   'en': 'English',
   'ru': 'Русский',
 };
+
+const defaultLocale = 'en';

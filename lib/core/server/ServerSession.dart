@@ -1,20 +1,38 @@
-// import 'dart:developer';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
+
+import 'package:march_tales_app/supportedLocales.dart';
 
 final defaultHeaders = {
   'credentials': 'include',
-  'content-language': 'en', // TODO: Use current locale language
+  'content-language': defaultLocale,
+  'accept-language': defaultLocale,
   'accept': 'application/json',
   'content-type': 'application/json',
 };
+
+final logger = Logger();
 
 class _ServerSession {
   final JsonDecoder _decoder = const JsonDecoder();
   final JsonEncoder _encoder = const JsonEncoder();
 
+  String currentLocale = defaultLocale;
+
   Map<String, String> headers = Map.from(defaultHeaders);
   Map<String, String> cookies = {};
+
+  updateLocale(String locale) {
+    // Store language
+    currentLocale = locale;
+    // Update `django_language` cookie?
+    cookies['django_language'] = locale;
+    // Update header values
+    headers['accept-language'] = locale;
+    headers['content-language'] = locale;
+    headers['cookie'] = _generateCookieHeader();
+  }
 
   void _updateCookie(http.Response response) {
     String? allSetCookie = response.headers['set-cookie'];
@@ -75,7 +93,7 @@ class _ServerSession {
       _updateCookie(response);
 
       if (statusCode < 200 || statusCode > 400) {
-        throw Exception('Error while fetching data');
+        throw Exception('Error fetching data (get)');
       }
       return _decoder.convert(res);
     });
@@ -96,7 +114,7 @@ class _ServerSession {
       _updateCookie(response);
 
       if (statusCode < 200 || statusCode > 400) {
-        throw Exception('Error while fetching data');
+        throw Exception('Error fetching data (post)');
       }
       return _decoder.convert(res);
     });
@@ -117,7 +135,7 @@ class _ServerSession {
       _updateCookie(response);
 
       if (statusCode < 200 || statusCode > 400) {
-        throw Exception('Error while fetching data');
+        throw Exception('Error fetching data (put)');
       }
       return _decoder.convert(res);
     });

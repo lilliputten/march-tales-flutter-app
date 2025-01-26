@@ -7,19 +7,16 @@ final logger = Logger();
 class TopMenuBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // final appState = context.watch<MyAppState>();
-    var colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme.copyWith(
+          brightness: Brightness.dark,
+        );
 
     return ColoredBox(
-      color: colorScheme.primary,
+      color: colorScheme.primary.withValues(alpha: 0.5),
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(height: 10),
-            Text('TopMenu'),
-            SizedBox(height: 10),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          child: Text('--TopMenu--'),
         ),
       ),
     );

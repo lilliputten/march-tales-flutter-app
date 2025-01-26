@@ -1,18 +1,15 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:i18n_extension/i18n_extension.dart';
-// import 'package:flutter_localizations/flutter_localizations.dart';
-// import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/shared/states/MyAppState.dart';
 import 'package:march_tales_app/pages/MyHomePage.dart';
 
-import 'sharedTranslations.i18n.dart';
+import 'pages/MyHomePage.i18n.dart';
 import 'Init.dart';
 import 'SplashScreen.dart';
 
@@ -29,14 +26,19 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) {
         var appState = MyAppState();
+        // Initialize locale
+        final locale = I18n.locale.toString();
+        serverSession.updateLocale(locale);
+        appState.updateLocale(locale);
+        // Wait for the config & tick initialization and request for the first track record
         initFuture.then((initData) {
           // Get project info from init data and set to the context
           final projectInfo = initData['projectInfo'];
           logger.d(
               '[ChangeNotifierProvider:create:initFuture.then]: $projectInfo, $initData');
           appState.setProjectInfo(projectInfo);
-          // TODO: Get these parameters from constants/config?
-          appState.loadTracks(offset: 0, limit: 2);
+          // Retrieve tracks
+          appState.reloadTracks();
         });
         // logger.d('[ChangeNotifierProvider:create]: $initFuture');
         return appState;
@@ -50,7 +52,7 @@ class MyApp extends StatelessWidget {
         supportedLocales: I18n.supportedLocales,
 
         // onGenerateTitle: (context) => I18n.of(context)!.appTitle,
-        // onGenerateTitle: (context) => appTitle.i18n,
+        onGenerateTitle: (context) => appTitle.i18n,
         // home: MyHomePage(),
         home: FutureBuilder(
           future: initFuture,

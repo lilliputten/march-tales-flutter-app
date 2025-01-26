@@ -6,7 +6,7 @@ extension Localization on String {
       sharedTranslationsByLocaleData +
       {
         'ru': {
-          'Tracks list': 'Список треков',
+          'No tracks found': 'Не найдено треков',
         },
       };
 
