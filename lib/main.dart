@@ -7,6 +7,9 @@ import 'core/config/AppConfig.dart';
 import 'MyApp.dart';
 import 'supportedLocales.dart';
 
+// Make it depending on a LOCAL flag, put to the constants/config
+const connectionTimeoutDelay = 5;
+
 /// Try to allow fetching urls with expired certificate (https://api.quotable.io/random)
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -16,7 +19,7 @@ class MyHttpOverrides extends HttpOverrides {
     client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
     // Set request timeout
-    client.connectionTimeout = const Duration(seconds: 10);
+    client.connectionTimeout = const Duration(seconds: connectionTimeoutDelay);
     return client;
   }
 }

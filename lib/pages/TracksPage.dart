@@ -18,12 +18,14 @@ class TracksPage extends StatelessWidget {
     final appState = context.watch<MyAppState>();
     final tracksLoadError = appState.tracksLoadError;
     final tracksHasBeenLoaded = appState.tracksHasBeenLoaded;
+    final tracksIsLoading = appState.tracksIsLoading;
     final tracks = appState.tracks;
 
     // logger.t(
     //     'TracksPage: tracksIsLoading=${tracksIsLoading} tracksHasBeenLoaded=${tracksHasBeenLoaded} tracksLoadError=${tracksLoadError} tracks=${tracks}');
 
     if (tracksLoadError != null) {
+      // TODO: Show an error in case of the server inaccessibility?
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -39,7 +41,7 @@ class TracksPage extends StatelessWidget {
           ),
         ],
       );
-    } else if (!tracksHasBeenLoaded) {
+    } else if (!tracksHasBeenLoaded && tracksIsLoading) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -61,7 +63,7 @@ class TracksPage extends StatelessWidget {
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                child: Text('No tracks found'.i18n),
+                child: Text('No tracks loaded'.i18n),
               ),
             ),
           ),
@@ -113,7 +115,7 @@ class MoreButton extends StatelessWidget {
                 child: CircularProgressIndicator(color: color, strokeWidth: 2),
               )
             : Icon(Icons.arrow_circle_down, size: iconSize),
-        label: Text('Load more...'.i18n),
+        label: Text(isWaiting ? 'Loading...'.i18n : 'Load more...'.i18n),
       ),
     );
   }

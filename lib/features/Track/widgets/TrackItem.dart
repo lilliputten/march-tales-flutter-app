@@ -109,7 +109,7 @@ Widget trackDetailsInfo(BuildContext context, Track track) {
       ),
       Text(
           formatDate(
-              DateTime.parse(track.published_at), context.locale.toString()),
+              DateTime.parse(track.published_at), context.locale.languageCode),
           style: style),
     ]),
     // Rubrics

@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       create: (context) {
         var appState = MyAppState();
         // Initialize locale
-        final locale = I18n.locale.toString();
+        final locale = I18n.locale.languageCode;
         serverSession.updateLocale(locale);
         appState.updateLocale(locale);
         // Wait for the config & tick initialization and request for the first track record

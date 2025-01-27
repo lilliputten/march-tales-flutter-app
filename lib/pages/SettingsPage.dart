@@ -53,8 +53,9 @@ class LanguageSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final appState = context.watch<MyAppState>();
     final colorScheme = Theme.of(context).colorScheme;
-    final currentLanguageCode = context.locale.toString();
+    final currentLanguageCode = context.locale.languageCode; // context.locale.toString();
     final items = getLanguagesList(currentLanguageCode);
+    // logger.d('LanguageSelector items: ${items} currentLanguageCode: ${currentLanguageCode}');
     return DropdownButtonFormField<String>(
       iconDisabledColor: Colors.white,
       decoration: InputDecoration(
