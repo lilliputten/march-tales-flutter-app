@@ -36,7 +36,6 @@ class SettingsPage extends StatelessWidget {
 
 // Widget languageSelector(BuildContext context) {
 class LanguageSelector extends StatelessWidget {
-  // TODO: Move to language helpers?
   getLanguagesList(String currentLanguageCode) {
     final List<DropdownMenuItem<String>> list = [];
     localeNames.forEach((code, text) {
@@ -68,7 +67,6 @@ class LanguageSelector extends StatelessWidget {
       style: TextStyle(color: colorScheme.primary),
       onChanged: (String? locale) {
         if (locale != null) {
-          // TODO: Update the language in an app state
           serverSession.updateLocale(locale);
           // Update locale in the context store
           appState.updateLocale(locale);

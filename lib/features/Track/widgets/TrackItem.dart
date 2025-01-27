@@ -1,6 +1,11 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:i18n_extension/i18n_extension.dart';
+import 'package:march_tales_app/core/helpers/formats.dart';
 
 import 'package:march_tales_app/features/Track/types/Track.dart';
+
+final dateFormat = DateFormat('HH:mm a');
 
 class TrackItem extends StatelessWidget {
   const TrackItem({
@@ -15,17 +20,158 @@ class TrackItem extends StatelessWidget {
     // var appState = context.watch<MyAppState>();
 
     return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-              child: Text(track.title),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+        child: Row(
+          spacing: 10,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            trackImage(context, track),
+            Expanded(
+              flex: 1,
+              child: trackDetails(context, track),
             ),
-          ),
-        ],
+            trackControl(context, track),
+          ],
+        ),
       ),
     );
   }
+}
+
+Widget trackImage(BuildContext context, Track track) {
+  return Center(
+    child: Text('Image'),
+  );
+}
+
+Widget trackDetailsInfo(BuildContext context, Track track) {
+  final theme = Theme.of(context);
+  final style = theme.textTheme.bodySmall!.copyWith();
+  final items = [
+    // Author
+    Wrap(spacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
+      Icon(
+        Icons.mode_edit,
+        size: style.fontSize,
+        color: theme.primaryColor.withValues(alpha: 0.5),
+      ),
+      Text(track.author.name, style: style),
+    ]),
+    // Played count
+    track.played_count == 0
+        ? null
+        : Wrap(
+            spacing: 2,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+                Icon(
+                  Icons.headphones_outlined,
+                  size: style.fontSize,
+                  color: theme.primaryColor.withValues(alpha: 0.5),
+                ),
+                Text(track.played_count.toString(), style: style),
+              ]),
+    // Duration
+    Wrap(spacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
+      Icon(
+        Icons.watch_later_outlined,
+        size: style.fontSize,
+        color: theme.primaryColor.withValues(alpha: 0.5),
+      ),
+      Text(formatSecondsDuration(track.audio_duration), style: style),
+    ]),
+    // Date
+    Wrap(spacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
+      Icon(
+        Icons.calendar_month,
+        size: style.fontSize,
+        color: theme.primaryColor.withValues(alpha: 0.5),
+      ),
+      Text(
+          formatDate(
+              DateTime.parse(track.published_at), context.locale.toString()),
+          style: style),
+    ]),
+    // Rubrics
+    track.rubrics.isEmpty
+        ? null
+        : Wrap(
+            spacing: 3,
+            children: track.rubrics.map((tag) {
+              return Container(
+                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 3),
+                decoration: BoxDecoration(
+                  // shape: BoxShape.circle,
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  border: Border.all(
+                      color: theme.primaryColor.withValues(alpha: 0.25),
+                      width: 1),
+                ),
+                child: Text(tag.text, style: style),
+              );
+            }).toList()),
+    // Tags
+    track.tags.isEmpty
+        ? null
+        : Wrap(
+            spacing: 3,
+            children: track.tags.map((tag) {
+              return Wrap(spacing: 2, children: [
+                Text('#',
+                    style: style.copyWith(
+                        color:
+                            theme.colorScheme.primary.withValues(alpha: 0.5))),
+                Text(tag.text, style: style),
+              ]);
+            }).toList()),
+  ].nonNulls;
+  // Add delimiters between each other item
+  final delimiter = Text('|',
+      style: style.copyWith(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.2)));
+  final delimitedItems =
+      items.map((e) => [delimiter, e]).expand((e) => e).skip(1);
+  return Wrap(
+    spacing: 4,
+    runSpacing: 2,
+    crossAxisAlignment: WrapCrossAlignment.center,
+    // runAlignment: WrapAlignment.center,
+    children: delimitedItems.toList(),
+  );
+}
+
+Widget trackDetails(BuildContext context, Track track) {
+  final title = track.title;
+  return Column(
+    spacing: 3,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(title),
+      trackDetailsInfo(context, track),
+    ],
+  );
+}
+
+Widget trackControl(BuildContext context, Track track) {
+  final colorScheme = Theme.of(context).colorScheme;
+  return IconButton(
+    icon: Icon(
+      Icons.play_arrow,
+      size: 24,
+      color: Colors.white,
+    ),
+    style: IconButton.styleFrom(
+      // minimumSize: Size.zero, // Set this
+      // padding: EdgeInsets.zero, // and this
+      shape: CircleBorder(),
+      backgroundColor: colorScheme.primary,
+      foregroundColor: colorScheme.onPrimary,
+    ),
+    alignment: Alignment.center,
+    padding: EdgeInsets.all(0.0),
+    onPressed: () {
+      logger.d('Play track ${track.id} (${track.title})');
+    },
+  );
 }

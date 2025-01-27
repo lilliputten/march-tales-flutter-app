@@ -21,8 +21,8 @@ class TracksPage extends StatelessWidget {
     final tracksHasBeenLoaded = appState.tracksHasBeenLoaded;
     final tracks = appState.tracks;
 
-    logger.t(
-        'TracksPage: tracksIsLoading=${tracksIsLoading} tracksHasBeenLoaded=${tracksHasBeenLoaded} tracksLoadError=${tracksLoadError} tracks=${tracks}');
+    // logger.t(
+    //     'TracksPage: tracksIsLoading=${tracksIsLoading} tracksHasBeenLoaded=${tracksHasBeenLoaded} tracksLoadError=${tracksLoadError} tracks=${tracks}');
 
     if (tracksLoadError != null) {
       return Column(
@@ -92,7 +92,6 @@ class TracksListWidget extends StatelessWidget {
     final tracksList = tracks.map((track) {
       return TrackItem(track: track);
     }).toList();
-    logger.t('Tracks: ${tracks}');
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),

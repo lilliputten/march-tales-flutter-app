@@ -25,6 +25,10 @@ class TrackAuthor {
       throw FormatException(msg);
     }
   }
+  @override
+  String toString() {
+    return 'Author: [${id}] ${name}';
+  }
 }
 
 class TrackTag {
@@ -47,6 +51,10 @@ class TrackTag {
       throw FormatException(msg);
     }
   }
+  @override
+  String toString() {
+    return 'Tag: [${id}] ${text}';
+  }
 }
 
 class TrackRubric {
@@ -68,6 +76,10 @@ class TrackRubric {
       debugger();
       throw FormatException(msg);
     }
+  }
+  @override
+  String toString() {
+    return 'Rubric: [${id}] ${text}';
   }
 }
 

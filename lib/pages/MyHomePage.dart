@@ -93,8 +93,6 @@ class _MyHomePageState extends State<MyHomePage>
       ),
     );
 
-    logger.t('_MyHomePageState: selectedIndex: ${_selectedIndex.value}');
-
     bottomNavigation() {
       return BottomNavigationBar(
         type: BottomNavigationBarType.fixed, // Fixed
@@ -133,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage>
       ),
       bottomNavigationBar: bottomNavigation(),
       // bottomSheet: Text('bottomSheet'),
-      drawer: Text('Drawer'), // TODO: Side navigation panel
+      drawer: Text('Drawer'), // Side navigation panel
       // onTap: (int i){setState((){index = i;});},
       body: LayoutBuilder(
         builder: (context, constraints) {

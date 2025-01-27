@@ -34,8 +34,7 @@ class MyApp extends StatelessWidget {
         initFuture.then((initData) {
           // Get project info from init data and set to the context
           final projectInfo = initData['projectInfo'];
-          logger.d(
-              '[ChangeNotifierProvider:create:initFuture.then]: $projectInfo, $initData');
+          // logger.d('[ChangeNotifierProvider:create:initFuture.then]: $projectInfo, $initData');
           appState.setProjectInfo(projectInfo);
           // Retrieve tracks
           appState.reloadTracks();

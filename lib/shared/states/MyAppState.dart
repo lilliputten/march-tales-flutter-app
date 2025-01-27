@@ -33,7 +33,7 @@ class MyAppState extends ChangeNotifier {
     currentLocale = locale;
     tracks = [];
     notifyListeners();
-    // TODO: Reset (& reload?) tracks, offset & filters
+    // Reset (& reload?) tracks, offset & filters
     if (tracksHasBeenLoaded) {
       reloadTracks();
     }
@@ -46,7 +46,7 @@ class MyAppState extends ChangeNotifier {
 
   /// Tracks list
 
-  // TODO: Store track filters
+  // TODO: Store track filters state
 
   bool tracksIsLoading = false;
   bool tracksHasBeenLoaded = false;
@@ -54,7 +54,7 @@ class MyAppState extends ChangeNotifier {
   int availableTracksCount = 0;
   int tracksLimit = defaultTracksDownloadLimit;
   List<Track> tracks = [];
-  // TODO: Store loading handler to be able cancelling it?
+  // XXX: Store loading handler to be able cancelling it?
 
   void resetTracks({bool doNotify = true}) {
     availableTracksCount = 0;
@@ -73,7 +73,6 @@ class MyAppState extends ChangeNotifier {
       final offset = tracks.length;
       final LoadTracksDataResults results =
           await loadTracksData(offset: offset, limit: tracksLimit);
-      logger.t('Loaded tracks:\n${formatter.format(results)}');
       tracks = results.results;
       availableTracksCount = results.count;
       logger.t(

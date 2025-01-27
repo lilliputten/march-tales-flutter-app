@@ -56,7 +56,6 @@ Future<LoadTracksDataResults> loadTracksData({
         'limit': limit.toString(),
       });
     }
-    logger.t('Starting loading tracks: ${uri}');
     final jsonData = await serverSession.get(uri);
     return LoadTracksDataResults.fromJson(jsonData);
   } catch (err, stacktrace) {
