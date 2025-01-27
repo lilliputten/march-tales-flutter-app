@@ -20,7 +20,7 @@ PUBLISH_BRANCH="publish-${APP_ID}"
 
 VERSION_FILE="project-version.txt"
 PROJECT_INFO_FILE="project-info.txt"
-PROJECT_INFO_JSON_FILE="lib/project-info.json"
+PROJECT_INFO_JSON_FILE="assets/project-info.json"
 
 # TODO: To use generic `init-crossplatform-command-names.sh`?
 FINDCMD="find"

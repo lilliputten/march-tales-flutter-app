@@ -2,7 +2,7 @@
 
 March tales mobile flutter application.
 
-- Project info: march-tales-app v.0.0.2 / 2025.01.27 09:16:57 +0300
+- Project info: march-tales-app v.0.0.2 / 2025.01.28 02:34:54 +0300
 
 ## Getting Started with Flutter
 

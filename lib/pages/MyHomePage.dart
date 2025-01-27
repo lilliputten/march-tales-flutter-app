@@ -121,32 +121,31 @@ class _MyHomePageState extends State<MyHomePage>
       );
     }
 
-    return /* RestorationScope(
+    return RestorationScope(
       restorationId: 'MyHomePage_Widget',
-      child: */
-        Scaffold(
-      appBar: AppBar(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
-        title: Text(appTitle.i18n),
-        // actions
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          title: Text(appTitle.i18n),
+          // actions
+        ),
+        bottomNavigationBar: bottomNavigation(),
+        // bottomSheet: Text('bottomSheet'),
+        drawer: Text('Drawer'), // Side navigation panel
+        // onTap: (int i){setState((){index = i;});},
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return Column(
+              children: [
+                // TopMenuBox(),
+                Expanded(child: pageArea),
+                PlayerBox(),
+              ],
+            );
+          },
+        ),
       ),
-      bottomNavigationBar: bottomNavigation(),
-      // bottomSheet: Text('bottomSheet'),
-      drawer: Text('Drawer'), // Side navigation panel
-      // onTap: (int i){setState((){index = i;});},
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return Column(
-            children: [
-              // TopMenuBox(),
-              Expanded(child: pageArea),
-              PlayerBox(),
-            ],
-          );
-        },
-      ),
-      // ),
     );
   }
 }

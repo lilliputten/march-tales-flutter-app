@@ -87,26 +87,26 @@ class LanguageSelector extends StatelessWidget {
 class AppInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
-    var style = theme.textTheme.bodyMedium!.copyWith();
-    // final appState = context.watch<MyAppState>();
-    // final colorScheme = Theme.of(context).colorScheme;
-    // final currentLanguageCode =
-    //     context.locale.languageCode; // context.locale.toString();
-    // final items = getLanguagesList(currentLanguageCode);
+    final theme = Theme.of(context);
+    final style = theme.textTheme.bodySmall!;
 
-    // final appId = Init.appId;
     final appVersion = Init.appVersion;
     final appTimestamp = Init.appTimestamp;
+    final serverVersion = Init.serverVersion;
+    final serverTimestamp = Init.serverTimestamp;
 
     logger.d('AppInfo appVersion: ${appVersion}');
 
     return Column(
+      spacing: 10,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Wrap(
           spacing: 5,
           children: [
-            SelectableText('Version:'.i18n),
+            SelectableText('Application version:'.i18n,
+              style: style,
+            ),
             SelectableText(
               appVersion!,
               style: style.copyWith(fontWeight: FontWeight.bold),
@@ -117,6 +117,23 @@ class AppInfo extends StatelessWidget {
                 style: style.copyWith(fontWeight: FontWeight.w300)),
           ],
         ),
+        Wrap(
+          spacing: 5,
+          children: [
+            SelectableText('Server version:'.i18n,
+              style: style,
+            ),
+            SelectableText(
+              serverVersion!,
+              style: style.copyWith(fontWeight: FontWeight.bold),
+            ),
+            SelectableText('/',
+                style: style.copyWith(fontWeight: FontWeight.w200)),
+            SelectableText(serverTimestamp!,
+                style: style.copyWith(fontWeight: FontWeight.w300)),
+          ],
+        ),
+        // TODO: Show other info (developer, project site etc)
       ],
     );
   }
@@ -127,7 +144,7 @@ class SettingsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
-        spacing: 10,
+        spacing: 20,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

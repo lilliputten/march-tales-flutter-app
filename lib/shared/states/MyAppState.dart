@@ -17,12 +17,34 @@ final formatter = YamlFormatter();
 final logger = Logger();
 
 class MyAppState extends ChangeNotifier {
-  /// App info
-  String? projectInfo;
+  /// App info (DEBUG)
+  dynamic globalError;
 
-  void setProjectInfo(String? info) {
-    projectInfo = info;
+  void setGlobalError(dynamic error) {
+    globalError = error;
     notifyListeners();
+  }
+
+  String? serverProjectInfo;
+
+  void setServerProjectInfo(String? info) {
+    serverProjectInfo = info;
+    notifyListeners();
+  }
+
+  String? appProjectInfo;
+
+  void setAppProjectInfo(String? info) {
+    appProjectInfo = info;
+    notifyListeners();
+  }
+
+  /// Theme
+
+  ThemeMode themeMode = ThemeMode.dark;
+
+  void toggleTheme(bool isOn) {
+    themeMode = isOn ? ThemeMode.light : ThemeMode.dark;
   }
 
   /// Language
