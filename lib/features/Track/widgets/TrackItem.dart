@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:i18n_extension/i18n_extension.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:march_tales_app/shared/states/MyAppState.dart';
+import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/formats.dart';
@@ -9,6 +12,8 @@ import 'package:march_tales_app/features/Track/types/Track.dart';
 const double previewSize = 80;
 const previewHalfSize = previewSize / 2;
 const previewProgressPadding = previewHalfSize - 16;
+
+final logger = Logger();
 
 class TrackItem extends StatelessWidget {
   const TrackItem({
@@ -21,20 +26,17 @@ class TrackItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-        child: Row(
-          spacing: 10,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            trackImage(context, track),
-            Expanded(
-              flex: 1,
-              child: trackDetails(context, track),
-            ),
-            trackControl(context, track),
-          ],
-        ),
+      child: Row(
+        spacing: 10,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          trackImage(context, track),
+          Expanded(
+            flex: 1,
+            child: trackDetails(context, track),
+          ),
+          trackControl(context, track),
+        ],
       ),
     );
   }
@@ -170,10 +172,13 @@ Widget trackDetails(BuildContext context, Track track) {
 }
 
 Widget trackControl(BuildContext context, Track track) {
+  final appState = context.watch<MyAppState>();
+  final playingTrack = appState.playingTrack;
+  final isPlaying = playingTrack != null && playingTrack.id == track.id;
   final colorScheme = Theme.of(context).colorScheme;
   return IconButton(
     icon: Icon(
-      Icons.play_arrow,
+      isPlaying ? Icons.pause : Icons.play_arrow,
       size: 24,
       color: Colors.white,
     ),
@@ -188,6 +193,7 @@ Widget trackControl(BuildContext context, Track track) {
     padding: EdgeInsets.all(0.0),
     onPressed: () {
       logger.d('Play track ${track.id} (${track.title})');
+      appState.playTrack(track);
     },
   );
 }

@@ -11,7 +11,7 @@ import 'package:march_tales_app/features/Track/loaders/loadTracksData.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/supportedLocales.dart';
 
-const int defaultTracksDownloadLimit = 5;
+const int defaultTracksDownloadLimit = 2;
 
 final formatter = YamlFormatter();
 final logger = Logger();
@@ -41,8 +41,8 @@ class MyAppState extends ChangeNotifier {
 
   /// Active player
 
-  // Track? activeTrack;
-  bool hasActivePlayer = true;
+  Track? playingTrack;
+  // bool hasActivePlayer = false;
 
   /// Tracks list
 
@@ -66,14 +66,22 @@ class MyAppState extends ChangeNotifier {
     }
   }
 
+  void playTrack(Track track) {
+    logger.t('playTrack ${track}');
+    playingTrack = track;
+    // hasActivePlayer = true;
+    notifyListeners();
+  }
+
   Future<LoadTracksDataResults> loadNextTracks() async {
     try {
       tracksIsLoading = true;
       notifyListeners();
       final offset = tracks.length;
+      logger.t('Starting loading tracks (offset: ${offset})');
       final LoadTracksDataResults results =
           await loadTracksData(offset: offset, limit: tracksLimit);
-      tracks = results.results;
+      tracks.addAll(results.results);
       availableTracksCount = results.count;
       logger.t(
           'Loaded tracks (count: ${availableTracksCount}):\n${formatter.format(tracks)}');

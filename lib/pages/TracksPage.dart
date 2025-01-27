@@ -16,7 +16,6 @@ class TracksPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<MyAppState>();
-    final tracksIsLoading = appState.tracksIsLoading;
     final tracksLoadError = appState.tracksLoadError;
     final tracksHasBeenLoaded = appState.tracksHasBeenLoaded;
     final tracks = appState.tracks;
@@ -40,7 +39,7 @@ class TracksPage extends StatelessWidget {
           ),
         ],
       );
-    } else if (tracksIsLoading || !tracksHasBeenLoaded) {
+    } else if (!tracksHasBeenLoaded) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -75,32 +74,74 @@ class TracksPage extends StatelessWidget {
       children: [
         TopMenuBox(),
         Expanded(
-          child: SingleChildScrollView(
-            child: TracksListWidget(),
-          ),
+          // child: SingleChildScrollView(
+          //   child: TracksListWidget(),
+          // ),
+          child: TracksList(),
         ),
       ],
     );
   }
 }
 
-class TracksListWidget extends StatelessWidget {
+class MoreButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final appState = context.watch<MyAppState>();
+    final tracksIsLoading = appState.tracksIsLoading;
+    final isWaiting = tracksIsLoading;
+    final color = isWaiting
+        ? theme.primaryColor.withValues(alpha: 0.5)
+        : theme.primaryColor;
+    const double iconSize = 20;
+    return Center(
+      child: TextButton.icon(
+        style: ButtonStyle(
+          foregroundColor: WidgetStatePropertyAll<Color>(color),
+        ),
+        onPressed: isWaiting
+            ? null
+            : () {
+                logger.t('Load more pressed');
+                appState.loadNextTracks();
+              },
+        icon: isWaiting
+            ? SizedBox(
+                height: iconSize,
+                width: iconSize,
+                child: CircularProgressIndicator(color: color, strokeWidth: 2),
+              )
+            : Icon(Icons.arrow_circle_down, size: iconSize),
+        label: Text('Load more...'.i18n),
+      ),
+    );
+  }
+}
+
+class TracksList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<MyAppState>();
+    final availableTracksCount = appState.availableTracksCount;
     final tracks = appState.tracks;
-    final tracksList = tracks.map((track) {
-      return TrackItem(track: track);
-    }).toList();
-    return Center(
-      child: Padding(
+    final tracksCount = tracks.length;
+    final hasMoreTracks = availableTracksCount > tracksCount;
+    final showItems = hasMoreTracks ? tracksCount + 1 : tracksCount;
+    logger.d(
+        'Tracks: ${tracksCount} / ${availableTracksCount} ${hasMoreTracks} ${showItems}');
+    return ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: tracksList,
-        ),
-      ),
-    );
+        key: PageStorageKey<String>('TracksList'),
+        // controller: statelessControllerA,
+        itemCount: showItems,
+        itemBuilder: (context, i) {
+          if (i == tracksCount) {
+            return MoreButton();
+          } else {
+            return TrackItem(track: tracks[i]);
+          }
+        },
+        separatorBuilder: (context, index) => SizedBox(height: 10));
   }
 }

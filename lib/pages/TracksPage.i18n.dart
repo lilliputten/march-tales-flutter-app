@@ -7,6 +7,7 @@ extension Localization on String {
       {
         'ru': {
           'No tracks found': 'Не найдено треков',
+          'Load more...': 'Загрузить ещё...',
         },
       };
 

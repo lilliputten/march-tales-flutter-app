@@ -44,19 +44,16 @@ Future<LoadTracksDataResults> loadTracksData({
   final String url =
       '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks';
   try {
-    var uri = Uri.parse(url);
-    if (offset != 0) {
-      uri = uri.replace(queryParameters: {
-        'offset': offset.toString(),
-        // ...queryParams,
-      });
-    }
+    final uri = Uri.parse(url);
+    final params = {...uri.queryParameters};
     if (limit != 0) {
-      uri = uri.replace(queryParameters: {
-        'limit': limit.toString(),
-      });
+      params['limit'] = limit.toString();
     }
-    final jsonData = await serverSession.get(uri);
+    if (offset != 0) {
+      params['offset'] = offset.toString();
+    }
+    final jsonData =
+        await serverSession.get(uri.replace(queryParameters: params));
     return LoadTracksDataResults.fromJson(jsonData);
   } catch (err, stacktrace) {
     final String msg = 'Error fetching tracks with an url $url: $err';

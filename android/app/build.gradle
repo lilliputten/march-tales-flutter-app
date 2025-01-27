@@ -25,8 +25,8 @@ android {
         applicationId = "com.example.march_tales_app"
 
         // version = "0.0.1"
-        // timestamp = "2025.01.26 08:17:14 +0300"
-        // timetag = "250126-0817"
+        // timestamp = "2025.01.27 09:00:58 +0300"
+        // timetag = "250127-0900"
 
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
