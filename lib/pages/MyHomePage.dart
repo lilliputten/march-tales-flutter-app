@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
+import 'package:march_tales_app/core/config/AppConfig.dart';
+
 import 'TracksPage.dart';
 import 'FavoritesPage.dart';
 import 'GeneratorPage.dart';
@@ -10,6 +12,8 @@ import 'components/PlayerBox.dart';
 // import 'components/TopMenuBox.dart';
 
 import 'MyHomePage.i18n.dart';
+
+const defaultPageIndex = AppConfig.LOCAL ? 3 : 0;
 
 final logger = Logger();
 
@@ -47,8 +51,6 @@ final pages = [
     icon: Icon(Icons.settings),
   ),
 ];
-
-const defaultPageIndex = 0;
 
 class MyHomePage extends StatefulWidget {
   @override

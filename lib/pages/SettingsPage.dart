@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:march_tales_app/Init.dart';
 import 'package:provider/provider.dart';
 import 'package:logger/logger.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
@@ -41,7 +44,7 @@ class LanguageSelector extends StatelessWidget {
     localeNames.forEach((code, text) {
       final item = DropdownMenuItem<String>(
         value: code,
-        enabled: code != currentLanguageCode,
+        // enabled: code != currentLanguageCode,
         child: Text(text),
       );
       list.add(item);
@@ -53,7 +56,7 @@ class LanguageSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final appState = context.watch<MyAppState>();
     final colorScheme = Theme.of(context).colorScheme;
-    final currentLanguageCode = context.locale.languageCode; // context.locale.toString();
+    final currentLanguageCode = context.locale.languageCode;
     final items = getLanguagesList(currentLanguageCode);
     // logger.d('LanguageSelector items: ${items} currentLanguageCode: ${currentLanguageCode}');
     return DropdownButtonFormField<String>(
@@ -75,8 +78,46 @@ class LanguageSelector extends StatelessWidget {
           context.locale = Locale(locale);
         }
       },
-      // selectedItemBuilder
+      // TODO; Make selected item distinctive using `selectedItemBuilder`
       items: items,
+    );
+  }
+}
+
+class AppInfo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+    var style = theme.textTheme.bodyMedium!.copyWith();
+    // final appState = context.watch<MyAppState>();
+    // final colorScheme = Theme.of(context).colorScheme;
+    // final currentLanguageCode =
+    //     context.locale.languageCode; // context.locale.toString();
+    // final items = getLanguagesList(currentLanguageCode);
+
+    // final appId = Init.appId;
+    final appVersion = Init.appVersion;
+    final appTimestamp = Init.appTimestamp;
+
+    logger.d('AppInfo appVersion: ${appVersion}');
+
+    return Column(
+      children: [
+        Wrap(
+          spacing: 5,
+          children: [
+            SelectableText('Version:'.i18n),
+            SelectableText(
+              appVersion!,
+              style: style.copyWith(fontWeight: FontWeight.bold),
+            ),
+            SelectableText('/',
+                style: style.copyWith(fontWeight: FontWeight.w200)),
+            SelectableText(appTimestamp!,
+                style: style.copyWith(fontWeight: FontWeight.w300)),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -86,10 +127,12 @@ class SettingsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
+        spacing: 10,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           LanguageSelector(),
+          AppInfo(),
         ],
       ),
     );

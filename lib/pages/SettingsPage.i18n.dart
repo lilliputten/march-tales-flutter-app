@@ -7,6 +7,7 @@ extension Localization on String {
       {
         'ru': {
           'Application language': 'Язык приложения',
+          'Version:': 'Версия:',
         },
       };
 
