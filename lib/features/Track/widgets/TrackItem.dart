@@ -1,11 +1,14 @@
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:i18n_extension/i18n_extension.dart';
-import 'package:march_tales_app/core/helpers/formats.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
+import 'package:march_tales_app/core/config/AppConfig.dart';
+import 'package:march_tales_app/core/helpers/formats.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 
-final dateFormat = DateFormat('HH:mm a');
+const double previewSize = 80;
+const previewHalfSize = previewSize / 2;
+const previewProgressPadding = previewHalfSize - 16;
 
 class TrackItem extends StatelessWidget {
   const TrackItem({
@@ -17,8 +20,6 @@ class TrackItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // var appState = context.watch<MyAppState>();
-
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
@@ -40,8 +41,24 @@ class TrackItem extends StatelessWidget {
 }
 
 Widget trackImage(BuildContext context, Track track) {
-  return Center(
-    child: Text('Image'),
+  final theme = Theme.of(context);
+  final String url = '${AppConfig.TALES_SERVER_HOST}${track.preview_picture}';
+  return ClipRRect(
+    borderRadius: BorderRadius.circular(10),
+    child: CachedNetworkImage(
+      imageUrl: url,
+      // color: theme.primaryColor,
+      width: previewSize,
+      height: previewSize,
+      fit: BoxFit.cover,
+      placeholder: (context, url) => Padding(
+        padding: const EdgeInsets.all(previewProgressPadding),
+        child: CircularProgressIndicator(),
+      ),
+      errorWidget: (context, url, error) => Icon(Icons.error,
+          color: theme.primaryColor.withValues(alpha: 0.5),
+          size: previewHalfSize),
+    ),
   );
 }
 
@@ -102,7 +119,6 @@ Widget trackDetailsInfo(BuildContext context, Track track) {
               return Container(
                 padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 3),
                 decoration: BoxDecoration(
-                  // shape: BoxShape.circle,
                   borderRadius: BorderRadius.all(Radius.circular(4)),
                   border: Border.all(
                       color: theme.primaryColor.withValues(alpha: 0.25),
