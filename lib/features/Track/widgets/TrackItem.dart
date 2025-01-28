@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:i18n_extension/i18n_extension.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:march_tales_app/shared/states/MyAppState.dart';
 import 'package:provider/provider.dart';
 
+import 'package:march_tales_app/shared/states/MyAppState.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/formats.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';

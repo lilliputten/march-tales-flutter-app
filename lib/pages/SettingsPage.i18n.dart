@@ -9,6 +9,9 @@ extension Localization on String {
           'Application language': 'Язык приложения',
           'Server version:': 'Версия сервера:',
           'Application version:': 'Версия приложения:',
+          'Color theme': 'Цветовая тема',
+          'Light': 'Светлая',
+          'Dark': 'Тёмная',
         },
       };
 

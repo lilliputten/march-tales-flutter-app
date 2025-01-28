@@ -6,6 +6,9 @@ abstract class AppConfig {
   static const LOCAL = bool.fromEnvironment('LOCAL', defaultValue: false);
   static const DEBUG = bool.fromEnvironment('DEBUG', defaultValue: false);
 
+  static const int PRIMARY_COLOR =
+      int.fromEnvironment('PRIMARY_COLOR', defaultValue: 0xffbb2266);
+
   // March Tales API
   static const String TALES_SERVER_HOST = String.fromEnvironment(
       'TALES_SERVER_HOST',

@@ -1,13 +1,12 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:march_tales_app/Init.dart';
 import 'package:provider/provider.dart';
 import 'package:logger/logger.dart';
+import 'package:i18n_extension/i18n_extension.dart';
+
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/shared/states/MyAppState.dart';
 import 'package:march_tales_app/supportedLocales.dart';
-import 'package:i18n_extension/i18n_extension.dart';
 
 import 'SettingsPage.i18n.dart';
 
@@ -37,7 +36,53 @@ class SettingsPage extends StatelessWidget {
   }
 }
 
-// Widget languageSelector(BuildContext context) {
+final themeItems = [
+  {'value': ThemeMode.light.toString(), 'text': 'Light'.i18n},
+  {'value': ThemeMode.dark.toString(), 'text': 'Dark'.i18n},
+];
+
+class ThemeSelector extends StatelessWidget {
+  getThemesList(String currentThemeCode) {
+    // final List<DropdownMenuItem<String>> list = [];
+    return themeItems.map((item) {
+      return DropdownMenuItem<String>(
+        value: item['value'],
+        // enabled: code != currentThemeCode,
+        child: Text(item['text']!),
+      );
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final appState = context.watch<MyAppState>();
+    final colorScheme = Theme.of(context).colorScheme;
+    final currentThemeCode = appState.themeMode.toString();
+    final items = getThemesList(currentThemeCode);
+    // logger.d('ThemeSelector items: ${items} currentThemeCode: ${currentThemeCode}');
+    return DropdownButtonFormField<String>(
+      iconDisabledColor: Colors.white,
+      decoration: InputDecoration(
+        filled: true,
+        labelText: 'Color theme'.i18n,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
+      ),
+      value: currentThemeCode,
+      elevation: 16,
+      style: TextStyle(color: colorScheme.primary),
+      onChanged: (String? themeCode) {
+        if (themeCode != null) {
+          appState.toggleTheme(themeCode == ThemeMode.dark.toString()
+              ? ThemeMode.dark
+              : ThemeMode.light);
+        }
+      },
+      // TODO; Make selected item distinctive using `selectedItemBuilder`
+      items: items,
+    );
+  }
+}
+
 class LanguageSelector extends StatelessWidget {
   getLanguagesList(String currentLanguageCode) {
     final List<DropdownMenuItem<String>> list = [];
@@ -104,7 +149,8 @@ class AppInfo extends StatelessWidget {
         Wrap(
           spacing: 5,
           children: [
-            SelectableText('Application version:'.i18n,
+            SelectableText(
+              'Application version:'.i18n,
               style: style,
             ),
             SelectableText(
@@ -120,7 +166,8 @@ class AppInfo extends StatelessWidget {
         Wrap(
           spacing: 5,
           children: [
-            SelectableText('Server version:'.i18n,
+            SelectableText(
+              'Server version:'.i18n,
               style: style,
             ),
             SelectableText(
@@ -149,6 +196,7 @@ class SettingsWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           LanguageSelector(),
+          ThemeSelector(),
           AppInfo(),
         ],
       ),

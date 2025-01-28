@@ -6,10 +6,8 @@ import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'TracksPage.dart';
 import 'FavoritesPage.dart';
 import 'GeneratorPage.dart';
-// import 'QuotePage.dart';
 import 'SettingsPage.dart';
 import 'components/PlayerBox.dart';
-// import 'components/TopMenuBox.dart';
 
 import 'MyHomePage.i18n.dart';
 
@@ -29,7 +27,6 @@ class Page {
 }
 
 final pages = [
-  // Page(widget: () => QuotePage(), label: 'Quote', icon: Icon(Icons.generating_tokens_outlined)),
   Page(
     widget: () => TracksPage(),
     label: 'Tracks'.i18n,
@@ -75,8 +72,6 @@ class _MyHomePageState extends State<MyHomePage>
     _selectedIndex.dispose();
     super.dispose();
   }
-
-  // int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +123,14 @@ class _MyHomePageState extends State<MyHomePage>
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,
           title: Text(appTitle.i18n),
-          // actions
+          // actions: [
+          //   Icon(Icons.dark_mode),
+          //   Switch(
+          //     value: themeMode == ThemeMode.light,
+          //     onChanged: toggleTheme,
+          //   ),
+          //   Icon(Icons.light_mode),
+          // ],
         ),
         bottomNavigationBar: bottomNavigation(),
         // bottomSheet: Text('bottomSheet'),

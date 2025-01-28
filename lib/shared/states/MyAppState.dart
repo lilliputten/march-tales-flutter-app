@@ -41,10 +41,11 @@ class MyAppState extends ChangeNotifier {
 
   /// Theme
 
-  ThemeMode themeMode = ThemeMode.dark;
+  ThemeMode themeMode = ThemeMode.light;
 
-  void toggleTheme(bool isOn) {
-    themeMode = isOn ? ThemeMode.light : ThemeMode.dark;
+  void toggleTheme(ThemeMode theme) {
+    themeMode = theme; // isOn ? ThemeMode.light : ThemeMode.dark;
+    notifyListeners();
   }
 
   /// Language

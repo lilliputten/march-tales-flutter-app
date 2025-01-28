@@ -1,17 +1,14 @@
-import 'dart:developer';
-
 import 'package:i18n_extension/i18n_extension.dart';
-
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:march_tales_app/core/server/ServerSession.dart';
-import 'package:march_tales_app/pages/AppErrorScreen.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
-import 'package:march_tales_app/shared/states/MyAppState.dart';
-import 'package:march_tales_app/pages/MyHomePage.dart';
-
+import 'core/config/AppConfig.dart';
+import 'core/server/ServerSession.dart';
+import 'pages/AppErrorScreen.dart';
+import 'core/helpers/YamlFormatter.dart';
+import 'shared/states/MyAppState.dart';
+import 'pages/MyHomePage.dart';
 import 'pages/MyHomePage.i18n.dart';
 import 'Init.dart';
 import 'SplashScreen.dart';
@@ -54,28 +51,63 @@ class MyApp extends StatelessWidget {
         // logger.d('[ChangeNotifierProvider:create]: $initFuture');
         return appState;
       },
-      child: MaterialApp(
-        restorationScopeId: 'app',
-        title: 'The March Cat Tales',
-        onGenerateTitle: (context) => appTitle.i18n,
-        debugShowCheckedModeBanner: false,
-        locale: I18n.locale,
-        localizationsDelegates: I18n.localizationsDelegates,
-        supportedLocales: I18n.supportedLocales,
-        home: FutureBuilder(
-          future: initFuture,
-          builder: (context, snapshot) {
-            if (snapshot.error != null) {
-              return AppErrorScreen(error: snapshot.error);
-            }
-            if (snapshot.connectionState == ConnectionState.done) {
-              return MyHomePage();
-            } else {
-              return SplashScreen();
-            }
-          },
+      child: AppWrapper(
+          builder: FutureBuilder(
+        future: initFuture,
+        builder: (context, snapshot) {
+          if (snapshot.error != null) {
+            return AppErrorScreen(error: snapshot.error);
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            return MyHomePage();
+          } else {
+            return SplashScreen();
+          }
+        },
+      )),
+    );
+  }
+}
+
+class AppWrapper extends StatelessWidget {
+  const AppWrapper({
+    super.key,
+    required this.builder,
+  });
+
+  final FutureBuilder builder;
+
+  @override
+  Widget build(BuildContext context) {
+    final appState = context.watch<MyAppState>();
+    return MaterialApp(
+      restorationScopeId: 'app',
+      title: 'The March Cat Tales',
+      onGenerateTitle: (context) => appTitle.i18n,
+      debugShowCheckedModeBanner: false,
+      locale: I18n.locale,
+      localizationsDelegates: I18n.localizationsDelegates,
+      supportedLocales: I18n.supportedLocales,
+      themeMode: appState.themeMode, // ThemeMode.light,
+      // darkTheme: ThemeData.dark(),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(AppConfig.PRIMARY_COLOR),
+          brightness: Brightness.dark,
+          // contrastLevel: 1.0,
         ),
       ),
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(AppConfig.PRIMARY_COLOR),
+          brightness: Brightness.light, // selectedBrightness,
+          // contrastLevel: 1.0,
+        ),
+        // colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 255, 0, 115)),
+      ),
+      home: builder,
     );
   }
 }
