@@ -3,8 +3,6 @@ import 'package:http/http.dart' as http;
 
 import '../constants/apis.dart' as apis;
 
-// TODO: To solve google image api error of too many requests
-//
 // See https://developers.google.com/custom-search/v1/overview:
 //
 // Custom Search JSON API provides 100 search queries per day for free. If you

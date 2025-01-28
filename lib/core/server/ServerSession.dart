@@ -1,20 +1,38 @@
-// import 'dart:developer';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
+
+import 'package:march_tales_app/supportedLocales.dart';
 
 final defaultHeaders = {
   'credentials': 'include',
-  'content-language': 'en',
+  'content-language': defaultLocale,
+  'accept-language': defaultLocale,
   'accept': 'application/json',
   'content-type': 'application/json',
 };
+
+final logger = Logger();
 
 class _ServerSession {
   final JsonDecoder _decoder = const JsonDecoder();
   final JsonEncoder _encoder = const JsonEncoder();
 
+  String currentLocale = defaultLocale;
+
   Map<String, String> headers = Map.from(defaultHeaders);
   Map<String, String> cookies = {};
+
+  updateLocale(String locale) {
+    // Store language
+    currentLocale = locale;
+    // Update `django_language` cookie?
+    cookies['django_language'] = locale;
+    // Update header values
+    headers['accept-language'] = locale;
+    headers['content-language'] = locale;
+    headers['cookie'] = _generateCookieHeader();
+  }
 
   void _updateCookie(http.Response response) {
     String? allSetCookie = response.headers['set-cookie'];
@@ -75,7 +93,7 @@ class _ServerSession {
       _updateCookie(response);
 
       if (statusCode < 200 || statusCode > 400) {
-        throw Exception('Error while fetching data');
+        throw Exception('Error fetching data (get)');
       }
       return _decoder.convert(res);
     });
@@ -96,7 +114,7 @@ class _ServerSession {
       _updateCookie(response);
 
       if (statusCode < 200 || statusCode > 400) {
-        throw Exception('Error while fetching data');
+        throw Exception('Error fetching data (post)');
       }
       return _decoder.convert(res);
     });
@@ -117,31 +135,11 @@ class _ServerSession {
       _updateCookie(response);
 
       if (statusCode < 200 || statusCode > 400) {
-        throw Exception('Error while fetching data');
+        throw Exception('Error fetching data (put)');
       }
       return _decoder.convert(res);
     });
   }
-
-  // Map<String, String> recentHeaders = {};
-  // Future<Map> get(String url) async {
-  //   http.Response response = await http.get(Uri.parse(url), headers: recentHeaders);
-  //   updateCookie(response);
-  //   return json.decode(response.body);
-  // }
-  // Future<Map> post(String url, dynamic data) async {
-  //   http.Response response = await http.post(Uri.parse(url), body: data, headers: recentHeaders);
-  //   updateCookie(response);
-  //   return json.decode(response.body);
-  // }
-  // void updateCookie(http.Response response) {
-  //   String? rawCookie = response.headers['set-cookie'];
-  //   if (rawCookie != null) {
-  //     int index = rawCookie.indexOf(';');
-  //     recentHeaders['cookie'] =
-  //         (index == -1) ? rawCookie : rawCookie.substring(0, index);
-  //   }
-  // }
 }
 
 final serverSession = _ServerSession();

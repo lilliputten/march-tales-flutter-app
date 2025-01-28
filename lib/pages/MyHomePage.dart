@@ -1,49 +1,88 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
+import 'package:march_tales_app/core/config/AppConfig.dart';
+
+import 'TracksPage.dart';
 import 'FavoritesPage.dart';
 import 'GeneratorPage.dart';
-import 'QuotePage.dart';
+import 'SettingsPage.dart';
+import 'components/PlayerBox.dart';
+
+import 'MyHomePage.i18n.dart';
+
+const defaultPageIndex = AppConfig.LOCAL ? 3 : 0;
+
+final logger = Logger();
+
+class Page {
+  final Widget Function() widget;
+  final String label;
+  final Icon icon;
+  const Page({
+    required this.widget,
+    required this.label,
+    required this.icon,
+  });
+}
+
+final pages = [
+  Page(
+    widget: () => TracksPage(),
+    label: 'Tracks'.i18n,
+    icon: Icon(Icons.audiotrack_outlined),
+  ),
+  Page(
+    widget: () => FavoritesPage(),
+    label: 'Favorites'.i18n,
+    icon: Icon(Icons.favorite_border),
+  ),
+  Page(
+    widget: () => GeneratorPage(),
+    label: 'Generator'.i18n,
+    icon: Icon(Icons.generating_tokens_outlined),
+  ),
+  Page(
+    widget: () => SettingsPage(),
+    label: 'Settings'.i18n,
+    icon: Icon(Icons.settings),
+  ),
+];
 
 class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-// @see https://docs.flutter.dev/cookbook/networking/fetch-data
+class _MyHomePageState extends State<MyHomePage>
+    with RestorationMixin<MyHomePage> {
+  // @see https://api.flutter.dev/flutter/widgets/RestorableInt-class.html
+  final RestorableInt _selectedIndex = RestorableInt(defaultPageIndex);
 
-class _MyHomePageState extends State<MyHomePage> {
-  // TODO: Put page index to store?
-  var selectedIndex = 1;
+  @override
+  String get restorationId => 'MyHomePage';
 
-  // // Networking
-  // // late Future<Album> futureAlbum;
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // futureAlbum = fetchAlbum();
-  // }
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_selectedIndex, 'selectedIndex');
+  }
+
+  @override
+  void dispose() {
+    _selectedIndex.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    var colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
-    Widget page;
-    switch (selectedIndex) {
-      case 0:
-        page = QuotePage();
-      case 1:
-        page = GeneratorPage();
-      case 2:
-        page = FavoritesPage();
-      default:
-        throw UnimplementedError('no widget for $selectedIndex');
-    }
-
+    // final widget = pages[_selectedIndex].widget;
+    final widget = pages[_selectedIndex.value].widget;
+    final Widget page = widget();
     // The container for the current page, with its background color
     // and subtle switching animation.
-    var mainArea = ColoredBox(
+    final pageArea = ColoredBox(
       color: colorScheme.surfaceContainerHighest,
       child: AnimatedSwitcher(
         duration: Duration(milliseconds: 200),
@@ -51,79 +90,63 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
-    // TODO: Generate navigation items from list
     bottomNavigation() {
       return BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.webhook),
-            label: 'Network',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.generating_tokens_outlined),
-            label: 'Generator',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border),
-            label: 'Favorites',
-          ),
-        ],
-        currentIndex: selectedIndex,
+        type: BottomNavigationBarType.fixed, // Fixed
+
+        backgroundColor: Colors.black,
+        selectedItemColor: colorScheme.primary,
+        unselectedItemColor: Colors.grey,
+
+        // showUnselectedLabels: true,
+        // showSelectedLabels: false,
+
+        items: pages
+            .map((page) =>
+                BottomNavigationBarItem(icon: page.icon, label: page.label))
+            .toList(),
+        // currentIndex: _selectedIndex,
+        currentIndex: _selectedIndex.value,
         onTap: (value) {
           setState(() {
-            selectedIndex = value;
+            // _selectedIndex = value;
+            _selectedIndex.value = value;
           });
         },
       );
     }
 
-    sideNavigation(constraints) {
-      return NavigationRail(
-        extended: constraints.maxWidth >= 600,
-        destinations: [
-          NavigationRailDestination(
-            icon: Icon(Icons.webhook),
-            label: Text('Network'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.generating_tokens_outlined),
-            label: Text('Generator'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.favorite_border),
-            label: Text('Favorites'),
-          ),
-        ],
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (value) {
-          setState(() {
-            selectedIndex = value;
-          });
-        },
-      );
-    }
-
-    return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth < 450) {
-            // Use a more mobile-friendly layout with BottomNavigationBar
-            // on narrow screens.
+    return RestorationScope(
+      restorationId: 'MyHomePage_Widget',
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          title: Text(appTitle.i18n),
+          // actions: [
+          //   Icon(Icons.dark_mode),
+          //   Switch(
+          //     value: themeMode == ThemeMode.light,
+          //     onChanged: toggleTheme,
+          //   ),
+          //   Icon(Icons.light_mode),
+          // ],
+        ),
+        bottomNavigationBar: bottomNavigation(),
+        // bottomSheet: Text('bottomSheet'),
+        drawer: Text('Drawer'), // Side navigation panel
+        // onTap: (int i){setState((){index = i;});},
+        body: LayoutBuilder(
+          builder: (context, constraints) {
             return Column(
               children: [
-                Expanded(child: mainArea),
-                SafeArea(child: bottomNavigation())
+                // TopMenuBox(),
+                Expanded(child: pageArea),
+                PlayerBox(),
               ],
             );
-          } else {
-            return Row(
-              children: [
-                SafeArea(child: sideNavigation(constraints)),
-                Expanded(child: mainArea),
-              ],
-            );
-          }
-        },
+          },
+        ),
       ),
     );
   }

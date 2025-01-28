@@ -1,17 +1,25 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:i18n_extension/i18n_extension.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/config/AppConfig.dart';
 import 'MyApp.dart';
+import 'supportedLocales.dart';
+
+// Make it depending on a LOCAL flag, put to the constants/config
+const connectionTimeoutDelay = 5;
 
 /// Try to allow fetching urls with expired certificate (https://api.quotable.io/random)
 class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     final client = super.createHttpClient(context);
+    // Try to allow fetching urls with expired certificate (eg, for `https://api.quotable.io/random`)
     client.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
-    client.connectionTimeout = const Duration(seconds: 10);
+    // Set request timeout
+    client.connectionTimeout = const Duration(seconds: connectionTimeoutDelay);
     return client;
   }
 }
@@ -32,13 +40,31 @@ void checkEnvironmentVariables() {
   }
 }
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   // Check enviroment variables
   checkEnvironmentVariables();
 
-  // Try to allow fetching urls with expired certificate (https://api.quotable.io/random)
+  // Setup http request options
   HttpOverrides.global = MyHttpOverrides();
 
   // Start app
-  runApp(MyApp());
+  runApp(
+    RootRestorationScope(
+      restorationId: 'root',
+      child: I18n(
+        initialLocale: await I18n.loadLocale(),
+        // initialLocale: 'ru'.asLocale, // DEBUG
+        autoSaveLocale: true,
+        supportedLocales: supportedLocales,
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        child: MyApp(),
+      ),
+    ),
+  );
 }
