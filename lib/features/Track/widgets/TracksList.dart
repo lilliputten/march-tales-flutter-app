@@ -56,7 +56,7 @@ class TracksList extends StatelessWidget {
         'Tracks: ${tracksCount} / ${availableTracksCount} ${hasMoreTracks} ${showItems}');
     return RefreshIndicator(
       onRefresh: () async {
-        appState.reloadTracks();
+        await appState.reloadTracks();
       },
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),

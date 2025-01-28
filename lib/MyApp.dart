@@ -6,15 +6,13 @@ import 'package:provider/provider.dart';
 import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/MyHomePage.dart';
 
-import 'core/config/AppConfig.dart';
 import 'core/server/ServerSession.dart';
 import 'core/helpers/YamlFormatter.dart';
 import 'shared/states/MyAppState.dart';
 
 import 'Init.dart';
+import 'AppWrapper.dart';
 import 'SplashScreen.dart';
-
-import 'sharedTranslationsData.i18n.dart';
 
 final formatter = YamlFormatter();
 final logger = Logger();
@@ -28,13 +26,15 @@ class MyApp extends StatelessWidget {
 
     return ChangeNotifierProvider(
       create: (context) {
-        var appState = MyAppState();
+        final appState = MyAppState();
         // Initialize locale
         final locale = I18n.locale.languageCode;
         serverSession.updateLocale(locale);
         appState.updateLocale(locale);
         // Wait for the config & tick initialization and request for the first track record
         initFuture.then((initData) {
+          appState.setPrefs(initData['prefs']);
+
           // Get project info from init data and set to the context
           final serverProjectInfo = initData['serverProjectInfo'];
           logger.d(
@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
           appState.reloadTracks();
         }).catchError((err) {
           logger.e('Error: ${err}');
-          appState.setGlobalError(err);
+          // appState.setGlobalError(err);
           // debugger();
         });
         // logger.d('[ChangeNotifierProvider:create]: $initFuture');
@@ -68,49 +68,6 @@ class MyApp extends StatelessWidget {
           }
         },
       )),
-    );
-  }
-}
-
-class AppWrapper extends StatelessWidget {
-  const AppWrapper({
-    super.key,
-    required this.builder,
-  });
-
-  final FutureBuilder builder;
-
-  @override
-  Widget build(BuildContext context) {
-    final appState = context.watch<MyAppState>();
-    return MaterialApp(
-      restorationScopeId: 'app',
-      title: 'The March Cat Tales',
-      onGenerateTitle: (context) => appTitle.i18n,
-      debugShowCheckedModeBanner: false,
-      locale: I18n.locale,
-      localizationsDelegates: I18n.localizationsDelegates,
-      supportedLocales: I18n.supportedLocales,
-      themeMode: appState.themeMode, // ThemeMode.light,
-      // darkTheme: ThemeData.dark(),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(AppConfig.PRIMARY_COLOR),
-          brightness: Brightness.dark,
-          // contrastLevel: 1.0,
-        ),
-      ),
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(AppConfig.PRIMARY_COLOR),
-          brightness: Brightness.light, // selectedBrightness,
-          // contrastLevel: 1.0,
-        ),
-        // colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 255, 0, 115)),
-      ),
-      home: builder,
     );
   }
 }

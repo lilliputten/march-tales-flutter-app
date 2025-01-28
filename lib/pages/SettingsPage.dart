@@ -38,17 +38,17 @@ class SettingsPage extends StatelessWidget {
 
 class ThemeSelector extends StatelessWidget {
   final themeItems = [
-    {'value': ThemeMode.light.toString(), 'text': 'Light'.i18n},
-    {'value': ThemeMode.dark.toString(), 'text': 'Dark'.i18n},
+    {'value': false, 'text': 'Light'.i18n},
+    {'value': true, 'text': 'Dark'.i18n},
   ];
 
-  getThemesList(String currentThemeCode) {
+  getThemesList(bool currentIsDarkTheme) {
     // final List<DropdownMenuItem<String>> list = [];
     return themeItems.map((item) {
       return DropdownMenuItem<String>(
-        value: item['value'],
-        // enabled: code != currentThemeCode,
-        child: Text(item['text']!),
+        value: item['value'].toString(),
+        // enabled: code != currentIsDarkTheme,
+        child: Text(item['text'].toString()),
       );
     }).toList();
   }
@@ -57,9 +57,9 @@ class ThemeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final appState = context.watch<MyAppState>();
     final colorScheme = Theme.of(context).colorScheme;
-    final currentThemeCode = appState.themeMode.toString();
-    final items = getThemesList(currentThemeCode);
-    // logger.d('ThemeSelector items: ${items} currentThemeCode: ${currentThemeCode}');
+    final currentIsDarkTheme = appState.isDarkTheme;
+    final items = getThemesList(currentIsDarkTheme);
+    // logger.d('ThemeSelector items: ${items} currentIsDarkTheme: ${currentIsDarkTheme}');
     return DropdownButtonFormField<String>(
       iconDisabledColor: Colors.white,
       decoration: InputDecoration(
@@ -67,14 +67,13 @@ class ThemeSelector extends StatelessWidget {
         labelText: 'Color scheme'.i18n,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
       ),
-      value: currentThemeCode,
+      value: currentIsDarkTheme.toString(),
       elevation: 16,
       style: TextStyle(color: colorScheme.primary),
-      onChanged: (String? themeCode) {
-        if (themeCode != null) {
-          appState.toggleTheme(themeCode == ThemeMode.dark.toString()
-              ? ThemeMode.dark
-              : ThemeMode.light);
+      onChanged: (String? value) {
+        if (value != null) {
+          final bool isDarkTheme = value.toLowerCase() == 'true';
+          appState.toggleDarkTheme(isDarkTheme);
         }
       },
       // TODO; Make selected item distinctive using `selectedItemBuilder`

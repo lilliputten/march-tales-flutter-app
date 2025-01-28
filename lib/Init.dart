@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
 import 'dart:convert';
 // import 'package:flutter/services.dart';
@@ -22,6 +23,7 @@ Future<dynamic> readJson(String filename) async {
 final parseProjectInfoReg = RegExp(r'^(\S+) v\.(\S+) / (.*)$');
 
 class Init {
+  static SharedPreferences? prefs;
   static String? serverProjectInfo;
   static String? serverVersion;
   static String? serverId;
@@ -33,14 +35,16 @@ class Init {
   static Map<String, dynamic>? authConfig;
   static Future initialize() async {
     List<Future> futures = [
-      // _registerServices(),
+      _initPrefs(),
       _loadLocalData(),
       _loadConfig(),
       _loadTick(),
+      // _registerServices(),
     ];
     final List<dynamic> waitResults = await Future.wait(futures);
     // logger.t('[Init:initialize]: waitResults: $waitResults');
     final results = {
+      'prefs': prefs,
       'waitResults': waitResults,
       'authConfig': authConfig,
       'serverProjectInfo': serverProjectInfo,
@@ -134,6 +138,20 @@ class Init {
       return '_loadLocalData: ok';
     } catch (err, stacktrace) {
       final String msg = 'Can not parse local data: ${err}';
+      logger.e('[Init:_loadTick] error ${msg}',
+          error: err, stackTrace: stacktrace);
+      // debugger();
+      showErrorToast(msg);
+      throw Exception(msg);
+    }
+  }
+
+  static _initPrefs() async {
+    try {
+      prefs = await SharedPreferences.getInstance();
+      return '_initPrefs: ok';
+    } catch (err, stacktrace) {
+      final String msg = 'Can not initialize persistent instance: ${err}';
       logger.e('[Init:_loadTick] error ${msg}',
           error: err, stackTrace: stacktrace);
       // debugger();

@@ -23,6 +23,7 @@ dependencies:
   intl: any
   i18n_extension: ^15.0.3
   cached_network_image: ^3.4.1
+  shared_preferences: ^2.4.0
 
 dev_dependencies:
   flutter_test:

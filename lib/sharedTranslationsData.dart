@@ -1,5 +1,5 @@
 const appTitleEn = 'The March Cat Tales';
-const appTitleRu = 'Сказки Мартовского кота';
+const appTitleRu = 'Сказки Мартовского Кота';
 
 final sharedTranslationsData = {
   'ru': {

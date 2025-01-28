@@ -15,6 +15,8 @@ const previewProgressPadding = previewHalfSize - 16;
 
 final logger = Logger();
 
+// NOTE: See theme info at: https://api.flutter.dev/flutter/material/ThemeData-class.html
+
 class TrackItem extends StatelessWidget {
   const TrackItem({
     super.key,

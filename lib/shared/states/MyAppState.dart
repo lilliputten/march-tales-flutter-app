@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:english_words/english_words.dart'; // DEBUG: To remove later
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
@@ -19,14 +20,37 @@ final formatter = YamlFormatter();
 final logger = Logger();
 
 class MyAppState extends ChangeNotifier {
-  /// App info (DEBUG)
-  dynamic globalError;
+  /// Persistent storage
+  SharedPreferences? prefs;
 
-  void setGlobalError(dynamic error) {
-    globalError = error;
+  loadSavedPrefs() {
+    final savedIsDarkTheme = prefs?.getBool('isDarkTheme');
+    if (savedIsDarkTheme != null) {
+      isDarkTheme = savedIsDarkTheme;
+    }
+    final savedCurrentLocale = prefs?.getString('currentLocale');
+    if (savedCurrentLocale != null) {
+      currentLocale = savedCurrentLocale;
+    }
     notifyListeners();
   }
 
+  setPrefs(SharedPreferences? value) {
+    if (value != null) {
+      prefs = value;
+      loadSavedPrefs();
+    }
+  }
+
+  // /// Global application error (UNUSED?)
+  // dynamic globalError;
+  //
+  // void setGlobalError(dynamic error) {
+  //   globalError = error;
+  //   notifyListeners();
+  // }
+
+  // DEBUG: App info
   String? serverProjectInfo;
 
   void setServerProjectInfo(String? info) {
@@ -43,10 +67,11 @@ class MyAppState extends ChangeNotifier {
 
   /// Theme
 
-  ThemeMode themeMode = ThemeMode.light;
+  bool isDarkTheme = false;
 
-  void toggleTheme(ThemeMode theme) {
-    themeMode = theme; // isOn ? ThemeMode.light : ThemeMode.dark;
+  void toggleDarkTheme(bool value) {
+    isDarkTheme = value;
+    prefs?.setBool('isDarkTheme', value);
     notifyListeners();
   }
 
@@ -54,13 +79,15 @@ class MyAppState extends ChangeNotifier {
 
   String currentLocale = defaultLocale;
 
-  updateLocale(String locale) {
-    currentLocale = locale;
+  updateLocale(String value) {
+    currentLocale = value;
     tracks = [];
+    prefs?.setString('currentLocale', value);
     notifyListeners();
     // Reset (& reload?) tracks, offset & filters
     if (tracksHasBeenLoaded) {
       reloadTracks();
+      // TODO: Update `playingTrack` if language has been changed
     }
   }
 
@@ -111,8 +138,9 @@ class MyAppState extends ChangeNotifier {
     try {
       tracksIsLoading = true;
       notifyListeners();
+      // DEBUG: Emulate delay
       if (AppConfig.LOCAL) {
-        await Future.delayed(Duration(seconds: 2)); // DEBUG
+        await Future.delayed(Duration(seconds: 2));
       }
       final offset = tracks.length;
       logger.t('Starting loading tracks (offset: ${offset})');
