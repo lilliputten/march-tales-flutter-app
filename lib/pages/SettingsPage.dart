@@ -36,12 +36,12 @@ class SettingsPage extends StatelessWidget {
   }
 }
 
-final themeItems = [
-  {'value': ThemeMode.light.toString(), 'text': 'Light'.i18n},
-  {'value': ThemeMode.dark.toString(), 'text': 'Dark'.i18n},
-];
-
 class ThemeSelector extends StatelessWidget {
+  final themeItems = [
+    {'value': ThemeMode.light.toString(), 'text': 'Light'.i18n},
+    {'value': ThemeMode.dark.toString(), 'text': 'Dark'.i18n},
+  ];
+
   getThemesList(String currentThemeCode) {
     // final List<DropdownMenuItem<String>> list = [];
     return themeItems.map((item) {
@@ -52,6 +52,7 @@ class ThemeSelector extends StatelessWidget {
       );
     }).toList();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,7 @@ class ThemeSelector extends StatelessWidget {
       iconDisabledColor: Colors.white,
       decoration: InputDecoration(
         filled: true,
-        labelText: 'Color theme'.i18n,
+        labelText: 'Color scheme'.i18n,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
       ),
       value: currentThemeCode,

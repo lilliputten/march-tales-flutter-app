@@ -1,15 +1,15 @@
 import 'package:i18n_extension/i18n_extension.dart';
-import 'package:march_tales_app/sharedTranslations.i18n.dart';
+// import 'package:march_tales_app/sharedTranslationsData.dart';
 
 extension Localization on String {
   static var _t = Translations.byLocale('en') +
-      sharedTranslationsByLocaleData +
+      // sharedTranslationsData +
       {
         'ru': {
           'Application language': 'Язык приложения',
           'Server version:': 'Версия сервера:',
           'Application version:': 'Версия приложения:',
-          'Color theme': 'Цветовая тема',
+          'Color scheme': 'Цветовая схема',
           'Light': 'Светлая',
           'Dark': 'Тёмная',
         },

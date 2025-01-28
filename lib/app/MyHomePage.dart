@@ -1,53 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
+import 'package:march_tales_app/app/BottomNavigation.dart';
+import 'package:march_tales_app/app/homePages.dart';
+import 'package:march_tales_app/components/PlayerBox.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 
-import 'TracksPage.dart';
-import 'FavoritesPage.dart';
-import 'GeneratorPage.dart';
-import 'SettingsPage.dart';
-import 'components/PlayerBox.dart';
-
-import 'MyHomePage.i18n.dart';
+import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
 
 const defaultPageIndex = AppConfig.LOCAL ? 3 : 0;
 
 final logger = Logger();
-
-class Page {
-  final Widget Function() widget;
-  final String label;
-  final Icon icon;
-  const Page({
-    required this.widget,
-    required this.label,
-    required this.icon,
-  });
-}
-
-final pages = [
-  Page(
-    widget: () => TracksPage(),
-    label: 'Tracks'.i18n,
-    icon: Icon(Icons.audiotrack_outlined),
-  ),
-  Page(
-    widget: () => FavoritesPage(),
-    label: 'Favorites'.i18n,
-    icon: Icon(Icons.favorite_border),
-  ),
-  Page(
-    widget: () => GeneratorPage(),
-    label: 'Generator'.i18n,
-    icon: Icon(Icons.generating_tokens_outlined),
-  ),
-  Page(
-    widget: () => SettingsPage(),
-    label: 'Settings'.i18n,
-    icon: Icon(Icons.settings),
-  ),
-];
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -78,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage>
     final colorScheme = Theme.of(context).colorScheme;
 
     // final widget = pages[_selectedIndex].widget;
-    final widget = pages[_selectedIndex.value].widget;
+    final widget = homePages[_selectedIndex.value].widget;
     final Widget page = widget();
     // The container for the current page, with its background color
     // and subtle switching animation.
@@ -90,32 +53,6 @@ class _MyHomePageState extends State<MyHomePage>
       ),
     );
 
-    bottomNavigation() {
-      return BottomNavigationBar(
-        type: BottomNavigationBarType.fixed, // Fixed
-
-        backgroundColor: Colors.black,
-        selectedItemColor: colorScheme.primary,
-        unselectedItemColor: Colors.grey,
-
-        // showUnselectedLabels: true,
-        // showSelectedLabels: false,
-
-        items: pages
-            .map((page) =>
-                BottomNavigationBarItem(icon: page.icon, label: page.label))
-            .toList(),
-        // currentIndex: _selectedIndex,
-        currentIndex: _selectedIndex.value,
-        onTap: (value) {
-          setState(() {
-            // _selectedIndex = value;
-            _selectedIndex.value = value;
-          });
-        },
-      );
-    }
-
     return RestorationScope(
       restorationId: 'MyHomePage_Widget',
       child: Scaffold(
@@ -123,16 +60,16 @@ class _MyHomePageState extends State<MyHomePage>
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,
           title: Text(appTitle.i18n),
-          // actions: [
-          //   Icon(Icons.dark_mode),
-          //   Switch(
-          //     value: themeMode == ThemeMode.light,
-          //     onChanged: toggleTheme,
-          //   ),
-          //   Icon(Icons.light_mode),
-          // ],
+          // actions?
         ),
-        bottomNavigationBar: bottomNavigation(),
+        bottomNavigationBar: BottomNavigation(
+          selectedIndex: _selectedIndex.value,
+          handleIndex: (int value) {
+            setState(() {
+              _selectedIndex.value = value;
+            });
+          },
+        ),
         // bottomSheet: Text('bottomSheet'),
         drawer: Text('Drawer'), // Side navigation panel
         // onTap: (int i){setState((){index = i;});},

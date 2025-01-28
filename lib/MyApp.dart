@@ -3,15 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
+import 'package:march_tales_app/app/AppErrorScreen.dart';
+import 'package:march_tales_app/app/MyHomePage.dart';
+
 import 'core/config/AppConfig.dart';
 import 'core/server/ServerSession.dart';
-import 'pages/AppErrorScreen.dart';
 import 'core/helpers/YamlFormatter.dart';
 import 'shared/states/MyAppState.dart';
-import 'pages/MyHomePage.dart';
-import 'pages/MyHomePage.i18n.dart';
+
 import 'Init.dart';
 import 'SplashScreen.dart';
+
+import 'sharedTranslationsData.i18n.dart';
 
 final formatter = YamlFormatter();
 final logger = Logger();

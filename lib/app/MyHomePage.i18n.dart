@@ -6,9 +6,11 @@ extension Localization on String {
       sharedTranslationsData +
       {
         'ru': {
-          'No tracks loaded': 'Не загружено треков',
-          'Load more...': 'Загрузить ещё...',
-          'Loading...': 'Загрузка...',
+          // appTitleEn: appTitleRu,
+          'Tracks': 'Треки',
+          'Favorites': 'Избранное',
+          'Generator': 'Генератор',
+          'Settings': 'Настройки',
         },
       };
 
