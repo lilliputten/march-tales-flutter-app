@@ -66,15 +66,19 @@ Widget trackImage(BuildContext context, Track track) {
 
 Widget trackDetailsInfo(BuildContext context, Track track) {
   final theme = Theme.of(context);
+  final colorScheme = theme.colorScheme;
+  final dimmedColor = colorScheme.primary.withValues(alpha: 0.5);
+  final delimiterColor = colorScheme.onSurface.withValues(alpha: 0.2);
   final style = theme.textTheme.bodySmall!.copyWith();
   final items = [
     // Author
     Wrap(spacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
-      Icon(
-        Icons.mode_edit,
-        size: style.fontSize,
-        color: theme.primaryColor.withValues(alpha: 0.5),
-      ),
+      // TODO: Render an author image
+      // Icon(
+      //   Icons.mode_edit,
+      //   size: style.fontSize,
+      //   color: dimmedColor,
+      // ),
       Text(track.author.name, style: style),
     ]),
     // Played count
@@ -87,7 +91,7 @@ Widget trackDetailsInfo(BuildContext context, Track track) {
                 Icon(
                   Icons.headphones_outlined,
                   size: style.fontSize,
-                  color: theme.primaryColor.withValues(alpha: 0.5),
+                  color: dimmedColor,
                 ),
                 Text(track.played_count.toString(), style: style),
               ]),
@@ -96,7 +100,7 @@ Widget trackDetailsInfo(BuildContext context, Track track) {
       Icon(
         Icons.watch_later_outlined,
         size: style.fontSize,
-        color: theme.primaryColor.withValues(alpha: 0.5),
+        color: dimmedColor,
       ),
       Text(formatSecondsDuration(track.audio_duration), style: style),
     ]),
@@ -105,7 +109,7 @@ Widget trackDetailsInfo(BuildContext context, Track track) {
       Icon(
         Icons.calendar_month,
         size: style.fontSize,
-        color: theme.primaryColor.withValues(alpha: 0.5),
+        color: dimmedColor,
       ),
       Text(
           formatDate(
@@ -122,9 +126,7 @@ Widget trackDetailsInfo(BuildContext context, Track track) {
                 padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 3),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(4)),
-                  border: Border.all(
-                      color: theme.primaryColor.withValues(alpha: 0.25),
-                      width: 1),
+                  border: Border.all(color: delimiterColor, width: 1),
                 ),
                 child: Text(tag.text, style: style),
               );
@@ -136,18 +138,13 @@ Widget trackDetailsInfo(BuildContext context, Track track) {
             spacing: 3,
             children: track.tags.map((tag) {
               return Wrap(spacing: 2, children: [
-                Text('#',
-                    style: style.copyWith(
-                        color:
-                            theme.colorScheme.primary.withValues(alpha: 0.5))),
+                Text('#', style: style.copyWith(color: dimmedColor)),
                 Text(tag.text, style: style),
               ]);
             }).toList()),
   ].nonNulls;
   // Add delimiters between each other item
-  final delimiter = Text('|',
-      style: style.copyWith(
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.2)));
+  final delimiter = Text('|', style: style.copyWith(color: delimiterColor));
   final delimitedItems =
       items.map((e) => [delimiter, e]).expand((e) => e).skip(1);
   return Wrap(

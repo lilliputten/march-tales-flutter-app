@@ -1,7 +1,9 @@
 import 'dart:developer';
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:english_words/english_words.dart'; // DEBUG: To remove later
+
+import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 
@@ -65,7 +67,6 @@ class MyAppState extends ChangeNotifier {
   /// Active player
 
   Track? playingTrack;
-  // bool hasActivePlayer = false;
 
   /// Tracks list
 
@@ -79,7 +80,12 @@ class MyAppState extends ChangeNotifier {
   List<Track> tracks = [];
   // XXX: Store loading handler to be able cancelling it?
 
+  bool hasMoreTracks() {
+    return availableTracksCount > tracks.length;
+  }
+
   void resetTracks({bool doNotify = true}) {
+    tracksHasBeenLoaded = false;
     availableTracksCount = 0;
     tracks = [];
     tracksLoadError = null;
@@ -96,10 +102,18 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<LoadTracksDataResults> reloadTracks() async {
+    resetTracks(doNotify: false);
+    return await loadNextTracks();
+  }
+
   Future<LoadTracksDataResults> loadNextTracks() async {
     try {
       tracksIsLoading = true;
       notifyListeners();
+      if (AppConfig.LOCAL) {
+        await Future.delayed(Duration(seconds: 2)); // DEBUG
+      }
       final offset = tracks.length;
       logger.t('Starting loading tracks (offset: ${offset})');
       final LoadTracksDataResults results =
@@ -122,11 +136,6 @@ class MyAppState extends ChangeNotifier {
       tracksIsLoading = false;
       notifyListeners();
     }
-  }
-
-  Future<LoadTracksDataResults> reloadTracks() async {
-    resetTracks(doNotify: false);
-    return await loadNextTracks();
   }
 
   /// Word pair & history (a demo)

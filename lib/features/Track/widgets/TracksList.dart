@@ -12,12 +12,13 @@ class MoreButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final buttonColorTheme = theme.buttonTheme.colorScheme!;
     final appState = context.watch<MyAppState>();
     final tracksIsLoading = appState.tracksIsLoading;
     final isWaiting = tracksIsLoading;
     final color = isWaiting
-        ? theme.primaryColor.withValues(alpha: 0.5)
-        : theme.primaryColor;
+        ? buttonColorTheme.primary.withValues(alpha: 0.5)
+        : buttonColorTheme.primary;
     const double iconSize = 20;
     return Center(
       child: TextButton.icon(
@@ -53,10 +54,13 @@ class TracksList extends StatelessWidget {
     final showItems = hasMoreTracks ? tracksCount + 1 : tracksCount;
     logger.d(
         'Tracks: ${tracksCount} / ${availableTracksCount} ${hasMoreTracks} ${showItems}');
-    return ListView.separated(
+    return RefreshIndicator(
+      onRefresh: () async {
+        appState.reloadTracks();
+      },
+      child: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         key: PageStorageKey<String>('TracksList'),
-        // controller: statelessControllerA,
         itemCount: showItems,
         itemBuilder: (context, i) {
           if (i == tracksCount) {
@@ -65,6 +69,8 @@ class TracksList extends StatelessWidget {
             return TrackItem(track: tracks[i]);
           }
         },
-        separatorBuilder: (context, index) => SizedBox(height: 10));
+        separatorBuilder: (context, index) => SizedBox(height: 10),
+      ),
+    );
   }
 }

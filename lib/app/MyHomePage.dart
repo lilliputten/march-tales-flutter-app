@@ -10,7 +10,7 @@ import 'homePages.dart';
 import 'BottomNavigation.dart';
 import 'AppDrawer.dart';
 
-const defaultPageIndex = AppConfig.LOCAL ? 3 : 0;
+const defaultPageIndex = AppConfig.LOCAL ? 0 : 0;
 
 final logger = Logger();
 

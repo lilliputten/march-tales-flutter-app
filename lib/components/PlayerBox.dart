@@ -11,8 +11,13 @@ class PlayerBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<MyAppState>();
-    final colorScheme = Theme.of(context).colorScheme;
     final track = appState.playingTrack;
+
+    final theme = Theme.of(context);
+    final style = theme.textTheme.bodyMedium!;
+    final colorScheme = theme.colorScheme;
+    final bgColor = colorScheme.primary;
+    final textColor = colorScheme.onPrimary;
 
     // No active track?
     if (track == null) {
@@ -20,11 +25,12 @@ class PlayerBox extends StatelessWidget {
     }
 
     return ColoredBox(
-      color: colorScheme.primary,
+      color: bgColor,
       child: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          child: Text('Playing track: ${track.title}'),
+          child: Text('Playing track: ${track.title}',
+              style: style.copyWith(color: textColor)),
         ),
       ),
     );
