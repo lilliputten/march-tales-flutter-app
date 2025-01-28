@@ -53,7 +53,6 @@ class ThemeSelector extends StatelessWidget {
     }).toList();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<MyAppState>();

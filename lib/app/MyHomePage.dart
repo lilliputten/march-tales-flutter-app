@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-import 'package:march_tales_app/app/BottomNavigation.dart';
-import 'package:march_tales_app/app/homePages.dart';
+import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
+
 import 'package:march_tales_app/components/PlayerBox.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 
-import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
+import 'homePages.dart';
+import 'BottomNavigation.dart';
+import 'AppDrawer.dart';
 
 const defaultPageIndex = AppConfig.LOCAL ? 3 : 0;
 
@@ -40,6 +42,8 @@ class _MyHomePageState extends State<MyHomePage>
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
+    final homePages = getHomePages();
+
     // final widget = pages[_selectedIndex].widget;
     final widget = homePages[_selectedIndex.value].widget;
     final Widget page = widget();
@@ -63,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage>
           // actions?
         ),
         bottomNavigationBar: BottomNavigation(
+          homePages: homePages,
           selectedIndex: _selectedIndex.value,
           handleIndex: (int value) {
             setState(() {
@@ -71,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage>
           },
         ),
         // bottomSheet: Text('bottomSheet'),
-        drawer: Text('Drawer'), // Side navigation panel
+        drawer: AppDrawer(), // Side navigation panel
         // onTap: (int i){setState((){index = i;});},
         body: LayoutBuilder(
           builder: (context, constraints) {

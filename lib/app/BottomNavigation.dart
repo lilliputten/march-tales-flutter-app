@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'homePages.dart';
+import 'package:march_tales_app/core/types/HomePageData.dart';
 
 class BottomNavigation extends StatelessWidget {
+  final List<HomePageData> homePages;
   final int selectedIndex;
   final Function(int) handleIndex;
   const BottomNavigation({
+    required this.homePages,
     required this.selectedIndex,
     required this.handleIndex,
   });
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -30,10 +33,6 @@ class BottomNavigation extends StatelessWidget {
       currentIndex: selectedIndex,
       onTap: (value) {
         handleIndex(value);
-        // setState(() {
-        //   // _selectedIndex = value;
-        //   _selectedIndex.value = value;
-        // });
       },
     );
   }
