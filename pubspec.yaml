@@ -24,6 +24,7 @@ dependencies:
   i18n_extension: ^15.0.3
   cached_network_image: ^3.4.1
   shared_preferences: ^2.4.0
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:
@@ -40,6 +41,8 @@ flutter:
 
   assets:
     - assets/
-    - assets/fonts/ # TODO: Use lobser font for titles
-    - assets/project-info.json
+    - assets/images
+    # - assets/images/march-cat/march-cat-sq-48.jpg
+    # - assets/fonts/ # TODO: Use lobser font for titles
+    # - assets/project-info.json
 

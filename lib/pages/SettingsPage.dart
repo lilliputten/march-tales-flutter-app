@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
 import 'package:march_tales_app/Init.dart';
+import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:provider/provider.dart';
 import 'package:logger/logger.dart';
 import 'package:i18n_extension/i18n_extension.dart';
@@ -16,10 +19,6 @@ final logger = Logger();
 class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // final colorScheme = Theme.of(context).colorScheme;
-    // final appState = context.watch<MyAppState>();
-    // var projectInfo = appState.projectInfo;
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -139,6 +138,12 @@ class AppInfo extends StatelessWidget {
     final serverVersion = Init.serverVersion;
     final serverTimestamp = Init.serverTimestamp;
 
+    final linkStyle = TextStyle(
+      decoration: TextDecoration.underline,
+      color: Colors.blue,
+      decorationColor: Colors.blue,
+    );
+
     logger.d('AppInfo appVersion: ${appVersion}');
 
     return Column(
@@ -147,6 +152,7 @@ class AppInfo extends StatelessWidget {
       children: [
         Wrap(
           spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             SelectableText(
               'Application version:'.i18n,
@@ -164,6 +170,7 @@ class AppInfo extends StatelessWidget {
         ),
         Wrap(
           spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             SelectableText(
               'Server version:'.i18n,
@@ -179,8 +186,92 @@ class AppInfo extends StatelessWidget {
                 style: style.copyWith(fontWeight: FontWeight.w300)),
           ],
         ),
+        Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SelectableText(
+              'Web site:'.i18n,
+              style: style,
+            ),
+            InkWell(
+              onTap: () =>
+                  launchUrl(Uri.parse('https://${AppConfig.WEB_SITE_URL}')),
+              child: Text(
+                AppConfig.WEB_SITE_URL,
+                style: linkStyle,
+              ),
+            ),
+          ],
+        ),
+        Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SelectableText(
+              'Contact e-mail:'.i18n,
+              style: style,
+            ),
+            InkWell(
+              onTap: () =>
+                  launchUrl(Uri.parse('mailto:${AppConfig.CONTACT_EMAIL}')),
+              child: Text(
+                AppConfig.CONTACT_EMAIL,
+                style: linkStyle,
+              ),
+            ),
+          ],
+        ),
+        Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SelectableText(
+              'Developer:'.i18n,
+              style: style,
+            ),
+            InkWell(
+              onTap: () =>
+                  launchUrl(Uri.parse('https://${AppConfig.DEVELOPER_URL}')),
+              child: Text(
+                AppConfig.DEVELOPER_URL,
+                style: linkStyle,
+              ),
+            ),
+          ],
+        ),
         // TODO: Show other info (developer, project site etc)
       ],
+    );
+  }
+}
+
+class SectionTitle extends StatelessWidget {
+  const SectionTitle({
+    super.key,
+    required this.title,
+  });
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textStyle = theme.textTheme.bodyLarge!.copyWith(
+      color: colorScheme.primary,
+      // fontWeight: FontWeight.bold,
+    );
+    final delimiterColor = colorScheme.onSurface.withValues(alpha: 0.2);
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(width: 1.5, color: delimiterColor),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+        child: Center(child: Text(title, style: textStyle)),
+      ),
     );
   }
 }
@@ -194,8 +285,10 @@ class SettingsWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          SectionTitle(title: 'Basic settings'.i18n),
           LanguageSelector(),
           ThemeSelector(),
+          SectionTitle(title: 'Application info'.i18n),
           AppInfo(),
         ],
       ),

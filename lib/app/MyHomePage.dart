@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:march_tales_app/app/AppColors.dart';
 
 import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
 
@@ -41,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final AppColors appColors = Theme.of(context).extension<AppColors>()!;
 
     final homePages = getHomePages();
 
@@ -61,9 +63,28 @@ class _MyHomePageState extends State<MyHomePage>
       restorationId: 'MyHomePage_Widget',
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: colorScheme.primary,
-          foregroundColor: colorScheme.onPrimary,
-          title: Text(appTitle.i18n),
+          backgroundColor: appColors.brandColor,
+          foregroundColor: appColors.onBrandColor,
+          title: FittedBox(
+            fit: BoxFit.contain,
+            child: Row(
+              spacing: 15,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: Image(
+                    image: AssetImage(
+                        'assets/images/march-cat/march-cat-sq-48.jpg'),
+                  ),
+                ),
+                Text(
+                  appTitle.i18n,
+                  maxLines: 1,
+                  overflow: TextOverflow.fade,
+                ),
+              ],
+            ),
+          ),
           // actions?
         ),
         bottomNavigationBar: BottomNavigation(
@@ -76,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage>
           },
         ),
         // bottomSheet: Text('bottomSheet'),
-        drawer: AppDrawer(), // Side navigation panel
+        endDrawer: AppDrawer(), // Side navigation panel
         // onTap: (int i){setState((){index = i;});},
         body: LayoutBuilder(
           builder: (context, constraints) {

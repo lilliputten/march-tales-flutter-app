@@ -37,7 +37,7 @@ android {
 
         // Make a filename in a form of `team.march.march_tales_app-v1(=0.0.1)-release.apk`
         archivesBaseName = "${applicationId}-v.${versionName}".replaceAll('_', '-')
-        print('Creating ' + archivesBaseName)
+        // print('Creating ' + archivesBaseName)
     }
 
     buildTypes {

@@ -9,6 +9,14 @@ abstract class AppConfig {
   static const int PRIMARY_COLOR =
       int.fromEnvironment('PRIMARY_COLOR', defaultValue: 0xffbb2266);
 
+  // Public resources
+  static const String WEB_SITE_URL =
+      String.fromEnvironment('WEB_SITE_URL', defaultValue: 'tales.march.team');
+  static const String CONTACT_EMAIL =
+      String.fromEnvironment('CONTACT_EMAIL', defaultValue: 'tales@march.team');
+  static const String DEVELOPER_URL =
+      String.fromEnvironment('DEVELOPER_URL', defaultValue: 'lilliputten.com');
+
   // March Tales API
   static const String TALES_SERVER_HOST = String.fromEnvironment(
       'TALES_SERVER_HOST',

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
+import 'app/AppColors.dart';
 import 'core/config/AppConfig.dart';
 import 'core/helpers/YamlFormatter.dart';
 import 'shared/states/MyAppState.dart';
@@ -11,6 +12,10 @@ import 'sharedTranslationsData.i18n.dart';
 
 final formatter = YamlFormatter();
 final logger = Logger();
+
+final themeExtensions = <ThemeExtension<dynamic>>[
+  appColors,
+];
 
 class AppWrapper extends StatelessWidget {
   const AppWrapper({
@@ -25,30 +30,28 @@ class AppWrapper extends StatelessWidget {
     final appState = context.watch<MyAppState>();
     return MaterialApp(
       restorationScopeId: 'app',
-      title: 'The March Cat Tales',
+      // title: 'The March Cat Tales',
       onGenerateTitle: (context) => appTitle.i18n,
       debugShowCheckedModeBanner: false,
       locale: I18n.locale,
       localizationsDelegates: I18n.localizationsDelegates,
       supportedLocales: I18n.supportedLocales,
       themeMode: appState.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
-      // darkTheme: ThemeData.dark(),
       darkTheme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(AppConfig.PRIMARY_COLOR),
+          seedColor: appColors.brandColor,
           brightness: Brightness.dark,
-          // contrastLevel: 1.0,
         ),
+        extensions: themeExtensions,
       ),
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(AppConfig.PRIMARY_COLOR),
-          brightness: Brightness.light, // selectedBrightness,
-          // contrastLevel: 1.0,
+          brightness: Brightness.light,
         ),
-        // colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 255, 0, 115)),
+        extensions: themeExtensions,
       ),
       home: builder,
     );

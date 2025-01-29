@@ -27,12 +27,10 @@ class _SplashScreen extends State<SplashScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
-    var style = theme.textTheme.bodySmall!.copyWith(
-        // color: theme.colorScheme.primary,
-        );
-    var size = 60.0;
-    // var strokeWidth = 2.0;
+    final theme = Theme.of(context);
+    final style = theme.textTheme.bodySmall!;
+    const double size = 60.0;
+    const double strokeWidth = 3;
 
     return Material(
       child: Opacity(
@@ -44,9 +42,9 @@ class _SplashScreen extends State<SplashScreen> with TickerProviderStateMixin {
               height: size,
               width: size,
               child: CircularProgressIndicator(
-                  // strokeWidth: strokeWidth,
-                  // valueColor: animationController.drive(
-                  //     ColorTween(begin: Colors.blueAccent, end: Colors.red)),
+                  strokeWidth: strokeWidth,
+                  valueColor: animationController.drive(
+                      ColorTween(begin: Colors.blueAccent, end: Colors.red)),
                   ),
             ),
             SizedBox(height: 40),
