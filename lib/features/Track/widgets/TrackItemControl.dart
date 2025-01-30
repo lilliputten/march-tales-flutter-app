@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:march_tales_app/app/AppColors.dart';
@@ -8,14 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:march_tales_app/shared/states/MyAppState.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 
-const double previewSize = 80;
-const previewHalfSize = previewSize / 2;
-const previewProgressPadding = previewHalfSize - 16;
-
 final logger = Logger();
 
-class TrackItemControl extends StatefulWidget {
-  const TrackItemControl({
+class TrackItemActiveControl extends StatefulWidget {
+  const TrackItemActiveControl({
     super.key,
     required this.track,
   });
@@ -23,13 +17,46 @@ class TrackItemControl extends StatefulWidget {
   final Track track;
 
   @override
-  State<TrackItemControl> createState() => _TrackItemControlState();
+  State<TrackItemActiveControl> createState() => _TrackItemActiveControlState();
 }
 
-class _TrackItemControlState extends State<TrackItemControl> {
-  late AnimationController animationController;
+const double _iconSize = 24;
+const double _circleSize = _iconSize + 16;
 
-  // Widget TrackItemControl(BuildContext context, Track track)
+class _TrackItemActiveControlState extends State<TrackItemActiveControl>
+    with TickerProviderStateMixin {
+  late double _lastProgress;
+  late Animation<double> _animation;
+  late Tween<double> _tween;
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _lastProgress = 0;
+    _animationController =
+        AnimationController(duration: Duration(seconds: 1), vsync: this);
+    _tween = Tween(begin: 0, end: 0);
+    _animation = _tween.animate(_animationController)
+      ..addListener(() {
+        setState(() {});
+      });
+  }
+
+  void setNewProgress(double newProgress) {
+    _tween = Tween(begin: _lastProgress, end: newProgress);
+    _animationController.reset();
+    _animation = _tween.animate(_animationController);
+    _animationController.forward();
+    _lastProgress = newProgress;
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<MyAppState>();
@@ -53,24 +80,19 @@ class _TrackItemControlState extends State<TrackItemControl> {
       if (duration != null && duration != 0 && position != null) {
         progress = position / duration;
       }
+      if (progress != _lastProgress) {
+        setNewProgress(progress);
+      }
       logger.t(
-          'TrackItemControl: progress=${progress} position=${position} duration=${duration}');
+          'TrackItemActiveControl: ${_animation.value} progress=${progress} position=${position} duration=${duration}');
     }
-
-    // logger.d(
-    //     'TrackItemControl: isActive: ${isActive}, isPlaying: ${appState.isPlaying}');
-
-    // TODO: Show circular playing progress indicator for active track around the icon
-
-    const double iconSize = 24;
-    const double circleSize = iconSize + 16;
 
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
         SizedBox(
-          width: circleSize,
-          height: circleSize,
+          width: _circleSize,
+          height: _circleSize,
           child: CircularProgressIndicator(
             color: appColors.brandColor.withValues(alpha: 0.2),
             strokeWidth: 2,
@@ -78,18 +100,21 @@ class _TrackItemControlState extends State<TrackItemControl> {
           ),
         ),
         SizedBox(
-          width: circleSize,
-          height: circleSize,
-          child: CircularProgressIndicator(
-            color: appColors.brandColor,
-            strokeWidth: isPlaying ? 3 : 0,
-            value: progress,
-          ),
+          width: _circleSize,
+          height: _circleSize,
+          child: isPlaying
+              ? CircularProgressIndicator(
+                  color: appColors.brandColor,
+                  strokeWidth: 3,
+                  // value: progress,
+                  value: _animation.value,
+                )
+              : SizedBox(),
         ),
         IconButton(
           icon: Icon(
             isActive ? Icons.pause : Icons.play_arrow,
-            size: iconSize,
+            size: _iconSize,
             color: appColors.brandColor,
           ),
           style: IconButton.styleFrom(

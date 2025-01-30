@@ -120,12 +120,24 @@ class MyAppState extends ChangeNotifier {
       activePlayer!.stop();
       activePlayer = null;
     }
-    if (isPlaying) {
-      isPlaying = false;
-    }
+    isPlaying = false;
+    isPaused = false;
     if (notify) {
       notifyListeners();
     }
+  }
+
+  void _playerTimerTick(Timer timer) {
+    activePosition = activePlayer?.position;
+    final position = activePosition?.inMilliseconds;
+    final duration = activePlayer?.duration?.inMilliseconds;
+    logger.t(
+        '_playerTimerTick: Tick: ${timer.tick} position=${position} duration=${duration}');
+    if (position! >= duration!) {
+      debugger();
+      _playerStop(notify: false);
+    }
+    notifyListeners();
   }
 
   void _playerTimerStop() {
@@ -166,13 +178,6 @@ class MyAppState extends ChangeNotifier {
     // Start timer...
     _playerTimerStart();
     // Update all...
-    notifyListeners();
-  }
-
-  void _playerTimerTick(Timer timer) {
-    activePosition = activePlayer?.position;
-    logger
-        .t('_playerTimerTick: Tick: ${timer.tick} position: ${activePosition}');
     notifyListeners();
   }
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'SplashScreen.i18n.dart';
+
 class SplashScreen extends StatefulWidget {
   // @override
   // SplashScreen createState() => _SplashScreen();
@@ -49,7 +51,7 @@ class _SplashScreen extends State<SplashScreen> with TickerProviderStateMixin {
             ),
             SizedBox(height: 40),
             Text(
-              "Starting...",
+              'Loading...'.i18n,
               style: style,
             ),
           ],

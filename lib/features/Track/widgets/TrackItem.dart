@@ -36,7 +36,7 @@ class TrackItem extends StatelessWidget {
             flex: 1,
             child: trackDetails(context, track),
           ),
-          TrackItemControl(track: track),
+          TrackItemActiveControl(track: track),
         ],
       ),
     );
