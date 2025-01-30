@@ -39,9 +39,13 @@ flutter:
   uses-material-design: true
   generate: true
 
+  fonts:
+    - family: Lobster
+      fonts:
+        - asset: assets/fonts/lobster/lobster.ttf
+
   assets:
     - assets/
-    # - assets/images
     - assets/images/march-cat/march-cat-sq-48.jpg
     - assets/project-info.json
     # - assets/fonts/ # TODO: Use lobser font for titles

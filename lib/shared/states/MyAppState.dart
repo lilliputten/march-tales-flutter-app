@@ -88,12 +88,10 @@ class MyAppState extends ChangeNotifier {
     if (tracksHasBeenLoaded) {
       // NOTE: Not waiting for finish
       reloadTracks();
-      // TODO: Update `playingTrack` if language has been changed
     }
     if (playingTrack != null) {
+      // Update `playingTrack` if language has been changed
       playingTrack = await loadTrackDetails(id: playingTrack!.id);
-      logger.d('Updated loaded playing track: ${playingTrack}');
-      debugger();
     }
     notifyListeners();
   }

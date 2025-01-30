@@ -18,7 +18,7 @@ class PlayerBox extends StatelessWidget {
     // final colorScheme = theme.colorScheme;
     // final bgColor = colorScheme.primary;
     // final textColor = colorScheme.onPrimary;
-    final bgColor = appColors.brandColor.withValues(alpha: 0.3);
+    final bgColor = appColors.brandColor.withValues(alpha: 0.5);
     final textColor = appColors.onBrandColor;
 
     final track = appState.playingTrack;

@@ -40,8 +40,10 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final AppColors appColors = Theme.of(context).extension<AppColors>()!;
+    final theme = Theme.of(context);
+    final AppColors appColors = theme.extension<AppColors>()!;
+    final style = theme.textTheme.bodyMedium!;
+    final colorScheme = theme.colorScheme;
 
     final homePages = getHomePages();
 
@@ -80,6 +82,10 @@ class _MyHomePageState extends State<MyHomePage>
                   appTitle.i18n,
                   maxLines: 1,
                   overflow: TextOverflow.fade,
+                  style: style.copyWith(
+                    fontFamily: 'Lobster',
+                    fontSize: 28,
+                  ),
                 ),
               ],
             ),

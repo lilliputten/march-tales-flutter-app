@@ -70,8 +70,10 @@ Widget trackImage(BuildContext context, Track track) {
 Widget trackDetailsInfo(BuildContext context, Track track) {
   final theme = Theme.of(context);
   final colorScheme = theme.colorScheme;
-  final dimmedColor = colorScheme.primary.withValues(alpha: 0.5);
-  final delimiterColor = colorScheme.onSurface.withValues(alpha: 0.2);
+  // final AppColors appColors = theme.extension<AppColors>()!;
+  // final dimmedColor = appColors.brandColor.withValues(alpha: 0.5);
+  final dimmedColor = colorScheme.primary.withValues(alpha: 0.25);
+  final delimiterColor = colorScheme.onSurface.withValues(alpha: 0.1);
   final style = theme.textTheme.bodySmall!;
   final items = [
     // Author
