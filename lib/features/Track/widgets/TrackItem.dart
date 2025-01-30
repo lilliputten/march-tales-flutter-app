@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:i18n_extension/i18n_extension.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:march_tales_app/shared/states/MyAppState.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackAuthorImageThumbnail.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/features/Track/widgets/TrackItemDefaultControl.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackItemActiveControl.dart';
-import 'package:march_tales_app/core/config/AppConfig.dart';
+import 'package:march_tales_app/shared/states/MyAppState.dart';
 import 'package:march_tales_app/core/helpers/formats.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-
-const double previewSize = 80;
-const previewHalfSize = previewSize / 2;
-const previewProgressPadding = previewHalfSize - 16;
+import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemDefaultControl.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemActiveControl.dart';
 
 final logger = Logger();
 
@@ -43,7 +39,7 @@ class TrackItem extends StatelessWidget {
         spacing: 10,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          trackImage(context, track),
+          TrackImageThumbnail(track: track, size: 80),
           Expanded(
             flex: 1,
             child: trackDetails(context, track),
@@ -57,28 +53,6 @@ class TrackItem extends StatelessWidget {
   }
 }
 
-Widget trackImage(BuildContext context, Track track) {
-  final theme = Theme.of(context);
-  final String url = '${AppConfig.TALES_SERVER_HOST}${track.preview_picture}';
-  return ClipRRect(
-    borderRadius: BorderRadius.circular(10),
-    child: CachedNetworkImage(
-      imageUrl: url,
-      // color: theme.primaryColor,
-      width: previewSize,
-      height: previewSize,
-      fit: BoxFit.cover,
-      placeholder: (context, url) => Padding(
-        padding: const EdgeInsets.all(previewProgressPadding),
-        child: CircularProgressIndicator(),
-      ),
-      errorWidget: (context, url, error) => Icon(Icons.error,
-          color: theme.primaryColor.withValues(alpha: 0.5),
-          size: previewHalfSize),
-    ),
-  );
-}
-
 Widget trackDetailsInfo(BuildContext context, Track track) {
   final theme = Theme.of(context);
   final colorScheme = theme.colorScheme;
@@ -89,13 +63,14 @@ Widget trackDetailsInfo(BuildContext context, Track track) {
   final style = theme.textTheme.bodySmall!;
   final items = [
     // Author
-    Wrap(spacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
+    Wrap(spacing: 4, crossAxisAlignment: WrapCrossAlignment.center, children: [
       // TODO: Render an author image
       // Icon(
       //   Icons.mode_edit,
       //   size: style.fontSize,
       //   color: dimmedColor,
       // ),
+      TrackAuthorImageThumbnail(track: track),
       Text(track.author.name, style: style),
     ]),
     // Played count

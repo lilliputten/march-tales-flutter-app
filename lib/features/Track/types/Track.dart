@@ -11,15 +11,18 @@ final formatter = YamlFormatter();
 class TrackAuthor {
   final int id;
   final String name;
+  final String portrait_picture;
   const TrackAuthor({
     required this.id,
     required this.name,
+    required this.portrait_picture,
   });
   factory TrackAuthor.fromJson(Map<String, dynamic> json) {
     try {
       return TrackAuthor(
         id: json['id'],
         name: json['name'].toString(),
+        portrait_picture: json['portrait_picture'].toString(),
       );
     } catch (err, stacktrace) {
       final String msg = 'Can not parse TrackAuthor data: $err';
