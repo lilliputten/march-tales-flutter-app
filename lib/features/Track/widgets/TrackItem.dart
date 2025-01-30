@@ -184,10 +184,13 @@ Widget trackControl(BuildContext context, Track track) {
   // final colorScheme = Theme.of(context).colorScheme;
   final AppColors appColors = theme.extension<AppColors>()!;
   final playingTrack = appState.playingTrack;
-  final isPlaying = playingTrack != null && playingTrack.id == track.id;
+  final thisTrackIsPlaying =
+      playingTrack != null && playingTrack.id == track.id && appState.isPlaying;
+  logger.d(
+      'trackControl: thisTrackIsPlaying: ${thisTrackIsPlaying}, isPlaying: ${appState.isPlaying}');
   return IconButton(
     icon: Icon(
-      isPlaying ? Icons.pause : Icons.play_arrow,
+      thisTrackIsPlaying ? Icons.stop : Icons.play_arrow,
       size: 24,
       color: Colors.white,
     ),

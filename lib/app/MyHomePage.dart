@@ -85,6 +85,7 @@ class _MyHomePageState extends State<MyHomePage>
                   style: style.copyWith(
                     fontFamily: 'Lobster',
                     fontSize: 28,
+                    color: appColors.onBrandColor,
                   ),
                 ),
               ],

@@ -18,7 +18,7 @@ class PlayerBox extends StatelessWidget {
     // final colorScheme = theme.colorScheme;
     // final bgColor = colorScheme.primary;
     // final textColor = colorScheme.onPrimary;
-    final bgColor = appColors.brandColor.withValues(alpha: 0.5);
+    final bgColor = appColors.brandColor; // .withValues(alpha: 0.75);
     final textColor = appColors.onBrandColor;
 
     final track = appState.playingTrack;
@@ -28,13 +28,18 @@ class PlayerBox extends StatelessWidget {
       return Container();
     }
 
+    String text = 'Current track: ${track.title}';
+    if (appState.isPlaying) {
+      text += ' (playing)';
+    }
+
     return ColoredBox(
       color: bgColor,
       child: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           child: Text(
-            'Playing track: ${track.title}',
+            text,
             overflow: TextOverflow.ellipsis,
             style: style.copyWith(color: textColor),
           ),

@@ -2,8 +2,11 @@
 
 import 'dart:developer';
 import 'package:logger/logger.dart';
+import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 
 final logger = Logger();
+
+final formatter = YamlFormatter();
 
 class TrackAuthor {
   final int id;
@@ -158,6 +161,9 @@ class Track {
     } catch (err, stacktrace) {
       final String msg = 'Can not parse Track data: $err';
       logger.e(msg, error: err, stackTrace: stacktrace);
+      // logger.d('Json data for the previous error is: ${json}');
+      logger.d(
+          'Formatted json data for the previous error is: : ${formatter.format(json)}');
       debugger();
       throw FormatException(msg);
     }

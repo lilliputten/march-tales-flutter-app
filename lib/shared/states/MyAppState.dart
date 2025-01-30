@@ -2,9 +2,11 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:english_words/english_words.dart'; // DEBUG: To remove later
-import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:just_audio/just_audio.dart';
+
+import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
@@ -99,6 +101,8 @@ class MyAppState extends ChangeNotifier {
   /// Active player
 
   Track? playingTrack;
+  bool isPlaying = false;
+  AudioPlayer? player = AudioPlayer();
 
   /// Tracks list
 
@@ -127,10 +131,42 @@ class MyAppState extends ChangeNotifier {
     }
   }
 
-  void playTrack(Track track) {
+  void playTrack(Track track) async {
     logger.t('playTrack ${track}');
+    if (playingTrack != null) {
+      if (isPlaying) {
+        // Stop if playing
+        logger.d('playTrack: Finished previous play: ${playingTrack}');
+        player?.stop();
+        isPlaying = false;
+      }
+      if (playingTrack!.id == track.id) {
+        logger.d('RplayTrack: esetting previous track: ${playingTrack}');
+        // Reset track and exit if it was current one
+        playingTrack = null;
+        return;
+      }
+    }
+    // Otherwise, start playing this track
     playingTrack = track;
-    // hasActivePlayer = true;
+    final String url = '${AppConfig.TALES_SERVER_HOST}${track.audio_file}';
+    if (player != null) {
+      // @see https://github.com/ryanheise/just_audio/tree/minor/just_audio
+      logger.d('playTrack: Start playing track ${playingTrack}: ${url}');
+      final duration = await player!.setUrl(url);
+      player!.setVolume(1);
+      final playing = player!.play(); // Returns the Future
+      // TODO: Increment played count
+      isPlaying = true;
+      playing.whenComplete(() {
+        logger.d('playTrack: Finished play: ${playingTrack}');
+        player?.stop();
+        isPlaying = false;
+        playingTrack = null;
+        notifyListeners();
+      });
+      logger.d('Started playing track ${track}: ${duration}');
+    }
     notifyListeners();
   }
 

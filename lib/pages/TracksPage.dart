@@ -22,21 +22,26 @@ class TracksPage extends StatelessWidget {
     final tracks = appState.tracks;
 
     if (tracksLoadError != null) {
-      // TODO: Show an error in case of the server inaccessibility?
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Center(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                child: Text(tracksLoadError),
+      // TODO: Display the error inside the RefreshIndicator to allow refresh data?
+      return RefreshIndicator(
+        onRefresh: () async {
+          await appState.reloadTracks();
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  child: Text(tracksLoadError),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
     } else if (!tracksHasBeenLoaded && tracksIsLoading) {
       return Column(
