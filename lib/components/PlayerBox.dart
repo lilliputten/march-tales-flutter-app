@@ -7,6 +7,15 @@ import 'package:march_tales_app/shared/states/MyAppState.dart';
 
 final logger = Logger();
 
+String getDurationString(Duration? d) {
+  if (d == null) {
+    return '';
+  }
+  String s = d.toString();
+  s = s.replaceFirst(RegExp(r'\.\d+$'), '');
+  return s;
+}
+
 // @see https://docs.flutter.dev/cookbook/networking/fetch-data
 class PlayerBox extends StatelessWidget {
   @override
@@ -15,10 +24,11 @@ class PlayerBox extends StatelessWidget {
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
     final style = theme.textTheme.bodyMedium!;
-    // final colorScheme = theme.colorScheme;
+    final colorScheme = theme.colorScheme;
     // final bgColor = colorScheme.primary;
     // final textColor = colorScheme.onPrimary;
-    final bgColor = appColors.brandColor; // .withValues(alpha: 0.75);
+    final bgColor = colorScheme
+        .surface; // appColors.brandColor; // .withValues(alpha: 0.75);
     final textColor = appColors.onBrandColor;
 
     final track = appState.playingTrack;
@@ -28,9 +38,15 @@ class PlayerBox extends StatelessWidget {
       return Container();
     }
 
+    final isPlaying = appState.isPlaying;
+    final isPaused = appState.isPaused;
+    final activePosition = appState.activePosition;
+
     String text = 'Current track: ${track.title}';
-    if (appState.isPlaying) {
-      text += ' (playing)';
+    if (isPlaying) {
+      final state = isPaused ? 'paused' : 'playing';
+      final positionString = getDurationString(activePosition);
+      text += ' (${state} ${positionString})';
     }
 
     return ColoredBox(

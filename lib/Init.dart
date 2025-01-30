@@ -56,7 +56,7 @@ class Init {
       'appVersion': appVersion,
       'appTimestamp': appTimestamp,
     };
-    logger.d('results: ${formatter.format(results)}');
+    // logger.d('results: ${formatter.format(results)}');
     return results;
   }
 

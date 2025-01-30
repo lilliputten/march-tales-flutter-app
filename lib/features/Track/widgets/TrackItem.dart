@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:i18n_extension/i18n_extension.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:march_tales_app/app/AppColors.dart';
-import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/shared/states/MyAppState.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemControl.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/formats.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
@@ -38,7 +36,7 @@ class TrackItem extends StatelessWidget {
             flex: 1,
             child: trackDetails(context, track),
           ),
-          trackControl(context, track),
+          TrackItemControl(track: track),
         ],
       ),
     );
@@ -175,37 +173,5 @@ Widget trackDetails(BuildContext context, Track track) {
       trackTitle(context, track),
       trackDetailsInfo(context, track),
     ],
-  );
-}
-
-Widget trackControl(BuildContext context, Track track) {
-  final appState = context.watch<MyAppState>();
-  final theme = Theme.of(context);
-  // final colorScheme = Theme.of(context).colorScheme;
-  final AppColors appColors = theme.extension<AppColors>()!;
-  final playingTrack = appState.playingTrack;
-  final thisTrackIsPlaying =
-      playingTrack != null && playingTrack.id == track.id && appState.isPlaying;
-  logger.d(
-      'trackControl: thisTrackIsPlaying: ${thisTrackIsPlaying}, isPlaying: ${appState.isPlaying}');
-  return IconButton(
-    icon: Icon(
-      thisTrackIsPlaying ? Icons.stop : Icons.play_arrow,
-      size: 24,
-      color: Colors.white,
-    ),
-    style: IconButton.styleFrom(
-      // minimumSize: Size.zero, // Set this
-      // padding: EdgeInsets.zero, // and this
-      shape: CircleBorder(),
-      backgroundColor: appColors.brandColor, // colorScheme.primary,
-      foregroundColor: appColors.onBrandColor, // colorScheme.onPrimary,
-    ),
-    alignment: Alignment.center,
-    padding: EdgeInsets.all(0.0),
-    onPressed: () {
-      logger.d('Play track ${track.id} (${track.title})');
-      appState.playTrack(track);
-    },
   );
 }

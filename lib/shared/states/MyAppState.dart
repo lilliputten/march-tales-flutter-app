@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -98,11 +99,109 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Active player
+  /// Player & active track
 
   Track? playingTrack;
   bool isPlaying = false;
-  AudioPlayer? player = AudioPlayer();
+  bool isPaused = false;
+  AudioPlayer? activePlayer = AudioPlayer();
+  Timer? activeTimer;
+  Duration? activePosition;
+
+  AudioPlayer getPlayer() {
+    activePlayer ??= AudioPlayer();
+    return activePlayer!;
+  }
+
+  void _playerStop({bool notify = true}) {
+    activePosition = null;
+    _playerTimerStop();
+    if (activePlayer != null) {
+      activePlayer!.stop();
+      activePlayer = null;
+    }
+    if (isPlaying) {
+      isPlaying = false;
+    }
+    if (notify) {
+      notifyListeners();
+    }
+  }
+
+  void _playerTimerStop() {
+    if (activeTimer != null) {
+      activeTimer!.cancel();
+      activeTimer = null;
+    }
+  }
+
+  void _playerTimerStart() {
+    activeTimer = Timer.periodic(Duration(seconds: 1), _playerTimerTick);
+  }
+
+  void _playerStart(Track track) async {
+    playingTrack = track;
+    final String url = '${AppConfig.TALES_SERVER_HOST}${track.audio_file}';
+    final player = getPlayer();
+    // @see https://github.com/ryanheise/just_audio/tree/minor/just_audio
+    logger.t('_playerStart: Start playing track ${track}: ${url}');
+    final duration = await player.setUrl(url);
+    player.setVolume(1);
+    final playing = player.play(); // Returns the Future
+    // TODO: Increment played count (via API)
+    isPlaying = true;
+    isPaused = false;
+    // Finished hadler
+    playing.whenComplete(() {
+      if (playingTrack?.id == track.id && isPlaying) {
+        // If the same track is playing
+        logger.t(
+            '_playerStart: Finished: track: ${track}, playingTrack: ${playingTrack}, isPaused: ${isPaused}');
+        if (!isPaused) {
+          _playerStop(notify: true);
+        }
+      }
+    });
+    logger.t('_playerStart: Started playing track ${track}: ${duration}');
+    // Start timer...
+    _playerTimerStart();
+    // Update all...
+    notifyListeners();
+  }
+
+  void _playerTimerTick(Timer timer) {
+    activePosition = activePlayer?.position;
+    logger
+        .t('_playerTimerTick: Tick: ${timer.tick} position: ${activePosition}');
+    notifyListeners();
+  }
+
+  /// Track's play button handler
+  void playTrack(Track track) async {
+    logger.t('playTrack ${track}');
+    if (playingTrack != null) {
+      if (isPlaying && playingTrack!.id == track.id) {
+        // Just pause/resume and exit if it was actively playing current track
+        logger.t(
+            'playTrack: Pausing/resuming active track: ${playingTrack} isPaused: ${isPaused}');
+        if (!isPaused) {
+          activePlayer?.pause();
+          isPaused = true;
+          _playerTimerStop();
+        } else {
+          activePlayer?.play();
+          isPaused = false;
+          _playerTimerStart();
+        }
+        notifyListeners();
+        return;
+      }
+      // Else stop playback and continue
+      _playerStop(notify: false);
+    }
+    // Start playing the track
+    _playerStart(track);
+  }
 
   /// Tracks list
 
@@ -120,58 +219,19 @@ class MyAppState extends ChangeNotifier {
     return availableTracksCount > tracks.length;
   }
 
-  void resetTracks({bool doNotify = true}) {
+  void resetTracks({bool notify = true}) {
     tracksHasBeenLoaded = false;
     availableTracksCount = 0;
     tracks = [];
     tracksLoadError = null;
     tracksIsLoading = false;
-    if (doNotify) {
+    if (notify) {
       notifyListeners();
     }
   }
 
-  void playTrack(Track track) async {
-    logger.t('playTrack ${track}');
-    if (playingTrack != null) {
-      if (isPlaying) {
-        // Stop if playing
-        logger.d('playTrack: Finished previous play: ${playingTrack}');
-        player?.stop();
-        isPlaying = false;
-      }
-      if (playingTrack!.id == track.id) {
-        logger.d('RplayTrack: esetting previous track: ${playingTrack}');
-        // Reset track and exit if it was current one
-        playingTrack = null;
-        return;
-      }
-    }
-    // Otherwise, start playing this track
-    playingTrack = track;
-    final String url = '${AppConfig.TALES_SERVER_HOST}${track.audio_file}';
-    if (player != null) {
-      // @see https://github.com/ryanheise/just_audio/tree/minor/just_audio
-      logger.d('playTrack: Start playing track ${playingTrack}: ${url}');
-      final duration = await player!.setUrl(url);
-      player!.setVolume(1);
-      final playing = player!.play(); // Returns the Future
-      // TODO: Increment played count
-      isPlaying = true;
-      playing.whenComplete(() {
-        logger.d('playTrack: Finished play: ${playingTrack}');
-        player?.stop();
-        isPlaying = false;
-        playingTrack = null;
-        notifyListeners();
-      });
-      logger.d('Started playing track ${track}: ${duration}');
-    }
-    notifyListeners();
-  }
-
   Future<LoadTracksListResults> reloadTracks() async {
-    resetTracks(doNotify: false);
+    resetTracks(notify: false);
     return await loadNextTracks();
   }
 
@@ -184,7 +244,7 @@ class MyAppState extends ChangeNotifier {
         await Future.delayed(Duration(seconds: 2));
       }
       final offset = tracks.length;
-      logger.t('Starting loading tracks (offset: ${offset})');
+      // logger.t('Starting loading tracks (offset: ${offset})');
       final LoadTracksListResults results =
           await loadTracksList(offset: offset, limit: tracksLimit);
       tracks.addAll(results.results);

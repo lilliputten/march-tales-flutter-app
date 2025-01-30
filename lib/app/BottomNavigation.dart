@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/core/types/HomePageData.dart';
 
 class BottomNavigation extends StatelessWidget {
@@ -14,12 +15,14 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    // final colorScheme = theme.colorScheme;
+    final AppColors appColors = theme.extension<AppColors>()!;
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed, // Fixed
 
-      backgroundColor: Colors.black,
-      selectedItemColor: colorScheme.primary,
+      // backgroundColor: colorScheme.surface, // Colors.black,
+      selectedItemColor: appColors.brandColor, // colorScheme.primary,
       unselectedItemColor: Colors.grey,
 
       // showUnselectedLabels: true,
