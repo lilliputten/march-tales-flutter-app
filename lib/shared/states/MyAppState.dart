@@ -134,7 +134,6 @@ class MyAppState extends ChangeNotifier {
     logger.t(
         '_playerTimerTick: Tick: ${timer.tick} position=${position} duration=${duration}');
     if (position! >= duration!) {
-      debugger();
       _playerStop(notify: false);
     }
     notifyListeners();
