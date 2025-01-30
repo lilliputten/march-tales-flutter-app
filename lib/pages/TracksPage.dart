@@ -21,9 +21,6 @@ class TracksPage extends StatelessWidget {
     final tracksIsLoading = appState.tracksIsLoading;
     final tracks = appState.tracks;
 
-    // logger.t(
-    //     'TracksPage: tracksIsLoading=${tracksIsLoading} tracksHasBeenLoaded=${tracksHasBeenLoaded} tracksLoadError=${tracksLoadError} tracks=${tracks}');
-
     if (tracksLoadError != null) {
       // TODO: Show an error in case of the server inaccessibility?
       return Column(
@@ -63,7 +60,7 @@ class TracksPage extends StatelessWidget {
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                child: Text('No tracks loaded'.i18n),
+                child: Text('No tracks'.i18n),
               ),
             ),
           ),

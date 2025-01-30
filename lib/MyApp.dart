@@ -10,9 +10,9 @@ import 'core/server/ServerSession.dart';
 import 'core/helpers/YamlFormatter.dart';
 import 'shared/states/MyAppState.dart';
 
-import 'Init.dart';
-import 'AppWrapper.dart';
-import 'SplashScreen.dart';
+import 'package:march_tales_app/Init.dart';
+import 'package:march_tales_app/AppWrapper.dart';
+import 'package:march_tales_app/SplashScreen.dart';
 
 final formatter = YamlFormatter();
 final logger = Logger();

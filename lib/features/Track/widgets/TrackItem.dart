@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:i18n_extension/i18n_extension.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:march_tales_app/app/AppColors.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/shared/states/MyAppState.dart';
@@ -71,7 +72,7 @@ Widget trackDetailsInfo(BuildContext context, Track track) {
   final colorScheme = theme.colorScheme;
   final dimmedColor = colorScheme.primary.withValues(alpha: 0.5);
   final delimiterColor = colorScheme.onSurface.withValues(alpha: 0.2);
-  final style = theme.textTheme.bodySmall!.copyWith();
+  final style = theme.textTheme.bodySmall!;
   final items = [
     // Author
     Wrap(spacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
@@ -158,13 +159,18 @@ Widget trackDetailsInfo(BuildContext context, Track track) {
   );
 }
 
+Widget trackTitle(BuildContext context, Track track) {
+  final theme = Theme.of(context);
+  final style = theme.textTheme.bodyLarge!;
+  return Text(track.title, style: style);
+}
+
 Widget trackDetails(BuildContext context, Track track) {
-  final title = track.title;
   return Column(
-    spacing: 3,
+    spacing: 8,
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(title),
+      trackTitle(context, track),
       trackDetailsInfo(context, track),
     ],
   );
@@ -172,9 +178,11 @@ Widget trackDetails(BuildContext context, Track track) {
 
 Widget trackControl(BuildContext context, Track track) {
   final appState = context.watch<MyAppState>();
+  final theme = Theme.of(context);
+  // final colorScheme = Theme.of(context).colorScheme;
+  final AppColors appColors = theme.extension<AppColors>()!;
   final playingTrack = appState.playingTrack;
   final isPlaying = playingTrack != null && playingTrack.id == track.id;
-  final colorScheme = Theme.of(context).colorScheme;
   return IconButton(
     icon: Icon(
       isPlaying ? Icons.pause : Icons.play_arrow,
@@ -185,8 +193,8 @@ Widget trackControl(BuildContext context, Track track) {
       // minimumSize: Size.zero, // Set this
       // padding: EdgeInsets.zero, // and this
       shape: CircleBorder(),
-      backgroundColor: colorScheme.primary,
-      foregroundColor: colorScheme.onPrimary,
+      backgroundColor: appColors.brandColor, // colorScheme.primary,
+      foregroundColor: appColors.onBrandColor, // colorScheme.onPrimary,
     ),
     alignment: Alignment.center,
     padding: EdgeInsets.all(0.0),

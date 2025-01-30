@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'app/AppColors.dart';
-import 'core/config/AppConfig.dart';
-import 'core/helpers/YamlFormatter.dart';
-import 'shared/states/MyAppState.dart';
+import 'package:march_tales_app/app/AppColors.dart';
+import 'package:march_tales_app/core/config/AppConfig.dart';
+import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
+import 'package:march_tales_app/shared/states/MyAppState.dart';
 
-import 'sharedTranslationsData.i18n.dart';
+import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
 
 final formatter = YamlFormatter();
 final logger = Logger();

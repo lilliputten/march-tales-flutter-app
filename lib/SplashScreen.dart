@@ -42,10 +42,10 @@ class _SplashScreen extends State<SplashScreen> with TickerProviderStateMixin {
               height: size,
               width: size,
               child: CircularProgressIndicator(
-                  strokeWidth: strokeWidth,
-                  valueColor: animationController.drive(
-                      ColorTween(begin: Colors.blueAccent, end: Colors.red)),
-                  ),
+                strokeWidth: strokeWidth,
+                valueColor: animationController.drive(
+                    ColorTween(begin: Colors.blueAccent, end: Colors.red)),
+              ),
             ),
             SizedBox(height: 40),
             Text(

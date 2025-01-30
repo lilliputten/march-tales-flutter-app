@@ -41,8 +41,8 @@ flutter:
 
   assets:
     - assets/
-    - assets/images
-    # - assets/images/march-cat/march-cat-sq-48.jpg
+    # - assets/images
+    - assets/images/march-cat/march-cat-sq-48.jpg
+    - assets/project-info.json
     # - assets/fonts/ # TODO: Use lobser font for titles
-    # - assets/project-info.json
 

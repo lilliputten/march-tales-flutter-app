@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'package:march_tales_app/Init.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:provider/provider.dart';
@@ -58,7 +58,6 @@ class ThemeSelector extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final currentIsDarkTheme = appState.isDarkTheme;
     final items = getThemesList(currentIsDarkTheme);
-    // logger.d('ThemeSelector items: ${items} currentIsDarkTheme: ${currentIsDarkTheme}');
     return DropdownButtonFormField<String>(
       iconDisabledColor: Colors.white,
       decoration: InputDecoration(
@@ -75,7 +74,7 @@ class ThemeSelector extends StatelessWidget {
           appState.toggleDarkTheme(isDarkTheme);
         }
       },
-      // TODO; Make selected item distinctive using `selectedItemBuilder`
+      // TODO; Make selected item distinctive using `selectedItemBuilder`?
       items: items,
     );
   }
@@ -101,7 +100,6 @@ class LanguageSelector extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final currentLanguageCode = context.locale.languageCode;
     final items = getLanguagesList(currentLanguageCode);
-    // logger.d('LanguageSelector items: ${items} currentLanguageCode: ${currentLanguageCode}');
     return DropdownButtonFormField<String>(
       iconDisabledColor: Colors.white,
       decoration: InputDecoration(
@@ -121,7 +119,7 @@ class LanguageSelector extends StatelessWidget {
           context.locale = Locale(locale);
         }
       },
-      // TODO; Make selected item distinctive using `selectedItemBuilder`
+      // TODO; Make selected item distinctive using `selectedItemBuilder`?
       items: items,
     );
   }
@@ -132,19 +130,16 @@ class AppInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final style = theme.textTheme.bodySmall!;
-
-    final appVersion = Init.appVersion;
-    final appTimestamp = Init.appTimestamp;
-    final serverVersion = Init.serverVersion;
-    final serverTimestamp = Init.serverTimestamp;
-
-    final linkStyle = TextStyle(
+    final linkStyle = style.copyWith(
       decoration: TextDecoration.underline,
       color: Colors.blue,
       decorationColor: Colors.blue,
     );
 
-    logger.d('AppInfo appVersion: ${appVersion}');
+    final appVersion = Init.appVersion;
+    final appTimestamp = Init.appTimestamp;
+    final serverVersion = Init.serverVersion;
+    final serverTimestamp = Init.serverTimestamp;
 
     return Column(
       spacing: 10,

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:english_words/english_words.dart'; // DEBUG: To remove later
+import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
@@ -10,7 +11,7 @@ import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 
 import 'package:march_tales_app/features/Quote/helpers/fetchQuote.dart';
 import 'package:march_tales_app/features/Quote/types/Quote.dart';
-import 'package:march_tales_app/features/Track/loaders/loadTracksData.dart';
+import 'package:march_tales_app/features/Track/loaders/loadTracksList.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/supportedLocales.dart';
 
@@ -79,16 +80,22 @@ class MyAppState extends ChangeNotifier {
 
   String currentLocale = defaultLocale;
 
-  updateLocale(String value) {
+  updateLocale(String value) async {
     currentLocale = value;
     tracks = [];
     prefs?.setString('currentLocale', value);
-    notifyListeners();
     // Reset (& reload?) tracks, offset & filters
     if (tracksHasBeenLoaded) {
+      // NOTE: Not waiting for finish
       reloadTracks();
       // TODO: Update `playingTrack` if language has been changed
     }
+    if (playingTrack != null) {
+      playingTrack = await loadTrackDetails(id: playingTrack!.id);
+      logger.d('Updated loaded playing track: ${playingTrack}');
+      debugger();
+    }
+    notifyListeners();
   }
 
   /// Active player
@@ -129,12 +136,12 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<LoadTracksDataResults> reloadTracks() async {
+  Future<LoadTracksListResults> reloadTracks() async {
     resetTracks(doNotify: false);
     return await loadNextTracks();
   }
 
-  Future<LoadTracksDataResults> loadNextTracks() async {
+  Future<LoadTracksListResults> loadNextTracks() async {
     try {
       tracksIsLoading = true;
       notifyListeners();
@@ -144,8 +151,8 @@ class MyAppState extends ChangeNotifier {
       }
       final offset = tracks.length;
       logger.t('Starting loading tracks (offset: ${offset})');
-      final LoadTracksDataResults results =
-          await loadTracksData(offset: offset, limit: tracksLimit);
+      final LoadTracksListResults results =
+          await loadTracksList(offset: offset, limit: tracksLimit);
       tracks.addAll(results.results);
       availableTracksCount = results.count;
       logger.t(

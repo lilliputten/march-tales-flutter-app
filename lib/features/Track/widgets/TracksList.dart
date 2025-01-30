@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+// import 'package:march_tales_app/app/AppColors.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/features/Track/widgets/TrackItem.dart';
 import 'package:march_tales_app/shared/states/MyAppState.dart';
-import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
+// import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
+
+import 'TracksList.i18n.dart';
 
 final logger = Logger();
 
@@ -12,13 +15,14 @@ class MoreButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    // final AppColors appColors = theme.extension<AppColors>()!;
     final buttonColorTheme = theme.buttonTheme.colorScheme!;
     final appState = context.watch<MyAppState>();
     final tracksIsLoading = appState.tracksIsLoading;
     final isWaiting = tracksIsLoading;
-    final color = isWaiting
-        ? buttonColorTheme.primary.withValues(alpha: 0.5)
-        : buttonColorTheme.primary;
+    // final baseColor = appColors.brandColor;
+    final baseColor = buttonColorTheme.primary;
+    final color = isWaiting ? baseColor.withValues(alpha: 0.5) : baseColor;
     const double iconSize = 20;
     return Center(
       child: TextButton.icon(
@@ -36,7 +40,7 @@ class MoreButton extends StatelessWidget {
                 width: iconSize,
                 child: CircularProgressIndicator(color: color, strokeWidth: 2),
               )
-            : Icon(Icons.arrow_circle_down, size: iconSize),
+            : Icon(Icons.arrow_circle_down, size: iconSize, color: color),
         label: Text(isWaiting ? 'Loading...'.i18n : 'Load more...'.i18n),
       ),
     );

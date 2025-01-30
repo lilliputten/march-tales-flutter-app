@@ -4,7 +4,8 @@ extension Localization on String {
   static var _t = Translations.byLocale('en') +
       {
         'ru': {
-          'No tracks': 'Нет треков',
+          'Load more...': 'Загрузить ещё...',
+          'Loading...': 'Загрузка...',
         },
       };
 

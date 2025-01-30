@@ -12,23 +12,23 @@ import 'package:march_tales_app/features/Track/trackConstants.dart';
 final formatter = YamlFormatter();
 final logger = Logger();
 
-class LoadTracksDataResults {
+class LoadTracksListResults {
   final int count;
   final List<Track> results;
-  const LoadTracksDataResults({
+  const LoadTracksListResults({
     required this.count,
     required this.results,
   });
-  factory LoadTracksDataResults.fromJson(Map<String, dynamic> json) {
+  factory LoadTracksListResults.fromJson(Map<String, dynamic> json) {
     try {
-      return LoadTracksDataResults(
+      return LoadTracksListResults(
         count: json['count'] as int,
         results: List<dynamic>.from(json['results'])
             .map<Track>((data) => Track.fromJson(data))
             .toList(),
       );
     } catch (err, stacktrace) {
-      final String msg = 'Can not parse LoadTracksDataResults data: $err';
+      final String msg = 'Can not parse LoadTracksListResults data: $err';
       logger.e(msg, error: err, stackTrace: stacktrace);
       debugger();
       throw FormatException(msg);
@@ -36,7 +36,7 @@ class LoadTracksDataResults {
   }
 }
 
-Future<LoadTracksDataResults> loadTracksData({
+Future<LoadTracksListResults> loadTracksList({
   int offset = 0,
   int limit = defaultTracksDownloadLimit,
   // TODO: Add filter/sort parameters
@@ -54,7 +54,7 @@ Future<LoadTracksDataResults> loadTracksData({
     }
     final jsonData =
         await serverSession.get(uri.replace(queryParameters: params));
-    return LoadTracksDataResults.fromJson(jsonData);
+    return LoadTracksListResults.fromJson(jsonData);
   } catch (err, stacktrace) {
     final String msg = 'Error fetching tracks with an url $url: $err';
     logger.e(msg, error: err, stackTrace: stacktrace);
