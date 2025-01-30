@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:march_tales_app/app/AppColors.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/shared/states/MyAppState.dart';
@@ -21,15 +21,50 @@ class PlayerBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<MyAppState>();
+
+    final track = appState.playingTrack;
+
+    // No active track?
+    if (track == null) {
+      // Display nothing if no active track
+      return Container();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      child: Row(
+        spacing: 10,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TrackImageThumbnail(track: track, size: 50),
+          Expanded(
+            flex: 1,
+            child: TrackDetails(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TrackDetails extends StatelessWidget {
+  const TrackDetails({
+    super.key,
+    // required this.track,
+    // this.isActive = false,
+  });
+
+  // final Track track;
+  // final bool isActive;
+
+  @override
+  Widget build(BuildContext context) {
+    final appState = context.watch<MyAppState>();
+
     final theme = Theme.of(context);
-    final AppColors appColors = theme.extension<AppColors>()!;
-    final style = theme.textTheme.bodyMedium!;
     final colorScheme = theme.colorScheme;
-    // final bgColor = colorScheme.primary;
-    // final textColor = colorScheme.onPrimary;
-    final bgColor = colorScheme
-        .surface; // appColors.brandColor; // .withValues(alpha: 0.75);
-    final textColor = appColors.onBrandColor;
+    final textColor = colorScheme.onSurface;
+    final style = theme.textTheme.bodyMedium!;
 
     final track = appState.playingTrack;
 
@@ -42,25 +77,25 @@ class PlayerBox extends StatelessWidget {
     final isPaused = appState.isPaused;
     final activePosition = appState.activePosition;
 
-    String text = 'Current track: ${track.title}';
+    String text = track.title;
     if (isPlaying) {
       final state = isPaused ? 'paused' : 'playing';
       final positionString = getDurationString(activePosition);
       text += ' (${state} ${positionString})';
     }
 
-    return ColoredBox(
-      color: bgColor,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          child: Text(
-            text,
-            overflow: TextOverflow.ellipsis,
-            style: style.copyWith(color: textColor),
-          ),
+    return Column(
+      spacing: 8,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          text,
+          overflow: TextOverflow.ellipsis,
+          style: style.copyWith(color: textColor),
         ),
-      ),
+        // TrackTitle(track: track, textColor: textColor),
+        // TrackDetailsInfo(track: track, isActive: isActive, textColor: textColor),
+      ],
     );
   }
 }

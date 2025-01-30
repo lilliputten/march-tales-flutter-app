@@ -11,9 +11,11 @@ class TrackImageThumbnail extends StatelessWidget {
     required this.size,
     this.borderRadius = defaultSquareThumbnailImageBorderRadius,
   });
+
   final Track track;
   final double size;
   final double borderRadius;
+
   @override
   Widget build(BuildContext context) {
     final String file = track.preview_picture;
@@ -21,6 +23,7 @@ class TrackImageThumbnail extends StatelessWidget {
       return SizedBox(width: size, height: size);
     }
     final String url = '${AppConfig.TALES_SERVER_HOST}${file}';
-    return SquareThumbnailImage(url: url, size: size);
+    return SquareThumbnailImage(
+        url: url, size: size, borderRadius: borderRadius);
   }
 }
