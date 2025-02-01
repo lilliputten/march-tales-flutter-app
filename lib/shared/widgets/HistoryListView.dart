@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/shared/states/MyAppState.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 
 class HistoryListView extends StatefulWidget {
   const HistoryListView({super.key});
@@ -13,7 +13,7 @@ class HistoryListView extends StatefulWidget {
 }
 
 class _HistoryListViewState extends State<HistoryListView> {
-  /// Needed so that [MyAppState] can tell [AnimatedList] below to animate
+  /// Needed so that [AppState] can tell [AnimatedList] below to animate
   /// new items.
   final _key = GlobalKey();
 
@@ -29,7 +29,7 @@ class _HistoryListViewState extends State<HistoryListView> {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<MyAppState>();
+    final appState = context.watch<AppState>();
     var theme = Theme.of(context);
     var style = theme.textTheme.bodyMedium!;
     appState.historyListKey = _key;

@@ -4,11 +4,11 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppErrorScreen.dart';
-import 'package:march_tales_app/app/MyHomePage.dart';
+import 'package:march_tales_app/app/HomePage.dart';
 
 import 'core/server/ServerSession.dart';
 import 'core/helpers/YamlFormatter.dart';
-import 'shared/states/MyAppState.dart';
+import 'shared/states/AppState.dart';
 
 import 'package:march_tales_app/Init.dart';
 import 'package:march_tales_app/AppWrapper.dart';
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
 
     return ChangeNotifierProvider(
       create: (context) {
-        final appState = MyAppState();
+        final appState = AppState();
         // Initialize locale
         final locale = I18n.locale.languageCode;
         serverSession.updateLocale(locale);
@@ -34,16 +34,6 @@ class MyApp extends StatelessWidget {
         // Wait for the config & tick initialization and request for the first track record
         initFuture.then((initData) {
           appState.setPrefs(initData['prefs']);
-
-          // Get project info from init data and set to the context
-          final serverProjectInfo = initData['serverProjectInfo'];
-          // logger.d(
-          //     '[ChangeNotifierProvider:create:initFuture.then]: $serverProjectInfo, $initData');
-          appState.setServerProjectInfo(serverProjectInfo);
-          final appProjectInfo = initData['appProjectInfo'];
-          // logger.d(
-          //     '[ChangeNotifierProvider:create:initFuture.then]: $appProjectInfo, $initData');
-          appState.setAppProjectInfo(appProjectInfo);
           // Retrieve tracks
           appState.reloadTracks();
         }).catchError((err) {
@@ -62,7 +52,7 @@ class MyApp extends StatelessWidget {
             return AppErrorScreen(error: snapshot.error);
           }
           if (snapshot.connectionState == ConnectionState.done) {
-            return MyHomePage();
+            return HomePage();
           } else {
             return SplashScreen();
           }

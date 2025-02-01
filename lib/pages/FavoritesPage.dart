@@ -3,12 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/shared/states/MyAppState.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 
 class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
+    var appState = context.watch<AppState>();
     var theme = Theme.of(context);
     var style = theme.textTheme.bodyMedium!.copyWith(
         // color: theme.colorScheme.onPrimary,

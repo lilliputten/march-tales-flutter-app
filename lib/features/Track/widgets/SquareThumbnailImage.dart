@@ -19,7 +19,7 @@ class SquareThumbnailImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final appState = context.watch<MyAppState>();
+    // final appState = context.watch<AppState>();
     final theme = Theme.of(context);
 
     final previewHalfSize = size / 2;

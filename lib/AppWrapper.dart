@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
-import 'package:march_tales_app/shared/states/MyAppState.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 
 import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
 
@@ -27,7 +27,7 @@ class AppWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<MyAppState>();
+    final appState = context.watch<AppState>();
     return MaterialApp(
       restorationScopeId: 'app',
       // title: 'The March Cat Tales',

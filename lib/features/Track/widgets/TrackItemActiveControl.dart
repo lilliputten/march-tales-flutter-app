@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/shared/states/MyAppState.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItemDefaultControl.dart';
@@ -57,7 +57,7 @@ class _TrackItemActiveControlState extends State<TrackItemActiveControl>
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<MyAppState>();
+    final appState = context.watch<AppState>();
     final theme = Theme.of(context);
     // final colorScheme = Theme.of(context).colorScheme;
     final AppColors appColors = theme.extension<AppColors>()!;

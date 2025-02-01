@@ -3,7 +3,7 @@ import 'package:logger/logger.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/shared/states/MyAppState.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
@@ -20,7 +20,7 @@ String getDurationString(Duration? d) {
 class PlayerBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<MyAppState>();
+    final appState = context.watch<AppState>();
 
     final track = appState.playingTrack;
 
@@ -59,7 +59,7 @@ class TrackDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<MyAppState>();
+    final appState = context.watch<AppState>();
 
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;

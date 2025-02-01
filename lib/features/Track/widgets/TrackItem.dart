@@ -3,7 +3,7 @@ import 'package:logger/logger.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackDetailsInfo.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/shared/states/MyAppState.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItemDefaultControl.dart';
@@ -23,7 +23,7 @@ class TrackItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<MyAppState>();
+    final appState = context.watch<AppState>();
     // final theme = Theme.of(context);
     // final colorScheme = Theme.of(context).colorScheme;
     // final AppColors appColors = theme.extension<AppColors>()!;

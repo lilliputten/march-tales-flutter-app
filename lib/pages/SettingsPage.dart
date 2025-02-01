@@ -8,7 +8,7 @@ import 'package:logger/logger.dart';
 import 'package:i18n_extension/i18n_extension.dart';
 
 import 'package:march_tales_app/core/server/ServerSession.dart';
-import 'package:march_tales_app/shared/states/MyAppState.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/supportedLocales.dart';
 
 import 'SettingsPage.i18n.dart';
@@ -54,7 +54,7 @@ class ThemeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<MyAppState>();
+    final appState = context.watch<AppState>();
     final colorScheme = Theme.of(context).colorScheme;
     final currentIsDarkTheme = appState.isDarkTheme;
     final items = getThemesList(currentIsDarkTheme);
@@ -96,7 +96,7 @@ class LanguageSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<MyAppState>();
+    final appState = context.watch<AppState>();
     final colorScheme = Theme.of(context).colorScheme;
     final currentLanguageCode = context.locale.languageCode;
     final items = getLanguagesList(currentLanguageCode);

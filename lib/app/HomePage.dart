@@ -14,18 +14,17 @@ const defaultPageIndex = AppConfig.LOCAL ? 0 : 0;
 
 final logger = Logger();
 
-class MyHomePage extends StatefulWidget {
+class HomePage extends StatefulWidget {
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage>
-    with RestorationMixin<MyHomePage> {
+class _HomePageState extends State<HomePage> with RestorationMixin<HomePage> {
   // @see https://api.flutter.dev/flutter/widgets/RestorableInt-class.html
   final RestorableInt _selectedIndex = RestorableInt(defaultPageIndex);
 
   @override
-  String get restorationId => 'MyHomePage';
+  String get restorationId => 'HomePage';
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
@@ -61,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage>
     );
 
     return RestorationScope(
-      restorationId: 'MyHomePage_Widget',
+      restorationId: 'HomePage_Widget',
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: appColors.brandColor,

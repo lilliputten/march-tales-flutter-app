@@ -4,7 +4,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/features/Track/widgets/TrackItem.dart';
-import 'package:march_tales_app/shared/states/MyAppState.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 // import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
 
 import 'TracksList.i18n.dart';
@@ -17,7 +17,7 @@ class MoreButton extends StatelessWidget {
     final theme = Theme.of(context);
     // final AppColors appColors = theme.extension<AppColors>()!;
     final buttonColorTheme = theme.buttonTheme.colorScheme!;
-    final appState = context.watch<MyAppState>();
+    final appState = context.watch<AppState>();
     final tracksIsLoading = appState.tracksIsLoading;
     final isWaiting = tracksIsLoading;
     // final baseColor = appColors.brandColor;
@@ -41,7 +41,7 @@ class MoreButton extends StatelessWidget {
                 child: CircularProgressIndicator(color: color, strokeWidth: 2),
               )
             : Icon(Icons.arrow_circle_down, size: iconSize, color: color),
-        label: Text(isWaiting ? 'Loading...'.i18n : 'Load more...'.i18n),
+        label: Text(isWaiting ? 'Loading...'.i18n : 'Show more...'.i18n),
       ),
     );
   }
@@ -50,7 +50,7 @@ class MoreButton extends StatelessWidget {
 class TracksList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<MyAppState>();
+    final appState = context.watch<AppState>();
     final availableTracksCount = appState.availableTracksCount;
     final tracks = appState.tracks;
     final tracksCount = tracks.length;
