@@ -10,17 +10,25 @@ abstract class AppConfig {
       int.fromEnvironment('PRIMARY_COLOR', defaultValue: 0xffbb2266);
 
   // Public resources
-  static const String WEB_SITE_URL =
-      String.fromEnvironment('WEB_SITE_URL', defaultValue: 'tales.march.team');
+  static const String WEB_SITE_PROTOCOL =
+      String.fromEnvironment('WEB_SITE_PROTOCOL', defaultValue: 'http://');
+  static const String WEB_SITE_DOMAIN = String.fromEnvironment(
+      'WEB_SITE_DOMAIN',
+      defaultValue: 'tales.march.team');
+  static const String WEB_SITE_HOST = String.fromEnvironment('WEB_SITE_HOST',
+      defaultValue: WEB_SITE_PROTOCOL + WEB_SITE_DOMAIN);
   static const String CONTACT_EMAIL =
       String.fromEnvironment('CONTACT_EMAIL', defaultValue: 'tales@march.team');
   static const String DEVELOPER_URL =
       String.fromEnvironment('DEVELOPER_URL', defaultValue: 'lilliputten.com');
 
   // March Tales API
-  static const String TALES_SERVER_HOST = String.fromEnvironment(
-      'TALES_SERVER_HOST',
-      defaultValue: 'http://10.0.2.2:8000');
+  // static const String TALES_SERVER_PROTOCOL = String.fromEnvironment('TALES_SERVER_PROTOCOL', defaultValue: LOCAL ? 'http://' : 'https://');
+  static const String TALES_SERVER_HOST =
+      String.fromEnvironment('TALES_SERVER_HOST',
+          defaultValue: LOCAL
+              ? 'http://10.0.2.2:8000' // Flutter dev.mode VM internal address
+              : WEB_SITE_HOST);
   static const String TALES_API_PREFIX =
       String.fromEnvironment('TALES_API_PREFIX', defaultValue: '/api/v1');
   static const String TALES_AUTH_PREFIX = String.fromEnvironment(

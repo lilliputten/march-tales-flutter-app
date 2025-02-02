@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
+import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/supportedLocales.dart';
 
 final defaultHeaders = {
@@ -74,6 +75,9 @@ class _ServerSession {
         this.cookies['csrftoken']!.isNotEmpty) {
       headers['X-CSRFToken'] = this.cookies['csrftoken']!;
     }
+    if (!AppConfig.LOCAL) {
+      headers['referer'] = AppConfig.WEB_SITE_HOST;
+    }
     return headers;
   }
 
@@ -81,7 +85,9 @@ class _ServerSession {
     String cookie = '';
 
     for (var key in this.cookies.keys) {
-      if (cookie.isNotEmpty) cookie += ';';
+      if (cookie.isNotEmpty) {
+        cookie += ';';
+      }
       cookie += '$key=${cookies[key]!}';
     }
 
