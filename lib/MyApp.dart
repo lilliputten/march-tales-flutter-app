@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:i18n_extension/i18n_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:march_tales_app/features/Track/db/TrackInfo.dart';
+import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppErrorScreen.dart';
@@ -33,6 +37,30 @@ class MyApp extends StatelessWidget {
         appState.updateLocale(locale);
         // Wait for the config & tick initialization and request for the first track record
         initFuture.then((initData) {
+          final tracksInfoDb = Init.tracksInfoDb;
+          // getTrackInfoList().then((res) {
+          //   logger.t('getTrackInfoList: ${res}');
+          //   debugger();
+          // });
+          logger.t('[MyApp] Inited tracksInfoDb ${tracksInfoDb}');
+          final now = DateTime.now();
+          final TrackInfo trackInfo = TrackInfo(
+            id: 0, // track.id
+            position: Duration.zero, // position
+            duration: Duration(seconds: 10), // duration
+            playedCount: 3, // track.played_count (but only for current user!).
+            lastUpdated: now, // DateTime.now()
+            lastPlayed: now, // DateTime.now()
+          );
+          tracksInfoDb.insertTrackInfo(trackInfo).then((result) async {
+            final list = await tracksInfoDb.getTrackInfoList();
+            logger.t('insertTrackInfo: ${result} ${list}');
+            debugger();
+          }).catchError((err) {
+            logger.e('Error: ${err}');
+            // appState.setGlobalError(err);
+            debugger();
+          });
           appState.setPrefs(initData['prefs']);
           // // DEBUG:
           // incrementPlayedCount(id: 1);
@@ -41,7 +69,7 @@ class MyApp extends StatelessWidget {
         }).catchError((err) {
           logger.e('Error: ${err}');
           // appState.setGlobalError(err);
-          // debugger();
+          debugger();
         });
         // logger.d('[ChangeNotifierProvider:create]: $initFuture');
         return appState;

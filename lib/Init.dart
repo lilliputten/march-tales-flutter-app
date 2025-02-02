@@ -1,11 +1,18 @@
 import 'dart:developer';
 
+import 'dart:async';
+
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
 import 'dart:convert';
 // import 'package:flutter/services.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
+import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
+import 'package:march_tales_app/features/Track/db/TracksInfoDbStructure.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
@@ -33,12 +40,16 @@ class Init {
   static String? appId;
   static String? appTimestamp;
   static Map<String, dynamic>? authConfig;
+
+  static late TracksInfoDb tracksInfoDb;
+
   static Future initialize() async {
     List<Future> futures = [
       _initPrefs(),
       _loadLocalData(),
       _loadConfig(),
       _loadTick(),
+      _initTracksInfoDb(),
       // _registerServices(),
     ];
     final List<dynamic> waitResults = await Future.wait(futures);
@@ -55,6 +66,7 @@ class Init {
       'appId': appId,
       'appVersion': appVersion,
       'appTimestamp': appTimestamp,
+      'tracksInfoDb': tracksInfoDb,
     };
     // logger.d('results: ${formatter.format(results)}');
     return results;
@@ -155,6 +167,31 @@ class Init {
       logger.e('[Init:_loadTick] error ${msg}',
           error: err, stackTrace: stacktrace);
       // debugger();
+      showErrorToast(msg);
+      throw Exception(msg);
+    }
+  }
+
+  static _initTracksInfoDb() async {
+    try {
+      tracksInfoDb = TracksInfoDb();
+      await tracksInfoDb.initializeDB();
+      //
+      // final dbPath = await getDatabasesPath();
+      // final dbFile = join(dbPath, 'tracks-info.db');
+      // final createCommand = getTracksInfoDbCreateCommand();
+      // final db = await openDatabase(
+      //   version: tracksInfoDbVersion,
+      //   dbFile,
+      //   onCreate: (db, version) => db.execute(createCommand),
+      // );
+      // Init.tracksInfoDb = db;
+      return '_initTracksInfoDb: ok';
+    } catch (err, stacktrace) {
+      final String msg = 'Can not initialize persistent instance: ${err}';
+      logger.e('[Init:_loadTick] error ${msg}',
+          error: err, stackTrace: stacktrace);
+      debugger();
       showErrorToast(msg);
       throw Exception(msg);
     }
