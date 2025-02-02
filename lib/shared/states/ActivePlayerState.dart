@@ -63,17 +63,15 @@ mixin ActivePlayerState {
       // this.setPlayingPosition(null, notify: false);
       this.getPrefs()?.setInt('playingTrackId', track?.id ?? 0);
       if (track != null) {
+        // Preliminary set duration from the track data (later will be updated with milliseconds from the player stats)
+        this.playingDuration = Duration(seconds: track.audio_duration);
         final player = this.getPlayer();
         debugger;
         final String url = '${AppConfig.TALES_SERVER_HOST}${track.audio_file}';
         // @see https://github.com/ryanheise/just_audio/tree/minor/just_audio
         logger.t('setPlayingTrack: Start playing track ${track}: ${url}');
         final duration = await player.setUrl(url);
-        // TODO: Process audio url loading errors
-        this
-            .getPrefs()
-            ?.setInt('playingDurationMs', duration?.inMilliseconds ?? 0);
-        player.setVolume(1); // ???
+        this.setPlayingDuration(duration);
       }
       if (notify) {
         this.notifyListeners();
@@ -155,7 +153,7 @@ mixin ActivePlayerState {
       final updatedTrack = await incrementPlayedCount(id: id);
       this.hasIncremented = true;
       this.updateSingleTrack(updatedTrack, notify: true);
-    } catch(err) {
+    } catch (err) {
       logger.e('[incrementCurrentTrackPlayedCount] ${err}');
       debugger();
     } finally {
@@ -170,14 +168,14 @@ mixin ActivePlayerState {
     final ProcessingState processingState = playerState.processingState;
     final position = player.position;
     final duration = player.duration;
-    // logger.t('_updatePlayerStatus: ${position}/${duration}');
+    logger.t('_updatePlayerStatus: ${position}/${duration}');
     this.setPlayingPosition(position, notify: false);
     if (processingState == ProcessingState.completed) {
       this.incrementCurrentTrackPlayedCount();
       this._playerStop(notify: false);
-      // // Set position to the full dration value: as sign of the finished playback
+      // Set position to the full dration value: as sign of the finished playback
       this.setPlayingPosition(duration, notify: false);
-      // logger.t('_updatePlayerStatus: Finished! ${position}/${duration}');
+      logger.t('_updatePlayerStatus: Finished! ${position}/${duration}');
     }
     this.notifyListeners();
   }
@@ -231,12 +229,12 @@ mixin ActivePlayerState {
 
   /// Track's play button handler
   void playTrack(Track track) async {
-    logger.t('playTrack ${track}');
+    // logger.t('playTrack ${track}');
     if (this.playingTrack != null) {
       if (this.isPlaying && this.playingTrack!.id == track.id) {
         // Just pause/resume and exit if it was actively playing current track
-        logger.t(
-            'playTrack: Pausing/resuming active track: ${this.playingTrack} isPaused: ${this.isPaused}');
+        // logger.t(
+        //     'playTrack: Pausing/resuming active track: ${this.playingTrack} isPaused: ${this.isPaused}');
         if (!this.isPaused) {
           this.activePlayer.pause();
           this.isPaused = true;
@@ -257,7 +255,6 @@ mixin ActivePlayerState {
       // TODO: Get position for the new track from a local db
       this.activePlayer.seek(Duration.zero);
       this.setPlayingPosition(null, notify: false);
-      this.setPlayingDuration(null, notify: false);
       // Set new track
       await this.setPlayingTrack(track, notify: false);
     } else if (this.isTrackPlayedCompletely()) {

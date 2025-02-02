@@ -125,7 +125,8 @@ class _ServerSession {
           reason = data['detail'].toString();
         }
         final message = 'GET error ${statusCode}: ${reason}';
-        logger.e('[ServerSession:get] ${message}, url: ${uri} requestHeaders: ${requestHeaders}');
+        logger.e(
+            '[ServerSession:get] ${message}, url: ${uri} requestHeaders: ${requestHeaders}');
         debugger();
         throw Exception(message);
       }
@@ -161,7 +162,8 @@ class _ServerSession {
           reason = data['detail'].toString();
         }
         final message = 'POST error ${statusCode}: ${reason}';
-        logger.e('[ServerSession] ${message}, url: ${uri} body: ${body} requestHeaders: ${requestHeaders}');
+        logger.e(
+            '[ServerSession] ${message}, url: ${uri} body: ${body} requestHeaders: ${requestHeaders}');
         debugger();
         throw Exception(message);
       }
@@ -197,13 +199,13 @@ class _ServerSession {
           reason = data['detail'].toString();
         }
         final message = 'PUT error ${statusCode}: ${reason}';
-        logger.e('[ServerSession] ${message}, url: ${uri} body: ${body} requestHeaders: ${requestHeaders}');
+        logger.e(
+            '[ServerSession] ${message}, url: ${uri} body: ${body} requestHeaders: ${requestHeaders}');
         debugger();
         throw Exception(message);
       }
 
       return data;
-
     });
   }
 }

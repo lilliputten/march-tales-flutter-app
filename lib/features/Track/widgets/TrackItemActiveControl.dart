@@ -25,34 +25,35 @@ class TrackItemActiveControl extends StatefulWidget {
 class _TrackItemActiveControlState extends State<TrackItemActiveControl>
     with TickerProviderStateMixin {
   late double _lastProgress;
-  late Animation<double> _animation;
-  late Tween<double> _tween;
-  late AnimationController _animationController;
+  // NOTE: Temporarily removed animation as buggy.
+  // late Animation<double> _animation;
+  // late Tween<double> _tween;
+  // late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
     this._lastProgress = 0; // this._getCurrentProgress();
-    this._animationController = AnimationController(
-        duration: Duration(milliseconds: playerTickDelayMs), vsync: this);
-    this._tween = Tween(begin: this._lastProgress, end: this._lastProgress);
-    this._animation = this._tween.animate(this._animationController)
-      ..addListener(() {
-        setState(() {});
-      });
+    // this._animationController = AnimationController(
+    //     duration: Duration(milliseconds: playerTickDelayMs), vsync: this);
+    // this._tween = Tween(begin: this._lastProgress, end: this._lastProgress);
+    // this._animation = this._tween.animate(this._animationController)
+    //   ..addListener(() {
+    //     setState(() {});
+    //   });
   }
 
   @override
   void dispose() {
-    this._animationController.dispose();
+    // this._animationController.dispose();
     super.dispose();
   }
 
   void _updateProgress(double progress) {
-    this._tween = Tween(begin: this._lastProgress, end: progress);
-    this._animationController.reset();
-    this._animation = this._tween.animate(this._animationController);
-    this._animationController.forward();
+    // this._tween = Tween(begin: this._lastProgress, end: progress);
+    // this._animationController.reset();
+    // this._animation = this._tween.animate(this._animationController);
+    // this._animationController.forward();
     this._lastProgress = progress;
   }
 
@@ -72,6 +73,8 @@ class _TrackItemActiveControlState extends State<TrackItemActiveControl>
       if (duration != null && duration != 0 && position != null) {
         progress = position / duration;
       }
+      // logger.t(
+      //     'TrackItemActiveControl:_getCurrentProgress: position=${position} duration=${duration}');
     }
     return progress;
   }
@@ -91,7 +94,7 @@ class _TrackItemActiveControlState extends State<TrackItemActiveControl>
     double progress = this._getCurrentProgress(context);
 
     // logger.t(
-    //     'TrackItemActiveControl: tprogress: ${progress} animated: ${this._animation.value}');
+    //     'TrackItemActiveControl:build: progress=${progress} animated=${this._animation.value}');
 
     if (progress != this._lastProgress) {
       this._updateProgress(progress);
@@ -107,10 +110,10 @@ class _TrackItemActiveControlState extends State<TrackItemActiveControl>
               ? CircularProgressIndicator(
                   color: appColors.brandColor,
                   strokeWidth: 3,
-                  // value: progress,
-                  value: this
-                      ._animation
-                      .value, // > _lastProgress ? this._animation.value : progress,
+                  value: progress,
+                  // value: this
+                  //     ._animation
+                  //     .value, // > _lastProgress ? this._animation.value : progress,
                 )
               : SizedBox(),
         ),

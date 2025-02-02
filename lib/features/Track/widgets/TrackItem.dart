@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackDetailsInfo.dart';
 import 'package:provider/provider.dart';
 
+import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItemDefaultControl.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItemActiveControl.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackDetailsInfo.dart';
 
 final logger = Logger();
 
@@ -78,8 +79,9 @@ class TrackDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final AppColors appColors = theme.extension<AppColors>()!;
     final colorScheme = theme.colorScheme;
-    final textColor = isActive ? colorScheme.primary : colorScheme.onSurface;
+    final textColor = isActive ? appColors.brandColor : colorScheme.onSurface;
     return Column(
       spacing: 8,
       crossAxisAlignment: CrossAxisAlignment.start,
