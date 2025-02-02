@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
@@ -27,12 +28,16 @@ class _ServerSession {
   updateLocale(String locale) {
     // Store language
     this.currentLocale = locale;
-    // Update `django_language` cookie?
+    // Update `django_language` cookie
     this.cookies['django_language'] = locale;
     // Update header values
     this.headers['accept-language'] = locale;
     this.headers['content-language'] = locale;
     // this.headers['cookie'] = _generateCookieHeader();
+  }
+
+  updateCSRFToken(String token) {
+    this.cookies['csrftoken'] = token;
   }
 
   void _updateCookie(http.Response response) {
@@ -95,63 +100,110 @@ class _ServerSession {
   }
 
   Future<dynamic> get(Uri uri) {
+    final requestHeaders = this._getHeaders();
+    // logger.t('[ServerSession] GET starting uri=${uri} headers=${requestHeaders}');
     return http
         .get(
       uri,
-      headers: this._getHeaders(),
+      headers: requestHeaders,
     )
         .then((http.Response response) {
       final String res = response.body;
       final int statusCode = response.statusCode;
 
+      // logger.t('[ServerSession:get] response uri=${uri} cookie=${response.headers["set-cookie"]} headers=${response.headers} requestHeaders=${requestHeaders}');
+      dynamic data = {};
+      try {
+        data = _decoder.convert(res);
+      } catch (_) {}
+
       this._updateCookie(response);
 
       if (statusCode < 200 || statusCode > 400) {
-        throw Exception('Error fetching data (get)');
+        String reason = response.reasonPhrase ?? 'Unknown error';
+        if (data != null && data['detail'] != null) {
+          reason = data['detail'].toString();
+        }
+        final message = 'GET error ${statusCode}: ${reason}';
+        logger.e('[ServerSession:get] ${message}, url: ${uri} requestHeaders: ${requestHeaders}');
+        debugger();
+        throw Exception(message);
       }
-      return _decoder.convert(res);
+
+      return data;
     });
   }
 
   Future<dynamic> post(Uri uri, {dynamic body, Encoding? encoding}) {
+    final requestHeaders = this._getHeaders();
+    // logger.t('[ServerSession] POST starting uri=${uri} headers=${requestHeaders}');
     return http
         .post(
       uri,
       body: _encoder.convert(body),
-      headers: this._getHeaders(),
+      headers: requestHeaders,
       encoding: encoding,
     )
         .then((http.Response response) {
       final String res = response.body;
       final int statusCode = response.statusCode;
 
+      dynamic data = {};
+      try {
+        data = _decoder.convert(res);
+      } catch (_) {}
+
       this._updateCookie(response);
 
       if (statusCode < 200 || statusCode > 400) {
-        throw Exception('Error fetching data (post)');
+        String reason = response.reasonPhrase ?? 'Unknown error';
+        if (data != null && data['detail'] != null) {
+          reason = data['detail'].toString();
+        }
+        final message = 'POST error ${statusCode}: ${reason}';
+        logger.e('[ServerSession] ${message}, url: ${uri} body: ${body} requestHeaders: ${requestHeaders}');
+        debugger();
+        throw Exception(message);
       }
-      return _decoder.convert(res);
+
+      return data;
     });
   }
 
   Future<dynamic> put(Uri uri, {dynamic body, Encoding? encoding}) {
+    final requestHeaders = this._getHeaders();
+    // logger.t('[ServerSession] PUT starting uri=${uri} headers=${requestHeaders}');
     return http
         .put(
       uri,
       body: _encoder.convert(body),
-      headers: this._getHeaders(),
+      headers: requestHeaders,
       encoding: encoding,
     )
         .then((http.Response response) {
       final String res = response.body;
       final int statusCode = response.statusCode;
 
+      dynamic data = {};
+      try {
+        data = _decoder.convert(res);
+      } catch (_) {}
+
       this._updateCookie(response);
 
       if (statusCode < 200 || statusCode > 400) {
-        throw Exception('Error fetching data (put)');
+        String reason = response.reasonPhrase ?? 'Unknown error';
+        if (data != null && data['detail'] != null) {
+          reason = data['detail'].toString();
+        }
+        final message = 'PUT error ${statusCode}: ${reason}';
+        logger.e('[ServerSession] ${message}, url: ${uri} body: ${body} requestHeaders: ${requestHeaders}');
+        debugger();
+        throw Exception(message);
       }
-      return _decoder.convert(res);
+
+      return data;
+
     });
   }
 }

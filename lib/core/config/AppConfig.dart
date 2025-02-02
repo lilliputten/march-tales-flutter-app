@@ -11,7 +11,7 @@ abstract class AppConfig {
 
   // Public resources
   static const String WEB_SITE_PROTOCOL =
-      String.fromEnvironment('WEB_SITE_PROTOCOL', defaultValue: 'http://');
+      String.fromEnvironment('WEB_SITE_PROTOCOL', defaultValue: 'https://');
   static const String WEB_SITE_DOMAIN = String.fromEnvironment(
       'WEB_SITE_DOMAIN',
       defaultValue: 'tales.march.team');
@@ -23,7 +23,6 @@ abstract class AppConfig {
       String.fromEnvironment('DEVELOPER_URL', defaultValue: 'lilliputten.com');
 
   // March Tales API
-  // static const String TALES_SERVER_PROTOCOL = String.fromEnvironment('TALES_SERVER_PROTOCOL', defaultValue: LOCAL ? 'http://' : 'https://');
   static const String TALES_SERVER_HOST =
       String.fromEnvironment('TALES_SERVER_HOST',
           defaultValue: LOCAL

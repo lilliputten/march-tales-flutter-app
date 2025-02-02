@@ -144,15 +144,23 @@ mixin ActivePlayerState {
   }
 
   void incrementCurrentTrackPlayedCount() async {
-    if (this.playingTrack == null || this.hasIncremented || this.isIncrementingNow) {
+    if (this.playingTrack == null ||
+        this.hasIncremented ||
+        this.isIncrementingNow) {
       return;
     }
     this.isIncrementingNow = true;
     final id = this.playingTrack!.id;
-    final updatedTrack = await incrementPlayedCount(id: id);
-    this.hasIncremented = true;
-    this.updateSingleTrack(updatedTrack, notify: true);
-    this.isIncrementingNow = false;
+    try {
+      final updatedTrack = await incrementPlayedCount(id: id);
+      this.hasIncremented = true;
+      this.updateSingleTrack(updatedTrack, notify: true);
+    } catch(err) {
+      logger.e('[incrementCurrentTrackPlayedCount] ${err}');
+      debugger();
+    } finally {
+      this.isIncrementingNow = false;
+    }
   }
 
   void _updatePlayerStatus([PlayerState? _]) {

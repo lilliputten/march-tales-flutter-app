@@ -191,7 +191,7 @@ class AppInfo extends StatelessWidget {
             ),
             InkWell(
               onTap: () => launchUrl(Uri.parse(
-                  '${AppConfig.WEB_SITE_PROTOCOL}${AppConfig.WEB_SITE_HOST}')),
+                  '${AppConfig.WEB_SITE_PROTOCOL}${AppConfig.WEB_SITE_DOMAIN}')),
               child: Text(
                 AppConfig.WEB_SITE_DOMAIN,
                 style: linkStyle,
