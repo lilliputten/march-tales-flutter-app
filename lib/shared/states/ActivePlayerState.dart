@@ -23,6 +23,7 @@ mixin ActivePlayerState {
   Duration? playingPosition;
   Duration? playingDuration;
   bool hasIncremented = false;
+  bool isIncrementingNow = false;
   bool isPlaying = false;
   bool isPaused = false;
   AudioPlayer activePlayer = AudioPlayer();
@@ -143,13 +144,15 @@ mixin ActivePlayerState {
   }
 
   void incrementCurrentTrackPlayedCount() async {
-    if (this.playingTrack == null || this.hasIncremented) {
+    if (this.playingTrack == null || this.hasIncremented || this.isIncrementingNow) {
       return;
     }
+    this.isIncrementingNow = true;
     final id = this.playingTrack!.id;
     final updatedTrack = await incrementPlayedCount(id: id);
     this.hasIncremented = true;
     this.updateSingleTrack(updatedTrack, notify: true);
+    this.isIncrementingNow = false;
   }
 
   void _updatePlayerStatus([PlayerState? _]) {
@@ -191,6 +194,7 @@ mixin ActivePlayerState {
     this.isPlaying = true;
     this.isPaused = false;
     this.hasIncremented = false;
+    this.isIncrementingNow = false;
     // Finished hadler
     playing.whenComplete(() {
       if (this.playingTrack?.id == track.id && this.isPlaying) {
