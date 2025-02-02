@@ -73,6 +73,16 @@ mixin TrackState {
     return await loadNextTracks();
   }
 
+  updateSingleTrack(Track track, {bool notify = true}) {
+    final idx = this.tracks.indexWhere((it) => it.id == track.id);
+    if (idx != -1) {
+      tracks[idx] = track;
+      if (notify) {
+        this.notifyListeners();
+      }
+    }
+  }
+
   Future<LoadTracksListResults> loadNextTracks() async {
     try {
       tracksIsLoading = true;

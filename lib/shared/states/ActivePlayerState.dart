@@ -8,18 +8,21 @@ import 'package:march_tales_app/core/constants/player.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'package:march_tales_app/features/Track/api-methods/incrementPlayedCount.dart';
 
 final logger = Logger();
 
 mixin ActivePlayerState {
   void notifyListeners();
   SharedPreferences? getPrefs();
+  void updateSingleTrack(Track track, {bool notify = true});
 
   /// Player & active track
 
   Track? playingTrack;
   Duration? playingPosition;
   Duration? playingDuration;
+  bool hasIncremented = false;
   bool isPlaying = false;
   bool isPaused = false;
   AudioPlayer activePlayer = AudioPlayer();
@@ -138,22 +141,32 @@ mixin ActivePlayerState {
       _listenerInstalled = true;
     }
   }
+
+  void incrementCurrentTrackPlayedCount() async {
+    if (this.playingTrack == null || this.hasIncremented) {
+      return;
+    }
+    final id = this.playingTrack!.id;
+    final updatedTrack = await incrementPlayedCount(id: id);
+    this.hasIncremented = true;
+    this.updateSingleTrack(updatedTrack, notify: true);
+  }
+
   void _updatePlayerStatus([PlayerState? _]) {
     final player = this.activePlayer;
     final PlayerState playerState = player.playerState;
-    // final bool playing = playerState.playing;
+    // final bool playing = playerState.playing; // XXX: To use?
     final ProcessingState processingState = playerState.processingState;
     final position = player.position;
     final duration = player.duration;
-    // logger.t(
-    //     '_updatePlayerStatus: playing: position=${position} duration=${duration} ${playerState}');
-    logger.t('_updatePlayerStatus: ${position}/${duration}');
+    // logger.t('_updatePlayerStatus: ${position}/${duration}');
     this.setPlayingPosition(position, notify: false);
     if (processingState == ProcessingState.completed) {
+      this.incrementCurrentTrackPlayedCount();
       this._playerStop(notify: false);
       // // Set position to the full dration value: as sign of the finished playback
       this.setPlayingPosition(duration, notify: false);
-      logger.t('_updatePlayerStatus: Finish! ${position}/${duration}');
+      // logger.t('_updatePlayerStatus: Finished! ${position}/${duration}');
     }
     this.notifyListeners();
   }
@@ -166,18 +179,18 @@ mixin ActivePlayerState {
   }
 
   void _playerTimerStart() {
-    // TODO: Use player updater callback?
+    // XXX: To use player updater callback?
     this.activeTimer = Timer.periodic(Duration(milliseconds: playerTickDelayMs),
         (_) => this._updatePlayerStatus());
   }
 
   void _playerStart(Track track) async {
-    // TODO: If player has loaded data
+    // XXX: To check if player has loaded data
     this._setPlayerListener();
     final playing = this.activePlayer.play(); // Returns the Future
-    // TODO: Increment played count (via API)
     this.isPlaying = true;
     this.isPaused = false;
+    this.hasIncremented = false;
     // Finished hadler
     playing.whenComplete(() {
       if (this.playingTrack?.id == track.id && this.isPlaying) {

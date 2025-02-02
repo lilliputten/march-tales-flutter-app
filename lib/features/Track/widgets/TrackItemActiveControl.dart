@@ -85,15 +85,13 @@ class _TrackItemActiveControlState extends State<TrackItemActiveControl>
 
     final track = appState.playingTrack;
 
-    final playing = track != null && track.id == this.widget.track.id
-        // && appState.isPlaying
-        ;
+    final playing = track != null && track.id == this.widget.track.id;
     final iconPlaying = playing && appState.isPlaying && !appState.isPaused;
 
     double progress = this._getCurrentProgress(context);
 
-    logger.t(
-        'TrackItemActiveControl: tprogress: ${progress} animated: ${this._animation.value}');
+    // logger.t(
+    //     'TrackItemActiveControl: tprogress: ${progress} animated: ${this._animation.value}');
 
     if (progress != this._lastProgress) {
       this._updateProgress(progress);

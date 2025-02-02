@@ -34,6 +34,8 @@ class MyApp extends StatelessWidget {
         // Wait for the config & tick initialization and request for the first track record
         initFuture.then((initData) {
           appState.setPrefs(initData['prefs']);
+          // // DEBUG:
+          // incrementPlayedCount(id: 1);
           // Retrieve tracks
           appState.reloadTracks();
         }).catchError((err) {
