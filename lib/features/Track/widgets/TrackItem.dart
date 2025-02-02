@@ -44,7 +44,7 @@ class TrackItem extends StatelessWidget {
           ),
           isActive
               ? TrackItemActiveControl(track: track)
-              : TrackItemDefaultControl(track: track, isActive: isActive),
+              : TrackItemDefaultControl(track: track, isPlaying: false),
         ],
       ),
     );

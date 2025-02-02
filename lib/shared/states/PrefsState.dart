@@ -6,8 +6,9 @@ final logger = Logger();
 
 mixin PrefsState {
   void notifyListeners();
-  void loadThemeStateSavedPrefs();
-  void loadLocaleStateSavedPrefs();
+  bool loadThemeStateSavedPrefs({bool notify = true});
+  bool loadLocaleStateSavedPrefs({bool notify = true});
+  bool loadActivePlayerStateSavedPrefs({bool notify = true});
 
   /// Persistent storage
   SharedPreferences? prefs;
@@ -24,7 +25,8 @@ mixin PrefsState {
   }
 
   loadSavedPrefs() {
-    loadThemeStateSavedPrefs();
-    loadLocaleStateSavedPrefs();
+    loadThemeStateSavedPrefs(notify: true);
+    loadLocaleStateSavedPrefs(notify: true);
+    loadActivePlayerStateSavedPrefs(notify: true);
   }
 }

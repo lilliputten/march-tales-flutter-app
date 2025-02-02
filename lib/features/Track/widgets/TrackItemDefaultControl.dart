@@ -15,11 +15,11 @@ class TrackItemDefaultControl extends StatelessWidget {
   const TrackItemDefaultControl({
     super.key,
     required this.track,
-    this.isActive = false,
+    this.isPlaying = false,
   });
 
   final Track track;
-  final bool isActive;
+  final bool isPlaying;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class TrackItemDefaultControl extends StatelessWidget {
         ),
         IconButton(
           icon: Icon(
-            isActive ? Icons.pause : Icons.play_arrow,
+            isPlaying ? Icons.pause : Icons.play_arrow,
             size: trackItemControlIconSize,
             color: appColors.brandColor,
           ),

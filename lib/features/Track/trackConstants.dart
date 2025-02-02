@@ -1,1 +1,1 @@
-const int defaultTracksDownloadLimit = 5;
+const int defaultTracksDownloadLimit = 10;

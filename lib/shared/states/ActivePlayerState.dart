@@ -1,144 +1,245 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:logger/logger.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:just_audio/just_audio.dart';
 
+import 'package:march_tales_app/core/constants/player.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-
-const int defaultTracksDownloadLimit = 2;
 
 final logger = Logger();
 
 mixin ActivePlayerState {
   void notifyListeners();
+  SharedPreferences? getPrefs();
 
   /// Player & active track
 
   Track? playingTrack;
+  Duration? playingPosition;
+  Duration? playingDuration;
   bool isPlaying = false;
   bool isPaused = false;
-  AudioPlayer? activePlayer = AudioPlayer();
+  AudioPlayer activePlayer = AudioPlayer();
   Timer? activeTimer;
-  Duration? activePosition;
+
+  bool loadActivePlayerStateSavedPrefs({bool notify = true}) {
+    final trackId = this.getPrefs()?.getInt('playingTrackId');
+    bool hasChanges = false;
+    if (trackId != null && trackId != 0) {
+      loadPlayingTrackDetails(id: trackId, notify: notify);
+      hasChanges = true;
+    }
+    final positionMs = this.getPrefs()?.getInt('playingPositionMs');
+    if (positionMs != null && positionMs != 0) {
+      this.playingPosition = Duration(milliseconds: positionMs);
+      hasChanges = true;
+    }
+    final durationMs = this.getPrefs()?.getInt('playingDurationMs');
+    if (durationMs != null && durationMs != 0) {
+      this.playingDuration = Duration(milliseconds: durationMs);
+      hasChanges = true;
+    }
+    if (hasChanges && notify) {
+      // TODO: Avoid duplicated notifications here and in async `loadPlayingTrackDetails`
+      this.notifyListeners();
+    }
+    return hasChanges;
+  }
 
   Track? getPlayingTrack() {
-    return playingTrack;
+    return this.playingTrack;
+  }
+
+  Future setPlayingTrack(Track? track, {bool notify = true}) async {
+    if (this.playingTrack != track) {
+      this.playingTrack = track;
+      // this.setPlayingPosition(null, notify: false);
+      this.getPrefs()?.setInt('playingTrackId', track?.id ?? 0);
+      if (track != null) {
+        final player = this.getPlayer();
+        debugger;
+        final String url = '${AppConfig.TALES_SERVER_HOST}${track.audio_file}';
+        // @see https://github.com/ryanheise/just_audio/tree/minor/just_audio
+        logger.t('setPlayingTrack: Start playing track ${track}: ${url}');
+        final duration = await player.setUrl(url);
+        // TODO: Process audio url loading errors
+        this
+            .getPrefs()
+            ?.setInt('playingDurationMs', duration?.inMilliseconds ?? 0);
+        player.setVolume(1); // ???
+      }
+      if (notify) {
+        this.notifyListeners();
+      }
+    }
+  }
+
+  void setPlayingPosition(Duration? position, {bool notify = true}) {
+    this.playingPosition = position;
+    final positionMs = position?.inMilliseconds ?? 0;
+    this.getPrefs()?.setInt('playingPositionMs', positionMs);
+    if (notify) {
+      this.notifyListeners();
+    }
+  }
+
+  void setPlayingDuration(Duration? duration, {bool notify = true}) {
+    this.playingDuration = duration;
+    final durationMs = duration?.inMilliseconds ?? 0;
+    this.getPrefs()?.setInt('playingDurationMs', durationMs);
+    if (notify) {
+      this.notifyListeners();
+    }
+  }
+
+  Future<Track?> loadPlayingTrackDetails(
+      {required int id, bool notify = true}) async {
+    if (id != 0) {
+      // Update `playingTrack` if language has been changed
+      final track = await loadTrackDetails(id: id);
+      this.setPlayingTrack(track, notify: notify);
+    }
+    return this.playingTrack;
   }
 
   Future<Track?> ensureLoadedPlayingTrackDetails({bool notify = true}) async {
-    if (playingTrack != null) {
+    if (this.playingTrack != null) {
       // Update `playingTrack` if language has been changed
-      playingTrack = await loadTrackDetails(id: playingTrack!.id);
+      loadPlayingTrackDetails(id: this.playingTrack!.id, notify: notify);
     }
-    notifyListeners();
-    return playingTrack;
-  }
-
-  void setPlayingTrack(Track? value, {bool notify = true}) {
-    playingTrack = value;
-    if (notify) {
-      notifyListeners();
-    }
+    return this.playingTrack;
   }
 
   AudioPlayer getPlayer() {
-    activePlayer ??= AudioPlayer();
-    return activePlayer!;
+    return this.activePlayer;
   }
 
   void _playerStop({bool notify = true}) {
-    activePosition = null;
-    _playerTimerStop();
-    if (activePlayer != null) {
-      activePlayer!.stop();
-      activePlayer = null;
+    this._playerTimerStop();
+    if (this.activePlayer.playing) {
+      this.activePlayer.stop();
     }
-    isPlaying = false;
-    isPaused = false;
+    this.isPlaying = false;
+    this.isPaused = false;
     if (notify) {
-      notifyListeners();
+      this.notifyListeners();
     }
   }
 
-  void _playerTimerTick(Timer timer) {
-    activePosition = activePlayer?.position;
-    final position = activePosition?.inMilliseconds;
-    final duration = activePlayer?.duration?.inMilliseconds;
-    logger.t(
-        '_playerTimerTick: Tick: ${timer.tick} position=${position} duration=${duration}');
-    if (position! >= duration!) {
-      _playerStop(notify: false);
+  bool _listenerInstalled = false;
+
+  void _setPlayerListener() {
+    final player = this.activePlayer;
+    if (!_listenerInstalled) {
+      player.playerStateStream.listen(this._updatePlayerStatus);
+      _listenerInstalled = true;
     }
-    notifyListeners();
+  }
+  void _updatePlayerStatus([PlayerState? _]) {
+    final player = this.activePlayer;
+    final PlayerState playerState = player.playerState;
+    // final bool playing = playerState.playing;
+    final ProcessingState processingState = playerState.processingState;
+    final position = player.position;
+    final duration = player.duration;
+    // logger.t(
+    //     '_updatePlayerStatus: playing: position=${position} duration=${duration} ${playerState}');
+    logger.t('_updatePlayerStatus: ${position}/${duration}');
+    this.setPlayingPosition(position, notify: false);
+    if (processingState == ProcessingState.completed) {
+      this._playerStop(notify: false);
+      // // Set position to the full dration value: as sign of the finished playback
+      this.setPlayingPosition(duration, notify: false);
+      logger.t('_updatePlayerStatus: Finish! ${position}/${duration}');
+    }
+    this.notifyListeners();
   }
 
   void _playerTimerStop() {
-    if (activeTimer != null) {
-      activeTimer!.cancel();
-      activeTimer = null;
+    if (this.activeTimer != null) {
+      this.activeTimer!.cancel();
+      this.activeTimer = null;
     }
   }
 
   void _playerTimerStart() {
-    activeTimer = Timer.periodic(Duration(seconds: 1), _playerTimerTick);
+    // TODO: Use player updater callback?
+    this.activeTimer = Timer.periodic(Duration(milliseconds: playerTickDelayMs),
+        (_) => this._updatePlayerStatus());
   }
 
   void _playerStart(Track track) async {
-    playingTrack = track;
-    final String url = '${AppConfig.TALES_SERVER_HOST}${track.audio_file}';
-    final player = getPlayer();
-    // @see https://github.com/ryanheise/just_audio/tree/minor/just_audio
-    logger.t('_playerStart: Start playing track ${track}: ${url}');
-    final duration = await player.setUrl(url);
-    player.setVolume(1);
-    final playing = player.play(); // Returns the Future
+    // TODO: If player has loaded data
+    this._setPlayerListener();
+    final playing = this.activePlayer.play(); // Returns the Future
     // TODO: Increment played count (via API)
-    isPlaying = true;
-    isPaused = false;
+    this.isPlaying = true;
+    this.isPaused = false;
     // Finished hadler
     playing.whenComplete(() {
-      if (playingTrack?.id == track.id && isPlaying) {
+      if (this.playingTrack?.id == track.id && this.isPlaying) {
         // If the same track is playing
         logger.t(
-            '_playerStart: Finished: track: ${track}, playingTrack: ${playingTrack}, isPaused: ${isPaused}');
-        if (!isPaused) {
-          _playerStop(notify: true);
+            '_playerStart: Finished: track: ${track}, playingTrack: ${this.playingTrack}, isPaused: ${this.isPaused}');
+        if (!this.isPaused) {
+          this._playerStop(notify: true);
         }
       }
     });
-    logger.t('_playerStart: Started playing track ${track}: ${duration}');
     // Start timer...
     _playerTimerStart();
     // Update all...
-    notifyListeners();
+    this.notifyListeners();
+  }
+
+  bool isTrackPlayedCompletely() {
+    final positionMs = this.playingPosition?.inMilliseconds;
+    final durationMs = this.activePlayer.duration?.inMilliseconds;
+    if (positionMs != null && durationMs != null && positionMs >= durationMs) {
+      return true;
+    }
+    return false;
   }
 
   /// Track's play button handler
   void playTrack(Track track) async {
     logger.t('playTrack ${track}');
-    if (playingTrack != null) {
-      if (isPlaying && playingTrack!.id == track.id) {
+    if (this.playingTrack != null) {
+      if (this.isPlaying && this.playingTrack!.id == track.id) {
         // Just pause/resume and exit if it was actively playing current track
         logger.t(
-            'playTrack: Pausing/resuming active track: ${playingTrack} isPaused: ${isPaused}');
-        if (!isPaused) {
-          activePlayer?.pause();
-          isPaused = true;
-          _playerTimerStop();
+            'playTrack: Pausing/resuming active track: ${this.playingTrack} isPaused: ${this.isPaused}');
+        if (!this.isPaused) {
+          this.activePlayer.pause();
+          this.isPaused = true;
+          this._playerTimerStop();
         } else {
-          activePlayer?.play();
-          isPaused = false;
+          this.activePlayer.play();
+          this.isPaused = false;
           _playerTimerStart();
         }
-        notifyListeners();
+        this.notifyListeners();
         return;
       }
       // Else stop playback and continue
-      _playerStop(notify: false);
+      this._playerStop(notify: false);
     }
     // Start playing the track
-    _playerStart(track);
+    if (this.playingTrack?.id != track.id) {
+      // TODO: Get position for the new track from a local db
+      this.activePlayer.seek(Duration.zero);
+      this.setPlayingPosition(null, notify: false);
+      this.setPlayingDuration(null, notify: false);
+      // Set new track
+      await this.setPlayingTrack(track, notify: false);
+    } else if (this.isTrackPlayedCompletely()) {
+      // Reset playing position...
+      this.activePlayer.seek(Duration.zero);
+      this.setPlayingPosition(null, notify: false);
+    }
+    this._playerStart(track);
   }
 }

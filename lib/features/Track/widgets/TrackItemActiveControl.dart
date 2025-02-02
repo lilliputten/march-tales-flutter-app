@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
+import 'package:march_tales_app/core/constants/player.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/app/AppColors.dart';
@@ -31,28 +32,48 @@ class _TrackItemActiveControlState extends State<TrackItemActiveControl>
   @override
   void initState() {
     super.initState();
-    _lastProgress = 0;
-    _animationController =
-        AnimationController(duration: Duration(seconds: 1), vsync: this);
-    _tween = Tween(begin: _lastProgress, end: _lastProgress);
-    _animation = _tween.animate(_animationController)
+    this._lastProgress = 0; // this._getCurrentProgress();
+    this._animationController = AnimationController(
+        duration: Duration(milliseconds: playerTickDelayMs), vsync: this);
+    this._tween = Tween(begin: this._lastProgress, end: this._lastProgress);
+    this._animation = this._tween.animate(this._animationController)
       ..addListener(() {
         setState(() {});
       });
   }
 
-  void setNewProgress(double newProgress) {
-    _tween = Tween(begin: _lastProgress, end: newProgress);
-    _animationController.reset();
-    _animation = _tween.animate(_animationController);
-    _animationController.forward();
-    _lastProgress = newProgress;
-  }
-
   @override
   void dispose() {
-    _animationController.dispose();
+    this._animationController.dispose();
     super.dispose();
+  }
+
+  void _updateProgress(double progress) {
+    this._tween = Tween(begin: this._lastProgress, end: progress);
+    this._animationController.reset();
+    this._animation = this._tween.animate(this._animationController);
+    this._animationController.forward();
+    this._lastProgress = progress;
+  }
+
+  double _getCurrentProgress(BuildContext context) {
+    double progress = 0;
+
+    final appState = context.watch<AppState>();
+
+    final track = appState.playingTrack;
+    final playing = track != null && track.id == this.widget.track.id;
+
+    if (playing) {
+      // final duration = appState.playingDuration?.inMilliseconds;
+      final player = appState.activePlayer;
+      final duration = player.duration?.inMilliseconds;
+      final position = appState.playingPosition?.inMilliseconds;
+      if (duration != null && duration != 0 && position != null) {
+        progress = position / duration;
+      }
+    }
+    return progress;
   }
 
   @override
@@ -62,27 +83,20 @@ class _TrackItemActiveControlState extends State<TrackItemActiveControl>
     // final colorScheme = Theme.of(context).colorScheme;
     final AppColors appColors = theme.extension<AppColors>()!;
 
-    final playingTrack = appState.playingTrack;
+    final track = appState.playingTrack;
 
-    final isPlaying = playingTrack != null &&
-        playingTrack.id == widget.track.id &&
-        appState.isPlaying;
-    final isActive = isPlaying && !appState.isPaused;
+    final playing = track != null && track.id == this.widget.track.id
+        // && appState.isPlaying
+        ;
+    final iconPlaying = playing && appState.isPlaying && !appState.isPaused;
 
-    double progress = 0;
+    double progress = this._getCurrentProgress(context);
 
-    if (isPlaying) {
-      final player = appState.activePlayer;
-      final duration = player?.duration?.inMilliseconds;
-      final position = player?.position.inMilliseconds;
-      if (duration != null && duration != 0 && position != null) {
-        progress = position / duration;
-      }
-      if (progress != _lastProgress) {
-        setNewProgress(progress);
-      }
-      // logger.t(
-      //     'TrackItemActiveControl: ${_animation.value} progress=${progress} position=${position} duration=${duration}');
+    logger.t(
+        'TrackItemActiveControl: tprogress: ${progress} animated: ${this._animation.value}');
+
+    if (progress != this._lastProgress) {
+      this._updateProgress(progress);
     }
 
     return Stack(
@@ -91,16 +105,19 @@ class _TrackItemActiveControlState extends State<TrackItemActiveControl>
         SizedBox(
           width: trackItemControlCircleSize,
           height: trackItemControlCircleSize,
-          child: isPlaying
+          child: playing
               ? CircularProgressIndicator(
                   color: appColors.brandColor,
                   strokeWidth: 3,
                   // value: progress,
-                  value: _animation.value,
+                  value: this
+                      ._animation
+                      .value, // > _lastProgress ? this._animation.value : progress,
                 )
               : SizedBox(),
         ),
-        TrackItemDefaultControl(track: widget.track, isActive: isActive),
+        TrackItemDefaultControl(
+            track: this.widget.track, isPlaying: iconPlaying),
       ],
     );
   }

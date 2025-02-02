@@ -7,9 +7,8 @@ import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 
 import 'package:march_tales_app/features/Track/loaders/loadTracksList.dart';
+import 'package:march_tales_app/features/Track/trackConstants.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-
-const int defaultTracksDownloadLimit = 2;
 
 final formatter = YamlFormatter();
 final logger = Logger();
@@ -17,7 +16,7 @@ final logger = Logger();
 mixin TrackState {
   void notifyListeners();
   Track? getPlayingTrack();
-  void setPlayingTrack(Track? value, {bool notify = true});
+  // void setPlayingTrack(Track? value, {bool notify = true});
   Future<Track?> ensureLoadedPlayingTrackDetails({bool notify = true});
 
   /// Tracks list

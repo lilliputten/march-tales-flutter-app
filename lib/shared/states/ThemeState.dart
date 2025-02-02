@@ -12,11 +12,16 @@ mixin ThemeState {
 
   bool isDarkTheme = false;
 
-  loadThemeStateSavedPrefs() {
+  bool loadThemeStateSavedPrefs({bool notify = true}) {
     final savedIsDarkTheme = getPrefs()?.getBool('isDarkTheme');
     if (savedIsDarkTheme != null) {
       isDarkTheme = savedIsDarkTheme;
+      if (notify) {
+        notifyListeners();
+      }
+      return true;
     }
+    return false;
   }
 
   void toggleDarkTheme(bool value) {

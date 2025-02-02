@@ -23,6 +23,7 @@ class PlayerBox extends StatelessWidget {
     final appState = context.watch<AppState>();
 
     final track = appState.playingTrack;
+    final player = appState.activePlayer;
 
     // No active track?
     if (track == null) {
@@ -30,20 +31,32 @@ class PlayerBox extends StatelessWidget {
       return Container();
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      child: Row(
-        spacing: 10,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TrackImageThumbnail(track: track, size: 50),
-          Expanded(
-            flex: 1,
-            child: TrackDetails(),
-          ),
-        ],
-      ),
-    );
+    return StreamBuilder(
+        stream: player.playerStateStream,
+        builder: (context, AsyncSnapshot snapshot) {
+          // final PlayerState? playerState = snapshot.data;
+          // final bool? playing = playerState?.playing;
+          // final ProcessingState? processingState = playerState?.processingState;
+          // final position = player.position;
+          // final duration = player.duration;
+          // logger.t('PlayerBox: playing: ${playing} processingState: ${processingState} position: ${position} duration: ${duration} ${playerState}');
+          // appState.updatePlayerStatus(playerState);
+          // int currentIndex = snapshot.data ?? 0;
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            child: Row(
+              spacing: 10,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TrackImageThumbnail(track: track, size: 50),
+                Expanded(
+                  flex: 1,
+                  child: TrackDetails(),
+                ),
+              ],
+            ),
+          );
+        });
   }
 }
 
@@ -75,13 +88,16 @@ class TrackDetails extends StatelessWidget {
 
     final isPlaying = appState.isPlaying;
     final isPaused = appState.isPaused;
-    final activePosition = appState.activePosition;
+    final position = appState.playingPosition;
+    final hasPosition = position != null && position.inMilliseconds != 0;
 
     String text = track.title;
-    if (isPlaying) {
-      final state = isPaused ? 'paused' : 'playing';
-      final positionString = getDurationString(activePosition);
-      text += ' (${state} ${positionString})';
+    if (isPlaying || hasPosition) {
+      final state = !isPlaying || isPaused ? 'paused' : 'playing';
+      if (hasPosition) {
+        final positionString = getDurationString(position);
+        text += ' (${state} ${positionString})';
+      }
     }
 
     return Column(

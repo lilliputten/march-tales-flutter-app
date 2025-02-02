@@ -18,16 +18,21 @@ mixin LocaleState {
 
   String currentLocale = defaultLocale;
 
-  loadLocaleStateSavedPrefs() {
+  bool loadLocaleStateSavedPrefs({bool notify = true}) {
     final savedCurrentLocale = getPrefs()?.getString('currentLocale');
     if (savedCurrentLocale != null) {
       currentLocale = savedCurrentLocale;
+      if (notify) {
+        notifyListeners();
+      }
+      return true;
     }
-    notifyListeners();
+    return false;
   }
 
   updateLocale(String value) async {
     currentLocale = value;
+    getPrefs()?.setString('currentLocale', value);
     reloadAllTracks(notify: false);
     notifyListeners();
   }
