@@ -14,6 +14,7 @@ linter:
     use_key_in_widget_constructors: false
     unnecessary_brace_in_string_interps: false
     unnecessary_this: false
+    unnecessary_new: false
 
 formatter:
   page_width: 120

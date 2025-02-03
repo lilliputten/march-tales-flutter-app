@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/core/constants/player.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/app/AppColors.dart';
@@ -103,6 +102,7 @@ class _TrackItemActiveControlState extends State<TrackItemActiveControl>
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
+        /*
         SizedBox(
           width: trackItemControlCircleSize,
           height: trackItemControlCircleSize,
@@ -117,8 +117,11 @@ class _TrackItemActiveControlState extends State<TrackItemActiveControl>
                 )
               : SizedBox(),
         ),
+        */
         TrackItemDefaultControl(
-            track: this.widget.track, isPlaying: iconPlaying),
+          track: this.widget.track,
+          // isPlaying: iconPlaying,
+        ),
       ],
     );
   }

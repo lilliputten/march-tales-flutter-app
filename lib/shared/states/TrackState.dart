@@ -15,8 +15,6 @@ final logger = Logger();
 
 mixin TrackState {
   void notifyListeners();
-  Track? getPlayingTrack();
-  // void setPlayingTrack(Track? value, {bool notify = true});
   Future<Track?> ensureLoadedPlayingTrackDetails({bool notify = true});
 
   /// Tracks list

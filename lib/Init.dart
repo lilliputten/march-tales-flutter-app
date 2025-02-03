@@ -2,17 +2,12 @@ import 'dart:developer';
 
 import 'dart:async';
 
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
 import 'dart:convert';
-// import 'package:flutter/services.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
-import 'package:march_tales_app/features/Track/db/TracksInfoDbStructure.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
@@ -41,7 +36,7 @@ class Init {
   static String? appTimestamp;
   static Map<String, dynamic>? authConfig;
 
-  static late TracksInfoDb tracksInfoDb;
+  // static late TracksInfoDb tracksInfoDb;
 
   static Future initialize() async {
     List<Future> futures = [
@@ -66,7 +61,7 @@ class Init {
       'appId': appId,
       'appVersion': appVersion,
       'appTimestamp': appTimestamp,
-      'tracksInfoDb': tracksInfoDb,
+      // 'tracksInfoDb': tracksInfoDb,
     };
     // logger.d('results: ${formatter.format(results)}');
     return results;
@@ -163,7 +158,7 @@ class Init {
       prefs = await SharedPreferences.getInstance();
       return '_initPrefs: ok';
     } catch (err, stacktrace) {
-      final String msg = 'Can not initialize persistent instance: ${err}';
+      final String msg = 'Can not initialize a persistent instance: ${err}';
       logger.e('[Init:_loadTick] error ${msg}',
           error: err, stackTrace: stacktrace);
       // debugger();
@@ -174,21 +169,11 @@ class Init {
 
   static _initTracksInfoDb() async {
     try {
-      tracksInfoDb = TracksInfoDb();
       await tracksInfoDb.initializeDB();
-      //
-      // final dbPath = await getDatabasesPath();
-      // final dbFile = join(dbPath, 'tracks-info.db');
-      // final createCommand = getTracksInfoDbCreateCommand();
-      // final db = await openDatabase(
-      //   version: tracksInfoDbVersion,
-      //   dbFile,
-      //   onCreate: (db, version) => db.execute(createCommand),
-      // );
-      // Init.tracksInfoDb = db;
+      logger.t('[Init:_initTracksInfoDb] Done ${tracksInfoDb.db}');
       return '_initTracksInfoDb: ok';
     } catch (err, stacktrace) {
-      final String msg = 'Can not initialize persistent instance: ${err}';
+      final String msg = 'Can not initialize a local database: ${err}';
       logger.e('[Init:_loadTick] error ${msg}',
           error: err, stackTrace: stacktrace);
       debugger();
@@ -196,18 +181,4 @@ class Init {
       throw Exception(msg);
     }
   }
-
-  // static _registerServices() async {
-  //   final response = await http.get(
-  //     Uri.parse(url),
-  //     headers: {
-  //       'content-type': 'application/json; charset=utf-8',
-  //     },
-  //     // body: json.encode(data),
-  //   );
-  //   logger.t("starting registering services");
-  //   await Future.delayed(Duration(seconds: 1));
-  //   logger.t("finished registering services");
-  //   return '_registerServices: ok';
-  // }
 }

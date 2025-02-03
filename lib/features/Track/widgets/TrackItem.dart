@@ -6,8 +6,7 @@ import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackItemDefaultControl.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackItemActiveControl.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemControl.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackDetailsInfo.dart';
 
 final logger = Logger();
@@ -43,9 +42,7 @@ class TrackItem extends StatelessWidget {
             flex: 1,
             child: TrackDetails(track: track, isActive: isActive),
           ),
-          isActive
-              ? TrackItemActiveControl(track: track)
-              : TrackItemDefaultControl(track: track, isPlaying: false),
+          TrackItemControl(track: track),
         ],
       ),
     );

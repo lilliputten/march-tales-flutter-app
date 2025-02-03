@@ -56,8 +56,6 @@ class TracksList extends StatelessWidget {
     final tracksCount = tracks.length;
     final hasMoreTracks = availableTracksCount > tracksCount;
     final showItems = hasMoreTracks ? tracksCount + 1 : tracksCount;
-    // logger.d(
-    //     'Tracks: ${tracksCount} / ${availableTracksCount} ${hasMoreTracks} ${showItems}');
     return RefreshIndicator(
       onRefresh: () async {
         await appState.reloadTracks();

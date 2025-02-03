@@ -7,16 +7,16 @@ final logger = Logger();
 final formatter = YamlFormatter();
 
 class TrackInfo {
-  final int id; // track.id
-  final Duration position; // positionMs; // position?.inMilliseconds ?? 0
-  final Duration duration; // durationMs; // duration?.inMilliseconds ?? 0
-  final int playedCount; // // track.played_count (but only for current user!).
-  final DateTime
+  int id; // track.id
+  Duration position; // positionMs; // position?.inMilliseconds ?? 0
+  Duration duration; // durationMs; // duration?.inMilliseconds ?? 0
+  int playedCount; // // track.played_count (but only for current user!).
+  DateTime
       lastUpdated; // DateTime.now().millisecondsSinceEpoch <-> DateTime.fromMillisecondsSinceEpoch(ms)
-  final DateTime
+  DateTime
       lastPlayed; // DateTime.now().millisecondsSinceEpoch <-> DateTime.fromMillisecondsSinceEpoch(ms)
 
-  const TrackInfo({
+  TrackInfo({
     required this.id,
     required this.position,
     required this.duration,
@@ -54,5 +54,10 @@ class TrackInfo {
       debugger();
       throw FormatException(msg);
     }
+  }
+
+  @override
+  String toString() {
+    return 'TrackInfo(id=$id position=${position} duration=${duration} lastUpdated=${lastUpdated} lastPlayed=${lastPlayed} playedCount=${playedCount})';
   }
 }
