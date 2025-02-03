@@ -170,7 +170,7 @@ class Init {
   static _initTracksInfoDb() async {
     try {
       await tracksInfoDb.initializeDB();
-      logger.t('[Init:_initTracksInfoDb] Done ${tracksInfoDb.db}');
+      // logger.t('[Init:_initTracksInfoDb] Done ${tracksInfoDb.db}');
       return '_initTracksInfoDb: ok';
     } catch (err, stacktrace) {
       final String msg = 'Can not initialize a local database: ${err}';

@@ -1,19 +1,22 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/app/AppColors.dart';
+import 'package:march_tales_app/features/Track/db/TrackInfo.dart';
+import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
+
+import 'package:march_tales_app/features/Track/widgets/TrackDetails.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItemControl.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackDetailsInfo.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
 
 final logger = Logger();
 
 // NOTE: See theme info at: https://api.flutter.dev/flutter/material/ThemeData-class.html
 
-class TrackItem extends StatelessWidget {
+class TrackItem extends StatefulWidget {
   const TrackItem({
     super.key,
     required this.track,
@@ -22,70 +25,109 @@ class TrackItem extends StatelessWidget {
   final Track track;
 
   @override
+  State<TrackItem> createState() => _TrackItemState();
+}
+
+class _TrackItemState extends State<TrackItem> {
+  TrackInfo? _trackInfo;
+
+  void updateTrackInfo(TracksInfoDbUpdate update) {
+    final trackInfo = update.trackInfo;
+    final Track track = this.widget.track;
+    if (trackInfo.id == track.id) {
+      setState(() {
+        this._trackInfo = trackInfo;
+        // logger.t('[TrackItem:updateTrackInfo] trackInfo=${trackInfo}');
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final Track track = this.widget.track;
+    // Load inital value
+    tracksInfoDb.getById(track.id).then((trackInfo) {
+      if (trackInfo != null) {
+        setState(() {
+          this._trackInfo = trackInfo;
+          // logger.t('[TrackItem:initState] trackInfo=${trackInfo}');
+          if (trackInfo.position.inMilliseconds == 0) {
+            debugger();
+          }
+        });
+      }
+    });
+    // Subscribe to the future updates
+    tracksInfoDb.updateEvents.subscribe(this.updateTrackInfo);
+  }
+
+  @override
+  void dispose() {
+    tracksInfoDb.updateEvents.unsubscribe(this.updateTrackInfo);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final Track track = this.widget.track;
+
     final appState = context.watch<AppState>();
+
     // final theme = Theme.of(context);
-    // final colorScheme = Theme.of(context).colorScheme;
+    // final colorScheme = theme.colorScheme;
     // final AppColors appColors = theme.extension<AppColors>()!;
 
+    // Determine this track state...
     final playingTrack = appState.playingTrack;
+    final isActiveTrack = playingTrack != null && playingTrack.id == track.id;
+    final isPlaying = isActiveTrack && appState.isPlaying && !appState.isPaused;
 
-    final isActive = playingTrack?.id == track.id;
+    final TrackInfo? trackInfo = this._trackInfo;
+    int? position = trackInfo?.position.inMilliseconds;
+    int? duration = trackInfo?.duration.inMilliseconds;
+    if (isActiveTrack) {
+      if (appState.playingPosition != null) {
+        position = appState.playingPosition!.inMilliseconds;
+      }
+      if (appState.playingDuration != null) {
+        duration = appState.playingDuration!.inMilliseconds;
+      }
+    }
 
-    return Center(
-      child: Row(
-        spacing: 10,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TrackImageThumbnail(track: track, size: 80),
-          Expanded(
-            flex: 1,
-            child: TrackDetails(track: track, isActive: isActive),
-          ),
-          TrackItemControl(track: track),
-        ],
-      ),
-    );
-  }
-}
+    double progress = 0;
+    if (duration != null && duration != 0 && position != null) {
+      progress = position / duration;
+    }
 
-class TrackTitle extends StatelessWidget {
-  const TrackTitle({
-    super.key,
-    required this.track,
-    this.textColor,
-  });
-  final Track track;
-  final Color? textColor;
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final style = theme.textTheme.bodyLarge!.copyWith(color: textColor);
-    return Text(track.title, style: style);
-  }
-}
+    final isAlreadyPlayed = !isActiveTrack && progress >= 1;
 
-class TrackDetails extends StatelessWidget {
-  const TrackDetails({
-    super.key,
-    required this.track,
-    this.isActive = false,
-  });
-  final Track track;
-  final bool isActive;
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final AppColors appColors = theme.extension<AppColors>()!;
-    final colorScheme = theme.colorScheme;
-    final textColor = isActive ? appColors.brandColor : colorScheme.onSurface;
-    return Column(
-      spacing: 8,
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final double opacity = isAlreadyPlayed ? 0.5 : 1;
+
+    return Row(
+      spacing: 10,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        TrackTitle(track: track, textColor: textColor),
-        TrackDetailsInfo(
-            track: track, isActive: isActive, textColor: textColor),
+        TrackImageThumbnail(track: track, size: 80),
+        Expanded(
+          flex: 1,
+          child: Opacity(
+            opacity: opacity,
+            child: TrackDetails(
+              track: track,
+              isActiveTrack: isActiveTrack,
+              isAlreadyPlayed: isAlreadyPlayed,
+              isPlaying: isPlaying,
+            ),
+          ),
+        ),
+        TrackItemControl(
+          track: track,
+          isActiveTrack: isActiveTrack,
+          isAlreadyPlayed: isAlreadyPlayed,
+          isPlaying: isPlaying,
+          progress: progress,
+        ),
       ],
     );
   }
