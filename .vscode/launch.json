@@ -5,6 +5,17 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Flutter",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--dart-define=DEBUG=true",
+        "--dart-define-from-file=.env.local",
+        // "--dart-define-from-file=.env",
+      ],
+    },
+    {
       "name": "Dart: current file",
       "type": "dart",
       "request": "launch",
@@ -15,17 +26,6 @@
       "type": "dart",
       "request": "launch",
       "program": "./test/"
-    },
-    {
-      "name": "Flutter",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main.dart",
-      "args": [
-        "--dart-define=DEBUG=true",
-        "--dart-define-from-file=.env.local",
-        // "--dart-define-from-file=.env",
-      ],
     },
     {
       "name": "Flutter (profile mode)",
