@@ -2,7 +2,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:logger/logger.dart';
 
-import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/supportedLocales.dart';
 
 final logger = Logger();
@@ -10,9 +9,7 @@ final logger = Logger();
 mixin LocaleState {
   void notifyListeners();
   SharedPreferences? getPrefs();
-  List<Track> getTracks();
-  void setTracks(List<Track> value, {bool notify = true});
-  reloadAllTracks({bool notify = true});
+  reloadAllTracks({bool notify = true}); // From `TrackState`
 
   /// Language
 
@@ -31,9 +28,10 @@ mixin LocaleState {
   }
 
   updateLocale(String value) async {
-    currentLocale = value;
-    getPrefs()?.setString('currentLocale', value);
-    reloadAllTracks(notify: false);
-    notifyListeners();
+    if (currentLocale != value) {
+      currentLocale = value;
+      getPrefs()?.setString('currentLocale', value);
+      await reloadAllTracks();
+    }
   }
 }

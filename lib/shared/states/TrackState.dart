@@ -16,6 +16,7 @@ final logger = Logger();
 mixin TrackState {
   void notifyListeners();
   Future<Track?> ensureLoadedPlayingTrackDetails({bool notify = true});
+  Future<Track?> updatePlayingTrackDetails({bool notify = true});
 
   /// Tracks list
 
@@ -34,9 +35,9 @@ mixin TrackState {
   }
 
   void setTracks(List<Track> value, {bool notify = true}) {
-    tracks = value;
+    this.tracks = value;
     if (notify) {
-      notifyListeners();
+      this.notifyListeners();
     }
   }
 
@@ -45,30 +46,35 @@ mixin TrackState {
   }
 
   void resetTracks({bool notify = true}) {
-    tracksHasBeenLoaded = false;
-    availableTracksCount = 0;
-    tracks = [];
-    tracksLoadError = null;
-    tracksIsLoading = false;
+    this.tracksHasBeenLoaded = false;
+    this.availableTracksCount = 0;
+    this.tracks = [];
+    this.tracksLoadError = null;
+    this.tracksIsLoading = false;
     if (notify) {
-      notifyListeners();
+      this.notifyListeners();
     }
   }
 
   reloadAllTracks({bool notify = true}) async {
-    tracks = [];
+    this.tracks = [];
     // Reset (& reload?) tracks, offset & filters
-    if (tracksHasBeenLoaded) {
-      // NOTE: Not waiting for finish
-      reloadTracks();
+    final List<Future> futures = [
+      this.updatePlayingTrackDetails(notify: notify),
+    ];
+    if (this.tracksHasBeenLoaded) {
+      futures.add(this.reloadTracks(notify: notify));
     }
-    ensureLoadedPlayingTrackDetails(notify: false);
-    notifyListeners();
+    await Future.wait(futures);
   }
 
-  Future<LoadTracksListResults> reloadTracks() async {
+  Future<LoadTracksListResults> reloadTracks({bool notify = true}) async {
     resetTracks(notify: false);
-    return await loadNextTracks();
+    final results = await loadNextTracks();
+    if (notify) {
+      notifyListeners();
+    }
+    return results;
   }
 
   updateSingleTrack(Track track, {bool notify = true}) {

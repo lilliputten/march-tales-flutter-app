@@ -71,7 +71,7 @@ class TrackDetailsInfo extends StatelessWidget {
               size: style.fontSize,
               color: dimmedColor,
             ),
-            Text(formatSecondsDuration(track.audio_duration), style: textStyle),
+            Text(formatDuration(track.duration), style: textStyle),
           ]),
       // Date
       Wrap(

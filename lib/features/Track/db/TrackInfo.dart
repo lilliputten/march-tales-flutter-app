@@ -9,7 +9,6 @@ final formatter = YamlFormatter();
 class TrackInfo {
   int id; // track.id
   Duration position; // positionMs; // position?.inMilliseconds ?? 0
-  Duration duration; // durationMs; // duration?.inMilliseconds ?? 0
   int playedCount; // // track.played_count (but only for current user!).
   DateTime
       lastUpdated; // DateTime.now().millisecondsSinceEpoch <-> DateTime.fromMillisecondsSinceEpoch(ms)
@@ -19,7 +18,6 @@ class TrackInfo {
   TrackInfo({
     required this.id,
     required this.position,
-    required this.duration,
     required this.lastUpdated,
     required this.lastPlayed,
     required this.playedCount,
@@ -28,8 +26,7 @@ class TrackInfo {
   Map<String, dynamic> toMap() {
     return {
       'id': this.id,
-      'positionMs': this.position.inMilliseconds,
-      'durationMs': this.duration.inMilliseconds,
+      'position': this.position.inMilliseconds / 1000,
       'playedCount': this.playedCount,
       'lastUpdatedMs': this.lastUpdated.millisecondsSinceEpoch,
       'lastPlayedMs': this.lastPlayed.millisecondsSinceEpoch,
@@ -38,10 +35,10 @@ class TrackInfo {
 
   factory TrackInfo.fromMap(Map<String, dynamic> data) {
     try {
+      final int positionMs = (data['position'].toDouble() * 1000).round();
       return TrackInfo(
         id: data['id'],
-        position: Duration(milliseconds: data['positionMs']),
-        duration: Duration(milliseconds: data['durationMs']),
+        position: Duration(milliseconds: positionMs),
         lastUpdated: DateTime.fromMillisecondsSinceEpoch(data['lastUpdatedMs']),
         lastPlayed: DateTime.fromMillisecondsSinceEpoch(data['lastPlayedMs']),
         playedCount: data['playedCount'],
@@ -58,6 +55,6 @@ class TrackInfo {
 
   @override
   String toString() {
-    return 'TrackInfo(id=$id position=${position} duration=${duration} lastUpdated=${lastUpdated} lastPlayed=${lastPlayed} playedCount=${playedCount})';
+    return 'TrackInfo(id=$id position=${position} lastUpdated=${lastUpdated} lastPlayed=${lastPlayed} playedCount=${playedCount})';
   }
 }

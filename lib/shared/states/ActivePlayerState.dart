@@ -17,14 +17,14 @@ mixin ActivePlayerState {
   // Abstract interfaces for other mixins/parents...
   void notifyListeners();
   SharedPreferences? getPrefs();
-  void updateSingleTrack(Track track, {bool notify = true});
+  void updateSingleTrack(Track track, {bool notify = true}); // TrackState
 
   // Player & active track
 
   Track? playingTrack;
 
   Duration? playingPosition;
-  Duration? playingDuration;
+  // Duration? playingDuration;
 
   bool hasIncremented = false;
   bool isIncrementingNow = false;
@@ -45,7 +45,6 @@ mixin ActivePlayerState {
       hasChanges = true;
     }
     if (hasChanges && notify) {
-      // TODO: Avoid duplicated notifications here and in async `_loadPlayingTrackDetails`
       this.notifyListeners();
     }
     return hasChanges;
@@ -56,22 +55,12 @@ mixin ActivePlayerState {
     return this.playingTrack;
   }
 
-  _loadPositionAndDurationForTrack(Track? track, {bool notify = true}) async {
+  _loadPositionForTrack(Track? track, {bool notify = true}) async {
     if (track == null) {
       return;
     }
     final trackInfo = await tracksInfoDb.getById(track.id);
     this.playingPosition = trackInfo?.position; // ?? Duration.zero;
-    if (this.playingPosition == null ||
-        this.playingPosition?.inMilliseconds == 0) {
-      debugger();
-    }
-    // this.activePlayer.seek(this.playingPosition ?? Duration.zero);
-    if (this.playingPosition?.inMilliseconds == 0) {
-      debugger();
-    }
-    this.playingDuration =
-        trackInfo?.duration; // ?? Duration(seconds: track.audio_duration);
     if (notify) {
       this.notifyListeners();
     }
@@ -82,14 +71,11 @@ mixin ActivePlayerState {
       this.playingTrack = track;
       this.getPrefs()?.setInt('playingTrackId', track?.id ?? 0);
       if (track != null) {
-        await this._loadPositionAndDurationForTrack(track, notify: false);
+        await this._loadPositionForTrack(track, notify: false);
         final String url = '${AppConfig.TALES_SERVER_HOST}${track.audio_file}';
-        final duration = await this.activePlayer.setUrl(url);
+        await this.activePlayer.setUrl(url);
         // logger.t('[ActivePlayerState:_setPlayingTrack]: Start playing track ${track}: url=${url} playingPosition=${this.playingPosition}');
         this.activePlayer.seek(this.playingPosition ?? Duration.zero);
-        this.playingDuration = duration;
-        // Update duration in TracksInfoDb
-        tracksInfoDb.updatePosition(this.playingTrack!.id, duration: duration);
       }
       if (notify) {
         this.notifyListeners();
@@ -114,11 +100,22 @@ mixin ActivePlayerState {
     return this.playingTrack;
   }
 
+  Future<Track?> updatePlayingTrackDetails({bool notify = true}) async {
+    if (this.playingTrack != null) {
+      this.playingTrack = await loadTrackDetails(id: this.playingTrack!.id);
+      if (notify) {
+        this.notifyListeners();
+      }
+    }
+    return this.playingTrack;
+  }
+
   /// Load or update active track details
   Future<Track?> ensureLoadedPlayingTrackDetails({bool notify = true}) async {
     if (this.playingTrack != null) {
       // Update `playingTrack` if language has been changed
-      this._loadPlayingTrackDetails(id: this.playingTrack!.id, notify: notify);
+      await this
+          ._loadPlayingTrackDetails(id: this.playingTrack!.id, notify: notify);
     }
     return this.playingTrack;
   }
@@ -185,10 +182,9 @@ mixin ActivePlayerState {
         processingState != ProcessingState.idle) {
       // logger.t('[ActivePlayerState:_updatePlayerStatus] playing=${playing} processingState=${processingState} position=${position}');
       this._savePlayingPosition(position, notify: false);
-      // Update the data in the local db (don't waiting for the finish)
-      /* await */
+      // Update the data in the local db (and don't wait for the finish)
       tracksInfoDb.updatePosition(this.playingTrack!.id,
-          position: position, duration: duration);
+          position: position); // await!
     }
     if (processingState == ProcessingState.completed) {
       this._incrementCurrentTrackPlayedCount();
@@ -214,23 +210,12 @@ mixin ActivePlayerState {
   }
 
   void _playerStart(Track track) async {
-    // XXX: To check if player has loaded data
     this._setPlayerListener();
-    final playing = this.activePlayer.play(); // Returns the Future
+    this.activePlayer.play(); // Returns the playback Future
     this.isPlaying = true;
     this.isPaused = false;
     this.hasIncremented = false;
     this.isIncrementingNow = false;
-    // Finished hadler
-    playing.whenComplete(() {
-      if (this.playingTrack?.id == track.id && this.isPlaying) {
-        // If the same track is playing
-        // logger.t('_playerStart: Finished: track: ${track}, playingTrack: ${this.playingTrack}, isPaused: ${this.isPaused}');
-        if (!this.isPaused) {
-          this._playerStop(notify: true);
-        }
-      }
-    });
     // Start timer...
     _playerTimerStart();
     // Update all...

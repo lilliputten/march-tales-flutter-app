@@ -6,7 +6,6 @@ import 'package:event/event.dart';
 
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-// import 'package:sqlite_schema_upgrader/sqlite_schema_upgrader.dart';
 
 import 'TracksInfoDbStructure.dart';
 import 'TrackInfo.dart';
@@ -21,55 +20,62 @@ class TracksInfoDb {
   late Database db;
   final Event<TracksInfoDbUpdate> updateEvents = Event<TracksInfoDbUpdate>();
 
-  // final sqliteSchema = SQLiteSchema();
+  _createDatabase(Database database) async {
+    final createCommand = getTracksInfoDbCreateCommand();
+    try {
+      final batch = database.batch();
+      batch.execute('DROP TABLE IF EXISTS ${tracksInfoDbName}');
+      batch.execute(createCommand);
+      await batch.commit();
+    } catch (err, stacktrace) {
+      logger.e('[TracksInfoDb] onCreate: Error: ${err}',
+          error: err, stackTrace: stacktrace);
+      debugger();
+      rethrow;
+    }
+  }
 
   /// Initializes and returns sqlite database connection.
   Future<Database> initializeDB() async {
     final dbPath = await getDatabasesPath();
     final dbFile = join(dbPath, tracksInfoDbFileName);
-    final createCommand = getTracksInfoDbCreateCommand();
-
     this.db = await openDatabase(
       version: tracksInfoDbVersion,
       dbFile,
       // singleInstance: true,
-      onCreate: (database, version) async {
-        // logger.t('[TracksInfoDb] onCreate: Start: database=${database}');
-        try {
-          final batch = database.batch();
-          batch.execute('DROP TABLE IF EXISTS ${tracksInfoDbName}');
-          batch.execute(createCommand);
-          await batch.commit();
-        } catch (err, stacktrace) {
-          logger.e('[TracksInfoDb] onCreate: Error: ${err}',
-              error: err, stackTrace: stacktrace);
-          debugger();
-          rethrow;
-        }
+      onCreate: (Database database, int version) async {
+        this._createDatabase(database);
       },
-      onUpgrade: (database, oldVersion, newVersion) async {
-        // logger.t('[TracksInfoDb] onUpgrade: Start: database=${database}');
-        try {
-          final batch = database.batch();
-          if (oldVersion < 3) {
-            // Add forgotten `lastUpdatedMs`
-            batch.execute(
-                'ALTER TABLE ${tracksInfoDbName} ADD lastUpdatedMs INTEGER');
-          }
-          await batch.commit();
-        } catch (err, stacktrace) {
-          logger.e('[TracksInfoDb] onUpgrade: Error: ${err}',
-              error: err, stackTrace: stacktrace);
-          debugger();
-          rethrow;
-        }
+      onUpgrade: (Database database, int oldVersion, int newVersion) async {
+        // Just recreate the table from scratch
+        this._createDatabase(database);
+        /* // UNUSED: Manually update to the current version
+         * try {
+         *   if (oldVersion < 3) {
+         *     // Add forgotten `lastUpdatedMs`
+         *     batch.execute('ALTER TABLE ${tracksInfoDbName} ADD lastUpdatedMs INTEGER');
+         *   }
+         *   if (oldVersion < 4) {
+         *     batch.execute('ALTER TABLE ${tracksInfoDbName} DROP COLUMN durationMs');
+         *   }
+         *   // etc...
+         *   await batch.commit();
+         * } catch (err, stacktrace) {
+         *   logger.e('[TracksInfoDb] onUpgrade: Error: ${err}',
+         *       error: err, stackTrace: stacktrace);
+         *   debugger();
+         *   rethrow;
+         * }
+         */
       },
-      // onConfigure: (database) async {
-      //   logger.t('[TracksInfoDb] onConfigure: Start: database=${database}');
-      // },
-      // onOpen: (database) async {
-      //   logger.t('[TracksInfoDb] onOpen: Start: database=${database}');
-      // },
+      /* // UNUSED: Other handlers
+       * onConfigure: (database) async {
+       *   logger.t('[TracksInfoDb] onConfigure: Start: database=${database}');
+       * },
+       * onOpen: (database) async {
+       *   logger.t('[TracksInfoDb] onOpen: Start: database=${database}');
+       * },
+       */
     );
     return this.db;
   }
@@ -97,7 +103,7 @@ class TracksInfoDb {
   }
 
   Future<TrackInfo> updatePosition(int id,
-      {Duration? position, Duration? duration, DateTime? now}) async {
+      {Duration? position, DateTime? now}) async {
     try {
       final _now = now ??= DateTime.now();
       return this.db.transaction((txn) async {
@@ -105,9 +111,6 @@ class TracksInfoDb {
         // final newTrackInfo = TrackInfo.clone
         if (position != null) {
           trackInfo.position = position;
-        }
-        if (duration != null) {
-          trackInfo.duration = duration;
         }
         trackInfo.lastPlayed = _now; // ???
         trackInfo.lastUpdated = _now;
@@ -149,7 +152,6 @@ class TracksInfoDb {
     final TrackInfo trackInfo = TrackInfo(
       id: id, // track.id
       position: Duration.zero, // position
-      duration: Duration.zero, // duration
       playedCount: 0, // track.played_count (but only for current user!).
       lastUpdated: now, // DateTime.now()
       lastPlayed: now, // DateTime.now()
@@ -177,9 +179,10 @@ class TracksInfoDb {
   Future<int> insert(TrackInfo trackInfo, {Transaction? txn}) async {
     final _txn = txn ?? this.db;
     try {
+      final data = trackInfo.toMap();
       return await _txn.insert(
         tracksInfoDbName,
-        trackInfo.toMap(),
+        data,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     } catch (err, stacktrace) {

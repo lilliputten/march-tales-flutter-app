@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -52,9 +51,6 @@ class _TrackItemState extends State<TrackItem> {
         setState(() {
           this._trackInfo = trackInfo;
           // logger.t('[TrackItem:initState] trackInfo=${trackInfo}');
-          if (trackInfo.position.inMilliseconds == 0) {
-            debugger();
-          }
         });
       }
     });
@@ -85,18 +81,15 @@ class _TrackItemState extends State<TrackItem> {
 
     final TrackInfo? trackInfo = this._trackInfo;
     int? position = trackInfo?.position.inMilliseconds;
-    int? duration = trackInfo?.duration.inMilliseconds;
+    int? duration = playingTrack!.duration.inMilliseconds;
     if (isActiveTrack) {
       if (appState.playingPosition != null) {
         position = appState.playingPosition!.inMilliseconds;
       }
-      if (appState.playingDuration != null) {
-        duration = appState.playingDuration!.inMilliseconds;
-      }
     }
 
     double progress = 0;
-    if (duration != null && duration != 0 && position != null) {
+    if (duration != 0 && position != null) {
       progress = position / duration;
     }
 

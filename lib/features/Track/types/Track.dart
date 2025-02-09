@@ -98,7 +98,8 @@ class Track {
   final List<TrackTag> tags;
   final List<TrackRubric> rubrics;
   final String audio_file;
-  final int audio_duration;
+  // final double audio_duration;
+  final Duration duration;
   final int audio_size;
   final String preview_picture;
   final bool for_members;
@@ -113,7 +114,8 @@ class Track {
     required this.id,
     required this.title,
     required this.description,
-    required this.audio_duration,
+    // required this.audio_duration,
+    required this.duration,
     required this.audio_file,
     required this.audio_size,
     required this.for_members,
@@ -137,6 +139,7 @@ class Track {
 
   factory Track.fromJson(Map<String, dynamic> json) {
     try {
+      final int durationMs = (json['audio_duration'].toDouble() * 1000).round();
       return Track(
         id: json['id'],
         title: json['title'].toString(),
@@ -150,7 +153,9 @@ class Track {
             .map((data) => TrackRubric.fromJson(data))
             .toList(),
         audio_file: json['audio_file'].toString(),
-        audio_duration: json['audio_duration'],
+        // audio_duration: json['audio_duration'].toDouble(),
+        duration: Duration(
+            milliseconds: durationMs), // json['audio_duration'].toDouble(),
         audio_size: json['audio_size'],
         preview_picture: json['preview_picture'].toString(),
         for_members: json['for_members'],
