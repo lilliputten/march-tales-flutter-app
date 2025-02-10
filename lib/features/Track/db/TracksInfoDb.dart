@@ -2,13 +2,13 @@
 
 import 'dart:async';
 import 'dart:developer';
+
 import 'package:event/event.dart';
-
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
-import 'TracksInfoDbStructure.dart';
 import 'TrackInfo.dart';
+import 'TracksInfoDbStructure.dart';
 
 class TracksInfoDbUpdate extends EventArgs {
   TrackInfo trackInfo;

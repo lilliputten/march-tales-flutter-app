@@ -1,15 +1,16 @@
 import 'dart:async';
 import 'dart:developer';
-import 'package:logger/logger.dart';
-import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:just_audio/just_audio.dart';
 
-import 'package:march_tales_app/core/constants/player.dart';
-import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:march_tales_app/core/config/AppConfig.dart';
-import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'package:march_tales_app/core/constants/player.dart';
 import 'package:march_tales_app/features/Track/api-methods/incrementPlayedCount.dart';
+import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
+import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
+import 'package:march_tales_app/features/Track/types/Track.dart';
 
 final logger = Logger();
 

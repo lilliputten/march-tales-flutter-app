@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+
+import 'package:i18n_extension/i18n_extension.dart';
+import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-// import 'package:flutter/services.dart';
+
 import 'package:march_tales_app/Init.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
-import 'package:provider/provider.dart';
-import 'package:logger/logger.dart';
-import 'package:i18n_extension/i18n_extension.dart';
-
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/supportedLocales.dart';
-
 import 'SettingsPage.i18n.dart';
+
+// import 'package:flutter/services.dart';
 
 final logger = Logger();
 

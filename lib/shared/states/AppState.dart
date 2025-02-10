@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'LocaleState.dart';
 import 'ActivePlayerState.dart';
+import 'LocaleState.dart';
 import 'PrefsState.dart';
 import 'TestState.dart';
 import 'ThemeState.dart';

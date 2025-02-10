@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+
 import 'package:i18n_extension/i18n_extension.dart';
 
-// import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/core/helpers/formats.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackAuthorImageThumbnail.dart';
+
+// import 'package:march_tales_app/app/AppColors.dart';
 
 class TrackDetailsInfo extends StatelessWidget {
   const TrackDetailsInfo({

@@ -1,4 +1,5 @@
 import 'package:i18n_extension/i18n_extension.dart';
+
 // import 'package:march_tales_app/sharedTranslationsData.dart';
 
 extension Localization on String {

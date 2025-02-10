@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-
 import 'package:march_tales_app/features/Track/widgets/TrackDetailsInfo.dart';
 
 final logger = Logger();

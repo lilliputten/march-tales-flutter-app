@@ -1,5 +1,6 @@
-import 'package:i18n_extension/i18n_extension.dart';
 import 'package:flutter/material.dart';
+
+import 'package:i18n_extension/i18n_extension.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -7,7 +8,6 @@ import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
-
 import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
 
 final formatter = YamlFormatter();

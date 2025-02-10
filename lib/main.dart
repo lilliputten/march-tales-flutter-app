@@ -1,10 +1,12 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:i18n_extension/i18n_extension.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'core/config/AppConfig.dart';
+import 'package:flutter/material.dart';
+
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:i18n_extension/i18n_extension.dart';
+
 import 'MyApp.dart';
+import 'core/config/AppConfig.dart';
 import 'supportedLocales.dart';
 
 // Make it depending on a LOCAL flag, put to the constants/config

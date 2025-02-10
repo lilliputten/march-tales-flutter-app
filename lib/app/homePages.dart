@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:march_tales_app/core/types/HomePageData.dart';
-
-import 'package:march_tales_app/pages/TracksPage.dart';
 import 'package:march_tales_app/pages/FavoritesPage.dart';
 import 'package:march_tales_app/pages/GeneratorPage.dart';
 import 'package:march_tales_app/pages/SettingsPage.dart';
-
+import 'package:march_tales_app/pages/TracksPage.dart';
 import 'homePages.i18n.dart';
 
 List<HomePageData> getHomePages() {

@@ -1,8 +1,12 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
+
 import 'package:english_words/english_words.dart';
+import 'package:logger/logger.dart';
+
 import 'package:march_tales_app/features/Quote/helpers/fetchQuote.dart';
+
 import 'package:march_tales_app/features/Quote/types/Quote.dart'; // DEBUG: To remove later
 
 final logger = Logger();

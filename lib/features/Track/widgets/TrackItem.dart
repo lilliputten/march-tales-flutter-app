@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/features/Track/db/TrackInfo.dart';
 import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
-import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-
 import 'package:march_tales_app/features/Track/widgets/TrackDetails.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackItemControl.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemControl.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 

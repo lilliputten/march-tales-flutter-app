@@ -1,20 +1,19 @@
 import 'dart:developer';
 
-import 'package:i18n_extension/i18n_extension.dart';
 import 'package:flutter/material.dart';
+
+import 'package:i18n_extension/i18n_extension.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
+import 'package:march_tales_app/AppWrapper.dart';
+import 'package:march_tales_app/Init.dart';
+import 'package:march_tales_app/SplashScreen.dart';
 import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/HomePage.dart';
-
-import 'core/server/ServerSession.dart';
 import 'core/helpers/YamlFormatter.dart';
+import 'core/server/ServerSession.dart';
 import 'shared/states/AppState.dart';
-
-import 'package:march_tales_app/Init.dart';
-import 'package:march_tales_app/AppWrapper.dart';
-import 'package:march_tales_app/SplashScreen.dart';
 
 final formatter = YamlFormatter();
 final logger = Logger();

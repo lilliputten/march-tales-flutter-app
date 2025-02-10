@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+
 import 'package:logger/logger.dart';
 
-import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
 import 'package:march_tales_app/app/AppColors.dart';
+import 'package:march_tales_app/app/AppDrawer.dart';
+import 'package:march_tales_app/app/BottomNavigation.dart';
+import 'package:march_tales_app/app/homePages.dart';
 import 'package:march_tales_app/components/PlayerBox.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
-
-import 'package:march_tales_app/app/homePages.dart';
-import 'package:march_tales_app/app/BottomNavigation.dart';
-import 'package:march_tales_app/app/AppDrawer.dart';
+import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
 
 const defaultPageIndex = AppConfig.LOCAL ? 0 : 0;
 
