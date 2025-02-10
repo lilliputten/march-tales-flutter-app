@@ -20,6 +20,7 @@ class TracksInfoDb {
   late Database db;
   final Event<TracksInfoDbUpdate> updateEvents = Event<TracksInfoDbUpdate>();
 
+  /// Create or re-create the database
   _createDatabase(Database database) async {
     final createCommand = getTracksInfoDbCreateCommand();
     try {
@@ -47,26 +48,43 @@ class TracksInfoDb {
         this._createDatabase(database);
       },
       onUpgrade: (Database database, int oldVersion, int newVersion) async {
-        // Just recreate the table from scratch
-        this._createDatabase(database);
-        /* // UNUSED: Manually update to the current version
-         * try {
-         *   if (oldVersion < 3) {
-         *     // Add forgotten `lastUpdatedMs`
-         *     batch.execute('ALTER TABLE ${tracksInfoDbName} ADD lastUpdatedMs INTEGER');
-         *   }
-         *   if (oldVersion < 4) {
-         *     batch.execute('ALTER TABLE ${tracksInfoDbName} DROP COLUMN durationMs');
-         *   }
-         *   // etc...
-         *   await batch.commit();
-         * } catch (err, stacktrace) {
-         *   logger.e('[TracksInfoDb] onUpgrade: Error: ${err}',
-         *       error: err, stackTrace: stacktrace);
-         *   debugger();
-         *   rethrow;
-         * }
+        /* // Just recreate the table from scratch
+         * this._createDatabase(database);
          */
+        // Manually update to the current version
+        final batch = database.batch();
+        try {
+          if (oldVersion < 3) {
+            // Add forgotten `lastUpdatedMs`
+            batch.execute(
+                'ALTER TABLE ${tracksInfoDbName} ADD lastUpdatedMs INTEGER');
+          }
+          if (oldVersion < 5) {
+            final tempTableName = '${tracksInfoDbName}_temp';
+            final createTempTableCommand =
+                getTracksInfoDbCreateCommand(tempTableName);
+            debugger();
+            batch.execute(createTempTableCommand);
+            final oldColumns =
+                'id, position, playedCount, lastUpdatedMs, lastPlayedMs';
+            final insertCommand =
+                'INSERT INTO ${tempTableName} ($oldColumns) SELECT $oldColumns FROM ${tracksInfoDbName}';
+            batch.execute(insertCommand);
+            batch.execute('DROP TABLE ${tracksInfoDbName}');
+            batch.execute(
+                'ALTER TABLE ${tempTableName} RENAME TO ${tracksInfoDbName};');
+            debugger();
+            // batch.execute(
+            //     'ALTER TABLE ${tracksInfoDbName} ADD favorite INTEGER DEFAULT(0)');
+          }
+          // etc...
+          await batch.commit();
+        } catch (err, stacktrace) {
+          logger.e('[TracksInfoDb] onUpgrade: Error: ${err}',
+              error: err, stackTrace: stacktrace);
+          debugger();
+          rethrow;
+        }
       },
       /* // UNUSED: Other handlers
        * onConfigure: (database) async {
@@ -126,6 +144,26 @@ class TracksInfoDb {
     }
   }
 
+  Future<TrackInfo> setFavorite(int id,
+      {required bool favorite, DateTime? now}) async {
+    try {
+      final _now = now ??= DateTime.now();
+      return this.db.transaction((txn) async {
+        final trackInfo = await this.getOrCreate(id, txn: txn);
+        trackInfo.favorite = favorite;
+        trackInfo.lastUpdated = _now;
+        final _ = await this.insert(trackInfo, txn: txn);
+        this.updateEvents.broadcast(TracksInfoDbUpdate(trackInfo));
+        return trackInfo;
+      });
+    } catch (err, stacktrace) {
+      logger.e('[TracksInfoDb] updatePosition: Error: ${err}',
+          error: err, stackTrace: stacktrace);
+      debugger();
+      rethrow;
+    }
+  }
+
   Future<TrackInfo> save(int id, TrackInfo trackInfo, {DateTime? now}) async {
     try {
       final _now = now ??= DateTime.now();
@@ -151,8 +189,9 @@ class TracksInfoDb {
     final now = DateTime.now();
     final TrackInfo trackInfo = TrackInfo(
       id: id, // track.id
-      position: Duration.zero, // position
+      favorite: false,
       playedCount: 0, // track.played_count (but only for current user!).
+      position: Duration.zero, // position
       lastUpdated: now, // DateTime.now()
       lastPlayed: now, // DateTime.now()
     );

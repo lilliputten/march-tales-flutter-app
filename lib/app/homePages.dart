@@ -12,7 +12,7 @@ List<HomePageData> getHomePages() {
     HomePageData(
       widget: () => TracksPage(),
       label: 'Tracks'.i18n,
-      icon: Icon(Icons.audiotrack_outlined),
+      icon: Icon(Icons.headphones),
     ),
     HomePageData(
       widget: () => FavoritesPage(),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:i18n_extension/i18n_extension.dart';
 
+import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/core/helpers/formats.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackAuthorImageThumbnail.dart';
@@ -15,19 +16,22 @@ class TrackDetailsInfo extends StatelessWidget {
     required this.isActiveTrack,
     required this.isAlreadyPlayed,
     required this.isPlaying,
+    required this.isFavorite,
     this.textColor,
   });
   final Track track;
   final bool isActiveTrack;
   final bool isAlreadyPlayed;
   final bool isPlaying;
+  final bool isFavorite;
   final Color? textColor;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    // final AppColors appColors = theme.extension<AppColors>()!;
+    final AppColors appColors = theme.extension<AppColors>()!;
+    final iconColor = appColors.brandColor;
     // final dimmedColor = appColors.brandColor.withValues(alpha: 0.5);
     final style = theme.textTheme.bodySmall!;
     final double basicAlpha = 1; // isAlreadyPlayed ? 0.3 : 1;
@@ -117,6 +121,13 @@ class TrackDetailsInfo extends StatelessWidget {
                   Text(tag.text, style: textStyle),
                 ]);
               }).toList()),
+      !isFavorite
+          ? null
+          : Icon(
+              Icons.favorite,
+              size: style.fontSize,
+              color: iconColor,
+            ),
     ].nonNulls;
 
     // Add delimiters between each other item

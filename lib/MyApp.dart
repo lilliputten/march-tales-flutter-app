@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
         appState.updateLocale(locale);
         // Wait for the config & tick initialization and request for the first track record
         initFuture.then((initData) {
+          // TODO: Check for valid app version?
           appState.setPrefs(Init.prefs);
           // Retrieve tracks
           appState.reloadTracks();

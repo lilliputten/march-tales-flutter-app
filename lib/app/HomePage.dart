@@ -110,6 +110,7 @@ class _HomePageState extends State<HomePage> with RestorationMixin<HomePage> {
               children: [
                 // TopMenuBox(),
                 Expanded(child: pageArea),
+                // PlayerSlider(),
                 PlayerBox(),
               ],
             );

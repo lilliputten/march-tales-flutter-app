@@ -76,7 +76,7 @@ class TrackItemControl extends StatelessWidget {
           alignment: Alignment.center,
           padding: EdgeInsets.all(0.0),
           onPressed: () {
-            appState.playTrack(track);
+            appState.setPlayingTrack(track, play: true);
           },
         ),
       ],

@@ -36,7 +36,6 @@ class _TrackItemState extends State<TrackItem> {
     if (trackInfo.id == track.id) {
       setState(() {
         this._trackInfo = trackInfo;
-        // logger.t('[TrackItem:updateTrackInfo] trackInfo=${trackInfo}');
       });
     }
   }
@@ -50,7 +49,6 @@ class _TrackItemState extends State<TrackItem> {
       if (trackInfo != null) {
         setState(() {
           this._trackInfo = trackInfo;
-          // logger.t('[TrackItem:initState] trackInfo=${trackInfo}');
         });
       }
     });
@@ -88,6 +86,8 @@ class _TrackItemState extends State<TrackItem> {
       }
     }
 
+    final isFavorite = this._trackInfo?.favorite ?? false;
+
     double progress = 0;
     if (duration != 0 && position != null) {
       progress = position / duration;
@@ -97,31 +97,80 @@ class _TrackItemState extends State<TrackItem> {
 
     final double opacity = isAlreadyPlayed ? 0.5 : 1;
 
-    return Row(
-      spacing: 10,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        TrackImageThumbnail(track: track, size: 80),
-        Expanded(
-          flex: 1,
-          child: Opacity(
-            opacity: opacity,
-            child: TrackDetails(
+    return new Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+      child: InkWell(
+        onTap: () {
+          appState.setPlayingTrack(track, play: false);
+        },
+        child: Row(
+          spacing: 10,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TrackImageThumbnail(track: track, size: 80),
+            Expanded(
+              flex: 1,
+              child: Opacity(
+                opacity: opacity,
+                child: TrackDetails(
+                  track: track,
+                  isActiveTrack: isActiveTrack,
+                  isAlreadyPlayed: isAlreadyPlayed,
+                  isPlaying: isPlaying,
+                  isFavorite: isFavorite,
+                ),
+              ),
+            ),
+            // TrackFavoriteIcon(track: track),
+            TrackItemControl(
               track: track,
               isActiveTrack: isActiveTrack,
               isAlreadyPlayed: isAlreadyPlayed,
               isPlaying: isPlaying,
+              progress: progress,
             ),
-          ),
+          ],
         ),
-        TrackItemControl(
-          track: track,
-          isActiveTrack: isActiveTrack,
-          isAlreadyPlayed: isAlreadyPlayed,
-          isPlaying: isPlaying,
-          progress: progress,
-        ),
-      ],
+      ),
     );
   }
 }
+
+/*
+ * class TrackFavoriteIcon extends StatelessWidget {
+ *   const TrackFavoriteIcon({
+ *     super.key,
+ *     required this.track,
+ *   });
+ *
+ *   final Track track;
+ *
+ *   @override
+ *   Widget build(BuildContext context) {
+ *     // final appState = context.watch<AppState>();
+ *     final theme = Theme.of(context);
+ *     final AppColors appColors = theme.extension<AppColors>()!;
+ *     // final colorScheme = theme.colorScheme;
+ *
+ *     final isFavorite = false;
+ *
+ *     return IconButton(
+ *       icon: Icon(
+ *         isFavorite ? Icons.favorite : Icons.favorite_border,
+ *         // size: 20, // trackItemControlIconSize,
+ *         color: appColors.brandColor,
+ *       ),
+ *       style: IconButton.styleFrom(
+ *         // shape: CircleBorder(),
+ *       ),
+ *       alignment: Alignment.center,
+ *       padding: EdgeInsets.all(0.0),
+ *       onPressed: () {
+ *         logger.d('[TrackItem:IconButton:onPressed]');
+ *         // appState.setPlayingTrack(track);
+ *       },
+ *     );
+ *   }
+ * }
+ */

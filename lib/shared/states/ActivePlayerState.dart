@@ -233,7 +233,7 @@ mixin ActivePlayerState {
   }
 
   /// Track's play button handler
-  void playTrack(Track track) async {
+  void setPlayingTrack(Track track, {bool play = true}) async {
     if (this.playingTrack != null) {
       if (this.isPlaying && this.playingTrack!.id == track.id) {
         // Just pause/resume and exit if it was actively playing current track
@@ -262,6 +262,18 @@ mixin ActivePlayerState {
       this.activePlayer.seek(Duration.zero);
       this._savePlayingPosition(null, notify: false);
     }
-    this._playerStart(track);
+    if (play) {
+      this._playerStart(track);
+    } else {
+      this.notifyListeners();
+    }
+  }
+
+  void playSeek(Duration position) {
+    // this.playingPosition = position;
+    this.activePlayer.seek(position);
+    tracksInfoDb.updatePosition(this.playingTrack!.id,
+        position: position); // await!
+    this._savePlayingPosition(position);
   }
 }

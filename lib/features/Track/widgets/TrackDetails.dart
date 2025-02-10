@@ -37,12 +37,14 @@ class TrackDetails extends StatelessWidget {
     required this.isActiveTrack,
     required this.isAlreadyPlayed,
     required this.isPlaying,
+    required this.isFavorite,
   });
 
   final Track track;
   final bool isActiveTrack;
   final bool isAlreadyPlayed;
   final bool isPlaying;
+  final bool isFavorite;
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +69,7 @@ class TrackDetails extends StatelessWidget {
           isActiveTrack: isActiveTrack,
           isAlreadyPlayed: isAlreadyPlayed,
           isPlaying: isPlaying,
+          isFavorite: isFavorite,
           textColor: textColor,
         ),
       ],
