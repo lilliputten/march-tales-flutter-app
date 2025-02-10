@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:march_tales_app/features/Quote/types/Quote.dart';
 import 'package:march_tales_app/core/helpers/fetchGoogleImages.dart';
+import 'package:march_tales_app/features/Quote/types/Quote.dart';
 
 class QuoteImage extends StatefulWidget {
   const QuoteImage({

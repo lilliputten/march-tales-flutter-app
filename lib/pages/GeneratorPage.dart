@@ -2,12 +2,13 @@
 
 // import 'dart:developer';
 
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+
+import 'package:english_words/english_words.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/shared/states/MyAppState.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/shared/widgets/HistoryListView.dart';
 
 final logger = Logger();
@@ -16,7 +17,7 @@ final logger = Logger();
 class GeneratorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
+    var appState = context.watch<AppState>();
     var pair = appState.current;
     // var projectInfo = appState.projectInfo;
 

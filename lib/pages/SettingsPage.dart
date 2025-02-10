@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:march_tales_app/Init.dart';
-import 'package:provider/provider.dart';
-import 'package:logger/logger.dart';
+
 import 'package:i18n_extension/i18n_extension.dart';
+import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import 'package:march_tales_app/Init.dart';
+import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
-import 'package:march_tales_app/shared/states/MyAppState.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/supportedLocales.dart';
-
 import 'SettingsPage.i18n.dart';
+
+// import 'package:flutter/services.dart';
 
 final logger = Logger();
 
@@ -16,10 +20,6 @@ final logger = Logger();
 class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // final colorScheme = Theme.of(context).colorScheme;
-    // final appState = context.watch<MyAppState>();
-    // var projectInfo = appState.projectInfo;
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -36,48 +36,46 @@ class SettingsPage extends StatelessWidget {
   }
 }
 
-final themeItems = [
-  {'value': ThemeMode.light.toString(), 'text': 'Light'.i18n},
-  {'value': ThemeMode.dark.toString(), 'text': 'Dark'.i18n},
-];
-
 class ThemeSelector extends StatelessWidget {
-  getThemesList(String currentThemeCode) {
+  final themeItems = [
+    {'value': false, 'text': 'Light'.i18n},
+    {'value': true, 'text': 'Dark'.i18n},
+  ];
+
+  getThemesList(bool currentIsDarkTheme) {
     // final List<DropdownMenuItem<String>> list = [];
     return themeItems.map((item) {
       return DropdownMenuItem<String>(
-        value: item['value'],
-        // enabled: code != currentThemeCode,
-        child: Text(item['text']!),
+        value: item['value'].toString(),
+        // enabled: code != currentIsDarkTheme,
+        child: Text(item['text'].toString()),
       );
     }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<MyAppState>();
+    final appState = context.watch<AppState>();
     final colorScheme = Theme.of(context).colorScheme;
-    final currentThemeCode = appState.themeMode.toString();
-    final items = getThemesList(currentThemeCode);
-    // logger.d('ThemeSelector items: ${items} currentThemeCode: ${currentThemeCode}');
+    final currentIsDarkTheme = appState.isDarkTheme;
+    final items = getThemesList(currentIsDarkTheme);
     return DropdownButtonFormField<String>(
       iconDisabledColor: Colors.white,
       decoration: InputDecoration(
         filled: true,
-        labelText: 'Color theme'.i18n,
+        labelText: 'Color scheme'.i18n,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
       ),
-      value: currentThemeCode,
+      value: currentIsDarkTheme.toString(),
       elevation: 16,
       style: TextStyle(color: colorScheme.primary),
-      onChanged: (String? themeCode) {
-        if (themeCode != null) {
-          appState.toggleTheme(themeCode == ThemeMode.dark.toString()
-              ? ThemeMode.dark
-              : ThemeMode.light);
+      onChanged: (String? value) {
+        if (value != null) {
+          final bool isDarkTheme = value.toLowerCase() == 'true';
+          appState.toggleDarkTheme(isDarkTheme);
         }
       },
-      // TODO; Make selected item distinctive using `selectedItemBuilder`
+      // TODO; Make selected item distinctive using `selectedItemBuilder`?
       items: items,
     );
   }
@@ -99,11 +97,10 @@ class LanguageSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<MyAppState>();
+    final appState = context.watch<AppState>();
     final colorScheme = Theme.of(context).colorScheme;
     final currentLanguageCode = context.locale.languageCode;
     final items = getLanguagesList(currentLanguageCode);
-    // logger.d('LanguageSelector items: ${items} currentLanguageCode: ${currentLanguageCode}');
     return DropdownButtonFormField<String>(
       iconDisabledColor: Colors.white,
       decoration: InputDecoration(
@@ -123,7 +120,7 @@ class LanguageSelector extends StatelessWidget {
           context.locale = Locale(locale);
         }
       },
-      // TODO; Make selected item distinctive using `selectedItemBuilder`
+      // TODO; Make selected item distinctive using `selectedItemBuilder`?
       items: items,
     );
   }
@@ -134,13 +131,16 @@ class AppInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final style = theme.textTheme.bodySmall!;
+    final linkStyle = style.copyWith(
+      decoration: TextDecoration.underline,
+      color: Colors.blue,
+      decorationColor: Colors.blue,
+    );
 
     final appVersion = Init.appVersion;
     final appTimestamp = Init.appTimestamp;
     final serverVersion = Init.serverVersion;
     final serverTimestamp = Init.serverTimestamp;
-
-    logger.d('AppInfo appVersion: ${appVersion}');
 
     return Column(
       spacing: 10,
@@ -148,6 +148,7 @@ class AppInfo extends StatelessWidget {
       children: [
         Wrap(
           spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             SelectableText(
               'Application version:'.i18n,
@@ -165,6 +166,7 @@ class AppInfo extends StatelessWidget {
         ),
         Wrap(
           spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             SelectableText(
               'Server version:'.i18n,
@@ -180,8 +182,92 @@ class AppInfo extends StatelessWidget {
                 style: style.copyWith(fontWeight: FontWeight.w300)),
           ],
         ),
+        Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SelectableText(
+              'Web site:'.i18n,
+              style: style,
+            ),
+            InkWell(
+              onTap: () => launchUrl(Uri.parse(
+                  '${AppConfig.WEB_SITE_PROTOCOL}${AppConfig.WEB_SITE_DOMAIN}')),
+              child: Text(
+                AppConfig.WEB_SITE_DOMAIN,
+                style: linkStyle,
+              ),
+            ),
+          ],
+        ),
+        Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SelectableText(
+              'Contact e-mail:'.i18n,
+              style: style,
+            ),
+            InkWell(
+              onTap: () =>
+                  launchUrl(Uri.parse('mailto:${AppConfig.CONTACT_EMAIL}')),
+              child: Text(
+                AppConfig.CONTACT_EMAIL,
+                style: linkStyle,
+              ),
+            ),
+          ],
+        ),
+        Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SelectableText(
+              'Developer:'.i18n,
+              style: style,
+            ),
+            InkWell(
+              onTap: () =>
+                  launchUrl(Uri.parse('https://${AppConfig.DEVELOPER_URL}')),
+              child: Text(
+                AppConfig.DEVELOPER_URL,
+                style: linkStyle,
+              ),
+            ),
+          ],
+        ),
         // TODO: Show other info (developer, project site etc)
       ],
+    );
+  }
+}
+
+class SectionTitle extends StatelessWidget {
+  const SectionTitle({
+    super.key,
+    required this.title,
+  });
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textStyle = theme.textTheme.bodyLarge!.copyWith(
+      color: colorScheme.primary,
+      // fontWeight: FontWeight.bold,
+    );
+    final delimiterColor = colorScheme.onSurface.withValues(alpha: 0.2);
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(width: 1.5, color: delimiterColor),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+        child: Center(child: Text(title, style: textStyle)),
+      ),
     );
   }
 }
@@ -195,8 +281,10 @@ class SettingsWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          SectionTitle(title: 'Basic settings'.i18n),
           LanguageSelector(),
           ThemeSelector(),
+          SectionTitle(title: 'Application info'.i18n),
           AppInfo(),
         ],
       ),

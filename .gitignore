@@ -56,6 +56,10 @@ config-local.sh
 .env*
 !.env*SAMPLE
 
+# Local data
+/databases
+/db-*
+
 # Unused & temp files
 \!UNUSED
 ~*

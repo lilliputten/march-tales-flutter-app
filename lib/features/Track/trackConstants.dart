@@ -1,1 +1,2 @@
-const int defaultTracksDownloadLimit = 5;
+const int defaultTracksDownloadLimit = 10;
+const Duration playerSeekGap = Duration(seconds: 5);

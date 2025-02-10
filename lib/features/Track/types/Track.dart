@@ -1,22 +1,30 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:developer';
+
 import 'package:logger/logger.dart';
 
+import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
+
 final logger = Logger();
+
+final formatter = YamlFormatter();
 
 class TrackAuthor {
   final int id;
   final String name;
+  final String portrait_picture;
   const TrackAuthor({
     required this.id,
     required this.name,
+    required this.portrait_picture,
   });
   factory TrackAuthor.fromJson(Map<String, dynamic> json) {
     try {
       return TrackAuthor(
         id: json['id'],
         name: json['name'].toString(),
+        portrait_picture: json['portrait_picture'].toString(),
       );
     } catch (err, stacktrace) {
       final String msg = 'Can not parse TrackAuthor data: $err';
@@ -86,34 +94,44 @@ class TrackRubric {
 class Track {
   final int id;
   final String title;
+  final String description;
   final String track_status;
   final TrackAuthor author;
   final List<TrackTag> tags;
   final List<TrackRubric> rubrics;
   final String audio_file;
-  final int audio_duration;
+  // final double audio_duration;
+  final Duration duration;
   final int audio_size;
   final String preview_picture;
   final bool for_members;
   final int played_count;
-  final String published_at;
   final String youtube_url;
+  final String published_at;
+  final int published_by_id;
+  final int updated_by_id;
+  final String updated_at;
 
   const Track({
     required this.id,
     required this.title,
-    required this.track_status,
-    required this.author,
-    required this.tags,
-    required this.rubrics,
+    required this.description,
+    // required this.audio_duration,
+    required this.duration,
     required this.audio_file,
-    required this.audio_duration,
     required this.audio_size,
-    required this.preview_picture,
     required this.for_members,
     required this.played_count,
-    required this.published_at,
+    required this.preview_picture,
+    required this.track_status,
     required this.youtube_url,
+    required this.author,
+    required this.rubrics,
+    required this.tags,
+    required this.published_at,
+    required this.published_by_id,
+    required this.updated_at,
+    required this.updated_by_id,
   });
 
   @override
@@ -123,9 +141,11 @@ class Track {
 
   factory Track.fromJson(Map<String, dynamic> json) {
     try {
+      final int durationMs = (json['audio_duration'].toDouble() * 1000).round();
       return Track(
         id: json['id'],
         title: json['title'].toString(),
+        description: json['description'].toString(),
         track_status: json['track_status'].toString(),
         author: TrackAuthor.fromJson(json['author']),
         tags: List<dynamic>.from(json['tags'])
@@ -135,17 +155,24 @@ class Track {
             .map((data) => TrackRubric.fromJson(data))
             .toList(),
         audio_file: json['audio_file'].toString(),
-        audio_duration: json['audio_duration'],
+        // audio_duration: json['audio_duration'].toDouble(),
+        duration: Duration(
+            milliseconds: durationMs), // json['audio_duration'].toDouble(),
         audio_size: json['audio_size'],
         preview_picture: json['preview_picture'].toString(),
         for_members: json['for_members'],
         played_count: json['played_count'],
-        published_at: json['published_at'].toString(),
         youtube_url: json['youtube_url'].toString(),
+        published_at: json['published_at'].toString(),
+        published_by_id: json['published_by_id'],
+        updated_at: json['updated_at'].toString(),
+        updated_by_id: json['updated_by_id'],
       );
     } catch (err, stacktrace) {
       final String msg = 'Can not parse Track data: $err';
       logger.e(msg, error: err, stackTrace: stacktrace);
+      logger.d(
+          'Raw json data for the previous error is: : ${formatter.format(json)}');
       debugger();
       throw FormatException(msg);
     }

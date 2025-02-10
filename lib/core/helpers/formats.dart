@@ -33,6 +33,7 @@ String formatDuration(Duration duration) {
   return parts.join(':');
 }
 
-String formatSecondsDuration(int seconds) {
-  return formatDuration(Duration(seconds: seconds));
+String formatSecondsDuration(double seconds) {
+  final int milliseconds = (seconds * 1000).round();
+  return formatDuration(Duration(milliseconds: milliseconds));
 }

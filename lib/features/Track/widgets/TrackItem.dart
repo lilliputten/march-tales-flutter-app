@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
+
 import 'package:logger/logger.dart';
-import 'package:i18n_extension/i18n_extension.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/shared/states/MyAppState.dart';
-import 'package:march_tales_app/core/config/AppConfig.dart';
-import 'package:march_tales_app/core/helpers/formats.dart';
+import 'package:march_tales_app/features/Track/db/TrackInfo.dart';
+import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-
-const double previewSize = 80;
-const previewHalfSize = previewSize / 2;
-const previewProgressPadding = previewHalfSize - 16;
+import 'package:march_tales_app/features/Track/widgets/TrackDetails.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemControl.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
-class TrackItem extends StatelessWidget {
+// NOTE: See theme info at: https://api.flutter.dev/flutter/material/ThemeData-class.html
+
+class TrackItem extends StatefulWidget {
   const TrackItem({
     super.key,
     required this.track,
@@ -24,176 +24,115 @@ class TrackItem extends StatelessWidget {
   final Track track;
 
   @override
+  State<TrackItem> createState() => _TrackItemState();
+}
+
+class _TrackItemState extends State<TrackItem> {
+  TrackInfo? _trackInfo;
+
+  void updateTrackInfo(TracksInfoDbUpdate update) {
+    final trackInfo = update.trackInfo;
+    final Track track = this.widget.track;
+    if (trackInfo.id == track.id) {
+      setState(() {
+        this._trackInfo = trackInfo;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final Track track = this.widget.track;
+    // Load inital value
+    tracksInfoDb.getById(track.id).then((trackInfo) {
+      if (trackInfo != null) {
+        setState(() {
+          this._trackInfo = trackInfo;
+        });
+      }
+    });
+    // Subscribe to the future updates
+    tracksInfoDb.updateEvents.subscribe(this.updateTrackInfo);
+  }
+
+  @override
+  void dispose() {
+    tracksInfoDb.updateEvents.unsubscribe(this.updateTrackInfo);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Row(
-        spacing: 10,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          trackImage(context, track),
-          Expanded(
-            flex: 1,
-            child: trackDetails(context, track),
-          ),
-          trackControl(context, track),
-        ],
+    final Track track = this.widget.track;
+
+    final appState = context.watch<AppState>();
+
+    // final theme = Theme.of(context);
+    // final colorScheme = theme.colorScheme;
+    // final AppColors appColors = theme.extension<AppColors>()!;
+
+    // Determine this track state...
+    final playingTrack = appState.playingTrack;
+    final isActiveTrack = playingTrack != null && playingTrack.id == track.id;
+    final isPlaying = isActiveTrack && appState.isPlaying && !appState.isPaused;
+
+    final TrackInfo? trackInfo = this._trackInfo;
+    int? position = trackInfo?.position.inMilliseconds;
+    int? duration = track.duration.inMilliseconds;
+    if (isActiveTrack) {
+      if (appState.playingPosition != null) {
+        position = appState.playingPosition!.inMilliseconds;
+      }
+    }
+
+    final isFavorite = this._trackInfo?.favorite ?? false;
+
+    double progress = 0;
+    if (duration != 0 && position != null) {
+      progress = position / duration;
+    }
+
+    final isAlreadyPlayed = !isActiveTrack && progress >= 1;
+
+    final double opacity = isAlreadyPlayed ? 0.5 : 1;
+
+    return new Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+      child: InkWell(
+        onTap: () {
+          appState.setPlayingTrack(track, play: false);
+        },
+        child: Row(
+          spacing: 10,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TrackImageThumbnail(track: track, size: 80),
+            Expanded(
+              flex: 1,
+              child: Opacity(
+                opacity: opacity,
+                child: TrackDetails(
+                  track: track,
+                  isActiveTrack: isActiveTrack,
+                  isAlreadyPlayed: isAlreadyPlayed,
+                  isPlaying: isPlaying,
+                  isFavorite: isFavorite,
+                ),
+              ),
+            ),
+            // TrackFavoriteIcon(track: track),
+            TrackItemControl(
+              track: track,
+              isActiveTrack: isActiveTrack,
+              isAlreadyPlayed: isAlreadyPlayed,
+              isPlaying: isPlaying,
+              progress: progress,
+            ),
+          ],
+        ),
       ),
     );
   }
-}
-
-Widget trackImage(BuildContext context, Track track) {
-  final theme = Theme.of(context);
-  final String url = '${AppConfig.TALES_SERVER_HOST}${track.preview_picture}';
-  return ClipRRect(
-    borderRadius: BorderRadius.circular(10),
-    child: CachedNetworkImage(
-      imageUrl: url,
-      // color: theme.primaryColor,
-      width: previewSize,
-      height: previewSize,
-      fit: BoxFit.cover,
-      placeholder: (context, url) => Padding(
-        padding: const EdgeInsets.all(previewProgressPadding),
-        child: CircularProgressIndicator(),
-      ),
-      errorWidget: (context, url, error) => Icon(Icons.error,
-          color: theme.primaryColor.withValues(alpha: 0.5),
-          size: previewHalfSize),
-    ),
-  );
-}
-
-Widget trackDetailsInfo(BuildContext context, Track track) {
-  final theme = Theme.of(context);
-  final style = theme.textTheme.bodySmall!.copyWith();
-  final items = [
-    // Author
-    Wrap(spacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
-      Icon(
-        Icons.mode_edit,
-        size: style.fontSize,
-        color: theme.primaryColor.withValues(alpha: 0.5),
-      ),
-      Text(track.author.name, style: style),
-    ]),
-    // Played count
-    track.played_count == 0
-        ? null
-        : Wrap(
-            spacing: 2,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-                Icon(
-                  Icons.headphones_outlined,
-                  size: style.fontSize,
-                  color: theme.primaryColor.withValues(alpha: 0.5),
-                ),
-                Text(track.played_count.toString(), style: style),
-              ]),
-    // Duration
-    Wrap(spacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
-      Icon(
-        Icons.watch_later_outlined,
-        size: style.fontSize,
-        color: theme.primaryColor.withValues(alpha: 0.5),
-      ),
-      Text(formatSecondsDuration(track.audio_duration), style: style),
-    ]),
-    // Date
-    Wrap(spacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
-      Icon(
-        Icons.calendar_month,
-        size: style.fontSize,
-        color: theme.primaryColor.withValues(alpha: 0.5),
-      ),
-      Text(
-          formatDate(
-              DateTime.parse(track.published_at), context.locale.languageCode),
-          style: style),
-    ]),
-    // Rubrics
-    track.rubrics.isEmpty
-        ? null
-        : Wrap(
-            spacing: 3,
-            children: track.rubrics.map((tag) {
-              return Container(
-                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 3),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(4)),
-                  border: Border.all(
-                      color: theme.primaryColor.withValues(alpha: 0.25),
-                      width: 1),
-                ),
-                child: Text(tag.text, style: style),
-              );
-            }).toList()),
-    // Tags
-    track.tags.isEmpty
-        ? null
-        : Wrap(
-            spacing: 3,
-            children: track.tags.map((tag) {
-              return Wrap(spacing: 2, children: [
-                Text('#',
-                    style: style.copyWith(
-                        color:
-                            theme.colorScheme.primary.withValues(alpha: 0.5))),
-                Text(tag.text, style: style),
-              ]);
-            }).toList()),
-  ].nonNulls;
-  // Add delimiters between each other item
-  final delimiter = Text('|',
-      style: style.copyWith(
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.2)));
-  final delimitedItems =
-      items.map((e) => [delimiter, e]).expand((e) => e).skip(1);
-  return Wrap(
-    spacing: 4,
-    runSpacing: 2,
-    crossAxisAlignment: WrapCrossAlignment.center,
-    // runAlignment: WrapAlignment.center,
-    children: delimitedItems.toList(),
-  );
-}
-
-Widget trackDetails(BuildContext context, Track track) {
-  final title = track.title;
-  return Column(
-    spacing: 3,
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(title),
-      trackDetailsInfo(context, track),
-    ],
-  );
-}
-
-Widget trackControl(BuildContext context, Track track) {
-  final appState = context.watch<MyAppState>();
-  final playingTrack = appState.playingTrack;
-  final isPlaying = playingTrack != null && playingTrack.id == track.id;
-  final colorScheme = Theme.of(context).colorScheme;
-  return IconButton(
-    icon: Icon(
-      isPlaying ? Icons.pause : Icons.play_arrow,
-      size: 24,
-      color: Colors.white,
-    ),
-    style: IconButton.styleFrom(
-      // minimumSize: Size.zero, // Set this
-      // padding: EdgeInsets.zero, // and this
-      shape: CircleBorder(),
-      backgroundColor: colorScheme.primary,
-      foregroundColor: colorScheme.onPrimary,
-    ),
-    alignment: Alignment.center,
-    padding: EdgeInsets.all(0.0),
-    onPressed: () {
-      logger.d('Play track ${track.id} (${track.title})');
-      appState.playTrack(track);
-    },
-  );
 }

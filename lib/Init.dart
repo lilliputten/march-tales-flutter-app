@@ -1,14 +1,17 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
-import 'package:logger/logger.dart';
-import 'dart:convert';
-// import 'package:flutter/services.dart';
 import 'package:flutter/services.dart' show rootBundle;
+
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
+import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 
 final formatter = YamlFormatter();
 final logger = Logger();
@@ -22,6 +25,7 @@ Future<dynamic> readJson(String filename) async {
 final parseProjectInfoReg = RegExp(r'^(\S+) v\.(\S+) / (.*)$');
 
 class Init {
+  static SharedPreferences? prefs;
   static String? serverProjectInfo;
   static String? serverVersion;
   static String? serverId;
@@ -31,16 +35,22 @@ class Init {
   static String? appId;
   static String? appTimestamp;
   static Map<String, dynamic>? authConfig;
+
+  // static late TracksInfoDb tracksInfoDb;
+
   static Future initialize() async {
     List<Future> futures = [
-      // _registerServices(),
+      _initPrefs(),
       _loadLocalData(),
       _loadConfig(),
       _loadTick(),
+      _initTracksInfoDb(),
+      // _registerServices(),
     ];
     final List<dynamic> waitResults = await Future.wait(futures);
     // logger.t('[Init:initialize]: waitResults: $waitResults');
     final results = {
+      'prefs': prefs,
       'waitResults': waitResults,
       'authConfig': authConfig,
       'serverProjectInfo': serverProjectInfo,
@@ -51,8 +61,9 @@ class Init {
       'appId': appId,
       'appVersion': appVersion,
       'appTimestamp': appTimestamp,
+      // 'tracksInfoDb': tracksInfoDb,
     };
-    logger.d('results: ${formatter.format(results)}');
+    // logger.d('results: ${formatter.format(results)}');
     return results;
   }
 
@@ -142,17 +153,32 @@ class Init {
     }
   }
 
-  // static _registerServices() async {
-  //   final response = await http.get(
-  //     Uri.parse(url),
-  //     headers: {
-  //       'content-type': 'application/json; charset=utf-8',
-  //     },
-  //     // body: json.encode(data),
-  //   );
-  //   logger.t("starting registering services");
-  //   await Future.delayed(Duration(seconds: 1));
-  //   logger.t("finished registering services");
-  //   return '_registerServices: ok';
-  // }
+  static _initPrefs() async {
+    try {
+      prefs = await SharedPreferences.getInstance();
+      return '_initPrefs: ok';
+    } catch (err, stacktrace) {
+      final String msg = 'Can not initialize a persistent instance: ${err}';
+      logger.e('[Init:_loadTick] error ${msg}',
+          error: err, stackTrace: stacktrace);
+      // debugger();
+      showErrorToast(msg);
+      throw Exception(msg);
+    }
+  }
+
+  static _initTracksInfoDb() async {
+    try {
+      await tracksInfoDb.initializeDB();
+      // logger.t('[Init:_initTracksInfoDb] Done ${tracksInfoDb.db}');
+      return '_initTracksInfoDb: ok';
+    } catch (err, stacktrace) {
+      final String msg = 'Can not initialize a local database: ${err}';
+      logger.e('[Init:_loadTick] error ${msg}',
+          error: err, stackTrace: stacktrace);
+      debugger();
+      showErrorToast(msg);
+      throw Exception(msg);
+    }
+  }
 }

@@ -13,6 +13,9 @@ linter:
     unnecessary_breaks: true
     use_key_in_widget_constructors: false
     unnecessary_brace_in_string_interps: false
+    unnecessary_this: false
+    unnecessary_new: false
+    # depend_on_referenced_packages: false # ? <- The imported package 'test' isn't a dependency of the importing package.
 
 formatter:
   page_width: 120

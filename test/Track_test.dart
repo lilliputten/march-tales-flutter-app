@@ -1,17 +1,18 @@
 import 'dart:developer';
-import 'package:logger/logger.dart';
 
-// ignore: depend_on_referenced_packages
+import 'package:logger/logger.dart';
 import 'package:test/test.dart';
 
-import 'Track.dart';
+import 'package:march_tales_app/features/Track/types/Track.dart';
 
+// import 'Track.dart';
+// ignore: depend_on_referenced_packages
 // @see https://docs.flutter.dev/cookbook/testing/unit/introduction
 
 final logger = Logger();
 
 void main() {
-  test('Track should be created from a dynamic data (parsed json)', () {
+  test('Track should be created from a dynamic data (parsed json)', () async {
     final data = {
       "id": 2,
       "title": "Новогодняя сказка",
@@ -26,7 +27,7 @@ void main() {
       ],
       "audio_file":
           "http://localhost:8000/media/samples/sample-with-wrong-metadata-duration.mp3",
-      "audio_duration": 167,
+      "audio_duration": 167.183673,
       "audio_size": 1031154,
       "preview_picture": "http://localhost:8000/media/samples/ny-800x450.jpg",
       "for_members": false,

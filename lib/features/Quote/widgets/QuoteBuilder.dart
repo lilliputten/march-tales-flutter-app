@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/shared/states/MyAppState.dart';
 import 'package:march_tales_app/features/Quote/types/Quote.dart';
-import 'package:march_tales_app/features/Quote/widgets/QuoteText.dart';
 import 'package:march_tales_app/features/Quote/widgets/QuoteImage.dart';
+import 'package:march_tales_app/features/Quote/widgets/QuoteText.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 
 class QuoteBuilder extends StatelessWidget {
   const QuoteBuilder({
@@ -13,7 +14,7 @@ class QuoteBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
+    var appState = context.watch<AppState>();
     return FutureBuilder<Quote>(
       future: appState.ensureQuote(),
       // @see https://www.dhiwise.com/post/how-to-resolve-flutter-setstate-called-during-build-issue

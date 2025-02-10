@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:developer';
+
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
+import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/supportedLocales.dart';
 
 final defaultHeaders = {
@@ -25,13 +28,17 @@ class _ServerSession {
 
   updateLocale(String locale) {
     // Store language
-    currentLocale = locale;
-    // Update `django_language` cookie?
-    cookies['django_language'] = locale;
+    this.currentLocale = locale;
+    // Update `django_language` cookie
+    this.cookies['django_language'] = locale;
     // Update header values
-    headers['accept-language'] = locale;
-    headers['content-language'] = locale;
-    headers['cookie'] = _generateCookieHeader();
+    this.headers['accept-language'] = locale;
+    this.headers['content-language'] = locale;
+    // this.headers['cookie'] = _generateCookieHeader();
+  }
+
+  updateCSRFToken(String token) {
+    this.cookies['csrftoken'] = token;
   }
 
   void _updateCookie(http.Response response) {
@@ -44,11 +51,11 @@ class _ServerSession {
         var cookies = setCookie.split(';');
 
         for (var cookie in cookies) {
-          _setCookie(cookie);
+          this._setCookie(cookie);
         }
       }
 
-      headers['cookie'] = _generateCookieHeader();
+      // headers['cookie'] = _generateCookieHeader();
     }
   }
 
@@ -56,24 +63,37 @@ class _ServerSession {
     if (rawCookie != null &&
         rawCookie.isNotEmpty &&
         !rawCookie.startsWith(' ')) {
-      var keyValue = rawCookie.split('=');
+      final keyValue = rawCookie.split('=');
       if (keyValue.length == 2) {
-        var key = keyValue[0].trim();
-        var value = keyValue[1];
-
+        final key = keyValue[0].trim();
+        final value = keyValue[1];
         // ignore keys that aren't cookies
         if (key == 'path' || key == 'expires') return;
-
-        cookies[key] = value;
+        this.cookies[key] = value;
       }
     }
+  }
+
+  _getHeaders() {
+    final headers = Map<String, String>.from(this.headers);
+    headers['cookie'] = this._generateCookieHeader();
+    if (this.cookies['csrftoken'] != null &&
+        this.cookies['csrftoken']!.isNotEmpty) {
+      headers['X-CSRFToken'] = this.cookies['csrftoken']!;
+    }
+    if (!AppConfig.LOCAL) {
+      headers['referer'] = AppConfig.WEB_SITE_HOST;
+    }
+    return headers;
   }
 
   String _generateCookieHeader() {
     String cookie = '';
 
-    for (var key in cookies.keys) {
-      if (cookie.isNotEmpty) cookie += ';';
+    for (var key in this.cookies.keys) {
+      if (cookie.isNotEmpty) {
+        cookie += ';';
+      }
       cookie += '$key=${cookies[key]!}';
     }
 
@@ -81,63 +101,112 @@ class _ServerSession {
   }
 
   Future<dynamic> get(Uri uri) {
+    final requestHeaders = this._getHeaders();
+    // logger.t('[ServerSession] GET starting uri=${uri} headers=${requestHeaders}');
     return http
         .get(
       uri,
-      headers: headers,
+      headers: requestHeaders,
     )
         .then((http.Response response) {
       final String res = response.body;
       final int statusCode = response.statusCode;
 
-      _updateCookie(response);
+      // logger.t('[ServerSession:get] response uri=${uri} cookie=${response.headers["set-cookie"]} headers=${response.headers} requestHeaders=${requestHeaders}');
+      dynamic data = {};
+      try {
+        data = _decoder.convert(res);
+      } catch (_) {}
+
+      this._updateCookie(response);
 
       if (statusCode < 200 || statusCode > 400) {
-        throw Exception('Error fetching data (get)');
+        String reason = response.reasonPhrase ?? 'Unknown error';
+        if (data != null && data['detail'] != null) {
+          reason = data['detail'].toString();
+        }
+        final message = 'GET error ${statusCode}: ${reason}';
+        logger.e(
+            '[ServerSession:get] ${message}, url: ${uri} requestHeaders: ${requestHeaders}');
+        debugger();
+        throw Exception(message);
       }
-      return _decoder.convert(res);
+
+      return data;
     });
   }
 
   Future<dynamic> post(Uri uri, {dynamic body, Encoding? encoding}) {
+    final requestHeaders = this._getHeaders();
+    // logger.t('[ServerSession] POST starting uri=${uri} headers=${requestHeaders}');
     return http
         .post(
       uri,
       body: _encoder.convert(body),
-      headers: headers,
+      headers: requestHeaders,
       encoding: encoding,
     )
         .then((http.Response response) {
       final String res = response.body;
       final int statusCode = response.statusCode;
 
-      _updateCookie(response);
+      dynamic data = {};
+      try {
+        data = _decoder.convert(res);
+      } catch (_) {}
+
+      this._updateCookie(response);
 
       if (statusCode < 200 || statusCode > 400) {
-        throw Exception('Error fetching data (post)');
+        String reason = response.reasonPhrase ?? 'Unknown error';
+        if (data != null && data['detail'] != null) {
+          reason = data['detail'].toString();
+        }
+        final message = 'POST error ${statusCode}: ${reason}';
+        logger.e(
+            '[ServerSession] ${message}, url: ${uri} body: ${body} requestHeaders: ${requestHeaders}');
+        debugger();
+        throw Exception(message);
       }
-      return _decoder.convert(res);
+
+      return data;
     });
   }
 
   Future<dynamic> put(Uri uri, {dynamic body, Encoding? encoding}) {
+    final requestHeaders = this._getHeaders();
+    // logger.t('[ServerSession] PUT starting uri=${uri} headers=${requestHeaders}');
     return http
         .put(
       uri,
       body: _encoder.convert(body),
-      headers: headers,
+      headers: requestHeaders,
       encoding: encoding,
     )
         .then((http.Response response) {
       final String res = response.body;
       final int statusCode = response.statusCode;
 
-      _updateCookie(response);
+      dynamic data = {};
+      try {
+        data = _decoder.convert(res);
+      } catch (_) {}
+
+      this._updateCookie(response);
 
       if (statusCode < 200 || statusCode > 400) {
-        throw Exception('Error fetching data (put)');
+        String reason = response.reasonPhrase ?? 'Unknown error';
+        if (data != null && data['detail'] != null) {
+          reason = data['detail'].toString();
+        }
+        final message = 'PUT error ${statusCode}: ${reason}';
+        logger.e(
+            '[ServerSession] ${message}, url: ${uri} body: ${body} requestHeaders: ${requestHeaders}');
+        debugger();
+        throw Exception(message);
       }
-      return _decoder.convert(res);
+
+      return data;
     });
   }
 }
