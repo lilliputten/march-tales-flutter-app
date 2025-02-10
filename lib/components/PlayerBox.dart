@@ -1,20 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+
 import 'package:logger/logger.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
 import 'package:provider/provider.dart';
 
+import 'package:march_tales_app/core/helpers/getDurationString.dart';
+import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
-
-String getDurationString(Duration? d) {
-  if (d == null) {
-    return '';
-  }
-  String s = d.toString();
-  s = s.replaceFirst(RegExp(r'\.\d+$'), '');
-  return s;
-}
 
 // @see https://docs.flutter.dev/cookbook/networking/fetch-data
 class PlayerBox extends StatelessWidget {
@@ -42,34 +38,111 @@ class PlayerBox extends StatelessWidget {
           // logger.t('PlayerBox: playing: ${playing} processingState: ${processingState} position: ${position} duration: ${duration} ${playerState}');
           // appState.updatePlayerStatus(playerState);
           // int currentIndex = snapshot.data ?? 0;
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-            child: Row(
-              spacing: 10,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TrackImageThumbnail(track: track, size: 50),
-                Expanded(
-                  flex: 1,
-                  child: TrackDetails(),
-                ),
-              ],
-            ),
-          );
+          return PlayerWrapper();
         });
   }
 }
 
+class PlayerWrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // final appState = context.watch<AppState>();
+    // final theme = Theme.of(context);
+    // final colorScheme = theme.colorScheme;
+
+    return Column(
+      spacing: 0,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        PlayerSlider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          child: PlayerDetails(),
+        ),
+      ],
+    );
+  }
+}
+
+class CustomTrackShape extends RoundedRectSliderTrackShape {
+  @override
+  Rect getPreferredRect({
+    required RenderBox parentBox,
+    // Offset offset = Offset.zero,
+    Offset offset = const Offset(10, 20),
+    required SliderThemeData sliderTheme,
+    bool isEnabled = false,
+    bool isDiscrete = false,
+  }) {
+    final Offset usedOffset = Offset(10, 0);
+    final double trackHeight = sliderTheme.trackHeight!;
+    final double trackLeft = usedOffset.dx;
+    final double trackTop =
+        usedOffset.dy + (parentBox.size.height - trackHeight) / 2;
+    final double trackWidth = parentBox.size.width;
+    return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
+  }
+}
+
+class PlayerSlider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+
+    final track = appState.playingTrack;
+    final duration = track?.duration;
+    final position = appState.playingPosition;
+
+    // TODO: Use real position/duration values
+
+    // final appState = context.watch<AppState>();
+    // final theme = Theme.of(context);
+    // final colorScheme = theme.colorScheme;
+
+    return SliderTheme(
+      data: SliderThemeData(
+        trackShape: CustomTrackShape(),
+      ),
+      child: Slider(
+        value: 0.5,
+        // max: 100,
+        // divisions: 5,
+        // label: 'XXX',
+        onChanged: (double value) {
+          debugger();
+          // setState(() {
+          //   _currentSliderValue = value;
+          // });
+        },
+      ),
+    );
+  }
+}
+
+class PlayerDetails extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+    final track = appState.playingTrack!;
+    // final appState = context.watch<AppState>();
+    // final theme = Theme.of(context);
+    // final colorScheme = theme.colorScheme;
+
+    return Row(
+      spacing: 10,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        TrackImageThumbnail(track: track, size: 50),
+        Expanded(
+          flex: 1,
+          child: TrackDetails(),
+        ),
+      ],
+    );
+  }
+}
+
 class TrackDetails extends StatelessWidget {
-  const TrackDetails({
-    super.key,
-    // required this.track,
-    // this.isActive = false,
-  });
-
-  // final Track track;
-  // final bool isActive;
-
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
