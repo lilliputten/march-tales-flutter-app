@@ -14,9 +14,6 @@ final logger = Logger();
 const double _bigControlIconSize = 24;
 const double _bigControlCircleSize = _bigControlIconSize + 16;
 
-// const double _smallControlIconSize = 20;
-// const double _smallControlCircleSize = _bigControlIconSize + 16;
-
 class PlayerControls extends StatelessWidget {
   const PlayerControls({
     super.key,
@@ -32,10 +29,10 @@ class PlayerControls extends StatelessWidget {
       spacing: 0,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        PlayerFavoriteControl(track: track, trackInfo: trackInfo),
         PlayerBackwardControl(track: track, trackInfo: trackInfo),
         PlayerPlayControl(track: track, trackInfo: trackInfo),
         PlayerForwardControl(track: track, trackInfo: trackInfo),
+        PlayerFavoriteControl(track: track, trackInfo: trackInfo),
       ],
     );
   }
@@ -114,12 +111,9 @@ class PlayerBackwardControl extends StatelessWidget {
         Icons.navigate_before,
         color: appColors.brandColor,
       ),
-      // style: IconButton.styleFrom(),
       alignment: Alignment.center,
       padding: EdgeInsets.all(0.0),
       onPressed: () {
-        logger.d(
-            '[TrackItem:PlayerBackwardControl:onPressed] track.id=${track.id}');
         appState.playSeekBackward();
       },
     );
@@ -147,12 +141,9 @@ class PlayerForwardControl extends StatelessWidget {
         Icons.navigate_next,
         color: appColors.brandColor,
       ),
-      // style: IconButton.styleFrom(),
       alignment: Alignment.center,
       padding: EdgeInsets.all(0.0),
       onPressed: () {
-        logger.d(
-            '[TrackItem:PlayerForwardControl:onPressed] track.id=${track.id}');
         appState.playSeekForward();
       },
     );
@@ -182,13 +173,10 @@ class PlayerFavoriteControl extends StatelessWidget {
         isFavorite ? Icons.favorite : Icons.favorite_border,
         color: appColors.brandColor,
       ),
-      // style: IconButton.styleFrom(),
       alignment: Alignment.center,
       padding: EdgeInsets.all(0.0),
       onPressed: () {
         final setFavorite = !isFavorite;
-        logger.d(
-            '[TrackItem:PlayerFavoriteControl:onPressed] track.id=${track.id} setFavorite=${setFavorite}');
         tracksInfoDb.setFavorite(track.id, favorite: setFavorite);
       },
     );

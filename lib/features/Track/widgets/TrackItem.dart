@@ -79,7 +79,7 @@ class _TrackItemState extends State<TrackItem> {
 
     final TrackInfo? trackInfo = this._trackInfo;
     int? position = trackInfo?.position.inMilliseconds;
-    int? duration = playingTrack!.duration.inMilliseconds;
+    int? duration = track.duration.inMilliseconds;
     if (isActiveTrack) {
       if (appState.playingPosition != null) {
         position = appState.playingPosition!.inMilliseconds;
@@ -136,41 +136,3 @@ class _TrackItemState extends State<TrackItem> {
     );
   }
 }
-
-/*
- * class TrackFavoriteIcon extends StatelessWidget {
- *   const TrackFavoriteIcon({
- *     super.key,
- *     required this.track,
- *   });
- *
- *   final Track track;
- *
- *   @override
- *   Widget build(BuildContext context) {
- *     // final appState = context.watch<AppState>();
- *     final theme = Theme.of(context);
- *     final AppColors appColors = theme.extension<AppColors>()!;
- *     // final colorScheme = theme.colorScheme;
- *
- *     final isFavorite = false;
- *
- *     return IconButton(
- *       icon: Icon(
- *         isFavorite ? Icons.favorite : Icons.favorite_border,
- *         // size: 20, // trackItemControlIconSize,
- *         color: appColors.brandColor,
- *       ),
- *       style: IconButton.styleFrom(
- *         // shape: CircleBorder(),
- *       ),
- *       alignment: Alignment.center,
- *       padding: EdgeInsets.all(0.0),
- *       onPressed: () {
- *         logger.d('[TrackItem:IconButton:onPressed]');
- *         // appState.setPlayingTrack(track);
- *       },
- *     );
- *   }
- * }
- */

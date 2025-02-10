@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/core/helpers/getDurationString.dart';
 import 'package:march_tales_app/features/Track/db/TrackInfo.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
@@ -34,20 +33,6 @@ class PlayerTrackDetails extends StatelessWidget {
     if (track == null) {
       return Container();
     }
-
-    // final isPlaying = appState.isPlaying;
-    // final isPaused = appState.isPaused;
-    // final position = appState.playingPosition;
-    // final hasPosition = position != null && position.inMilliseconds != 0;
-
-    // String text = track.title;
-    // if (isPlaying || hasPosition) {
-    //   final state = !isPlaying || isPaused ? 'paused' : 'playing';
-    //   if (hasPosition) {
-    //     final positionString = getDurationString(position);
-    //     text += ' (${state} ${positionString})';
-    //   }
-    // }
 
     return Column(
       spacing: 8,

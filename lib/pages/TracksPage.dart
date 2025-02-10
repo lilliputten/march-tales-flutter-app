@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/components/TopMenuBox.dart';
 import 'package:march_tales_app/features/Track/widgets/TracksList.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'TracksPage.i18n.dart';
 
-// final formatter = YamlFormatter();
 final logger = Logger();
 
 // @see https://docs.flutter.dev/cookbook/networking/fetch-data

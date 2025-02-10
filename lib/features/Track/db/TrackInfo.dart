@@ -62,6 +62,6 @@ class TrackInfo {
 
   @override
   String toString() {
-    return 'TrackInfo(id=$id position=${position} lastUpdated=${lastUpdated} lastPlayed=${lastPlayed} playedCount=${playedCount})';
+    return 'TrackInfo(id=$id favorite=${favorite} position=${position} playedCount=${playedCount} lastUpdated=${lastUpdated} lastPlayed=${lastPlayed})';
   }
 }

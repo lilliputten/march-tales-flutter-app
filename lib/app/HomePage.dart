@@ -64,12 +64,13 @@ class _HomePageState extends State<HomePage> with RestorationMixin<HomePage> {
       restorationId: 'HomePage_Widget',
       child: Scaffold(
         appBar: AppBar(
+          titleSpacing: 10,
           backgroundColor: appColors.brandColor,
           foregroundColor: appColors.onBrandColor,
           title: FittedBox(
             fit: BoxFit.contain,
             child: Row(
-              spacing: 15,
+              spacing: 10,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(100),

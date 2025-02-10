@@ -10,11 +10,10 @@ import 'package:march_tales_app/core/constants/player.dart';
 import 'package:march_tales_app/features/Track/api-methods/incrementPlayedCount.dart';
 import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
+import 'package:march_tales_app/features/Track/trackConstants.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 
 final logger = Logger();
-
-final seekGap = Duration(seconds: 1);
 
 mixin ActivePlayerState {
   // Abstract interfaces for other mixins/parents...
@@ -275,14 +274,14 @@ mixin ActivePlayerState {
   void playSeekBackward() {
     final currentPosition = this.playingPosition ?? this.playingTrack?.duration;
     if (currentPosition != null) {
-      final position = currentPosition - seekGap;
+      final position = currentPosition - playerSeekGap;
       this.playSeek(position);
     }
   }
 
   void playSeekForward() {
     final currentPosition = this.playingPosition ?? Duration.zero;
-    final position = currentPosition + seekGap;
+    final position = currentPosition + playerSeekGap;
     this.playSeek(position);
   }
 
