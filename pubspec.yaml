@@ -38,6 +38,15 @@ dev_dependencies:
   # Use shell command: `dart format . && dart analyze .`
   flutter_lints: ^5.0.0
   test: ^1.25.8
+  import_sorter: ^4.6.0
+
+# @see https://pub.dev/documentation/import_sorter/latest/
+import_sorter:
+  emojis: true # Optional, defaults to false
+  comments: false # Optional, defaults to true
+  # ignored_files: # Optional, defaults to []
+  #   - \/lib\/*
+
 
 flutter:
   uses-material-design: true

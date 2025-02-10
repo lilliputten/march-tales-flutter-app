@@ -8,10 +8,9 @@ prjPath="$rootPath" # `pwd`
 
 # Import config variables...
 test -f "$scriptsPath/config.sh" && . "$scriptsPath/config.sh"
-test -f "$scriptsPath/config-local.sh" && . "$scriptsPath/config-local.sh"
 
 # # Check basic required variables...
-# test -f "$rootPath/config-check.sh" && . "$rootPath/config-check.sh"
+# test -f "$scriptsPath/config-check.sh" && . "$scriptsPath/config-check.sh"
 
 # Read (and derive) variables from changed files...
 VERSION_PATH="$rootPath/${VERSION_FILE}"

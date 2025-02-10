@@ -2,16 +2,18 @@
 # @desc Create/update version tag (from build folder)
 # @changed 2025.01.22, 21:19
 
+# scriptsPath=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+# rootPath=`dirname "$scriptsPath"`
+# prjPath="$rootPath" # `pwd`
 scriptsPath=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
 rootPath=`dirname "$scriptsPath"`
-prjPath="$rootPath" # `pwd`
+utilsPath="$rootPath/.utils"
 
 # Import config variables (expected variable `$PUBLISH_FOLDER`)...
-test -f "$scriptsPath/config.sh" && . "$scriptsPath/config.sh"
-test -f "$scriptsPath/config-local.sh" && . "$scriptsPath/config-local.sh"
+test -f "$utilsPath/config.sh" && . "$utilsPath/config.sh"
 
 # Check basic required variables...
-test -f "$rootPath/config-check.sh" && . "$rootPath/config-check.sh"
+test -f "$utilsPath/config-check.sh" && . "$utilsPath/config-check.sh"
 
 PROJECT_INFO=`cat "$rootPath/$PROJECT_INFO_FILE"`
 # APP_ID=`cat "$rootPath/$APP_ID_FILE"`
