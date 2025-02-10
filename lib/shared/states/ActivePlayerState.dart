@@ -14,6 +14,8 @@ import 'package:march_tales_app/features/Track/types/Track.dart';
 
 final logger = Logger();
 
+final seekGap = Duration(seconds: 1);
+
 mixin ActivePlayerState {
   // Abstract interfaces for other mixins/parents...
   void notifyListeners();
@@ -213,6 +215,7 @@ mixin ActivePlayerState {
   void _playerStart(Track track) async {
     this._setPlayerListener();
     this.activePlayer.play(); // Returns the playback Future
+    // this.activePlayer.setVolume(1.0);
     this.isPlaying = true;
     this.isPaused = false;
     this.hasIncremented = false;
@@ -269,11 +272,32 @@ mixin ActivePlayerState {
     }
   }
 
+  void playSeekBackward() {
+    final currentPosition = this.playingPosition ?? this.playingTrack?.duration;
+    if (currentPosition != null) {
+      final position = currentPosition - seekGap;
+      this.playSeek(position);
+    }
+  }
+
+  void playSeekForward() {
+    final currentPosition = this.playingPosition ?? Duration.zero;
+    final position = currentPosition + seekGap;
+    this.playSeek(position);
+  }
+
   void playSeek(Duration position) {
-    // this.playingPosition = position;
-    this.activePlayer.seek(position);
-    tracksInfoDb.updatePosition(this.playingTrack!.id,
-        position: position); // await!
-    this._savePlayingPosition(position);
+    if (this.playingTrack != null) {
+      if (position > this.playingTrack!.duration) {
+        position = this.playingTrack!.duration;
+      }
+      if (position < Duration.zero) {
+        position = Duration.zero;
+      }
+      this.activePlayer.seek(position);
+      tracksInfoDb.updatePosition(this.playingTrack!.id,
+          position: position); // await!
+      this._savePlayingPosition(position);
+    }
   }
 }

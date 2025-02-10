@@ -35,7 +35,7 @@ class PlayerSlider extends StatelessWidget {
     required this.onSeek,
   });
 
-  final Duration position;
+  final Duration? position;
   final Duration duration;
   final Function onSeek;
 
@@ -48,7 +48,7 @@ class PlayerSlider extends StatelessWidget {
 
     double progress = 0;
     final durationMs = duration.inMilliseconds;
-    final positionMs = position.inMilliseconds;
+    final positionMs = position?.inMilliseconds ?? 0;
     if (durationMs != 0 && positionMs != 0) {
       progress = positionMs / durationMs;
       if (progress > 1) {

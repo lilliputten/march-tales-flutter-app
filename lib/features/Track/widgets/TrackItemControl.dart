@@ -9,8 +9,8 @@ import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
-const double trackItemControlIconSize = 24;
-const double trackItemControlCircleSize = trackItemControlIconSize + 16;
+const double _trackItemControlIconSize = 24;
+const double _trackItemControlCircleSize = _trackItemControlIconSize + 16;
 
 class TrackItemControl extends StatelessWidget {
   const TrackItemControl({
@@ -43,8 +43,8 @@ class TrackItemControl extends StatelessWidget {
       alignment: AlignmentDirectional.center,
       children: [
         SizedBox(
-          width: trackItemControlCircleSize,
-          height: trackItemControlCircleSize,
+          width: _trackItemControlCircleSize,
+          height: _trackItemControlCircleSize,
           child: isAlreadyPlayed
               ? SizedBox()
               : CircularProgressIndicator(
@@ -54,8 +54,8 @@ class TrackItemControl extends StatelessWidget {
                 ),
         ),
         SizedBox(
-          width: trackItemControlCircleSize,
-          height: trackItemControlCircleSize,
+          width: _trackItemControlCircleSize,
+          height: _trackItemControlCircleSize,
           child: progress == 0
               ? SizedBox()
               : CircularProgressIndicator(
@@ -67,7 +67,7 @@ class TrackItemControl extends StatelessWidget {
         IconButton(
           icon: Icon(
             isPlaying ? Icons.pause : Icons.play_arrow,
-            size: trackItemControlIconSize,
+            size: _trackItemControlIconSize,
             color: mainColor,
           ),
           style: IconButton.styleFrom(

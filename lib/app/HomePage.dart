@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
-import 'package:march_tales_app/app/AppDrawer.dart';
 import 'package:march_tales_app/app/BottomNavigation.dart';
 import 'package:march_tales_app/app/homePages.dart';
 import 'package:march_tales_app/components/PlayerBox.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
+
+// import 'package:march_tales_app/app/AppDrawer.dart';
 
 const defaultPageIndex = AppConfig.LOCAL ? 0 : 0;
 
@@ -102,7 +103,7 @@ class _HomePageState extends State<HomePage> with RestorationMixin<HomePage> {
           },
         ),
         // bottomSheet: Text('bottomSheet'),
-        endDrawer: AppDrawer(), // Side navigation panel
+        // endDrawer: AppDrawer(), // TODO: Side navigation panel
         // onTap: (int i){setState((){index = i;});},
         body: LayoutBuilder(
           builder: (context, constraints) {
