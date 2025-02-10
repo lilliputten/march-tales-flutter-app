@@ -3,16 +3,16 @@ import 'dart:developer';
 import 'package:logger/logger.dart';
 import 'package:test/test.dart';
 
-import 'Track.dart';
+import 'package:march_tales_app/features/Track/types/Track.dart';
 
+// import 'Track.dart';
 // ignore: depend_on_referenced_packages
-
 // @see https://docs.flutter.dev/cookbook/testing/unit/introduction
 
 final logger = Logger();
 
 void main() {
-  test('Track should be created from a dynamic data (parsed json)', () {
+  test('Track should be created from a dynamic data (parsed json)', () async {
     final data = {
       "id": 2,
       "title": "Новогодняя сказка",

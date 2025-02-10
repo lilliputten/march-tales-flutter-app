@@ -31,13 +31,13 @@ dependencies:
   event: ^3.1.0
 
 dev_dependencies:
+  test: ^1.25.8
   flutter_test:
     sdk: flutter
 
   # @see https://docs.flutter.dev/release/breaking-changes/flutter-lints-package
   # Use shell command: `dart format . && dart analyze .`
   flutter_lints: ^5.0.0
-  test: ^1.25.8
   import_sorter: ^4.6.0
 
 # @see https://pub.dev/documentation/import_sorter/latest/
