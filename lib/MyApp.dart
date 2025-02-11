@@ -33,11 +33,15 @@ class MyApp extends StatelessWidget {
         serverSession.updateLocale(locale);
         appState.updateLocale(locale);
         // Wait for the config & tick initialization and request for the first track record
-        initFuture.then((initData) {
+        initFuture.then((initData) async {
           // TODO: Check for valid app version?
           appState.setPrefs(Init.prefs);
+
           // Retrieve tracks
-          appState.reloadTracks();
+          await Future.wait<dynamic>([
+            appState.loadFavorites(),
+            appState.reloadTracks(),
+          ]);
         }).catchError((err) {
           logger.e('Error: ${err}');
           // appState.setGlobalError(err);

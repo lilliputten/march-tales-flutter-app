@@ -28,14 +28,15 @@ class BottomNavigation extends StatelessWidget {
       // showUnselectedLabels: true,
       // showSelectedLabels: false,
 
-      items: homePages
+      items: this
+          .homePages
           .map((page) =>
               BottomNavigationBarItem(icon: page.icon, label: page.label))
           .toList(),
       // currentIndex: _selectedIndex,
-      currentIndex: selectedIndex,
+      currentIndex: this.selectedIndex,
       onTap: (value) {
-        handleIndex(value);
+        this.handleIndex(value);
       },
     );
   }

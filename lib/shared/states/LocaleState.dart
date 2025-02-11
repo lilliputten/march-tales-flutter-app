@@ -7,19 +7,20 @@ final logger = Logger();
 
 mixin LocaleState {
   void notifyListeners();
-  SharedPreferences? getPrefs();
+  SharedPreferences? getPrefs(); // From `PrefsState`
   reloadAllTracks({bool notify = true}); // From `TrackState`
+  reloadFavoritesData(); // From `FavoritesState`
 
   /// Language
 
   String currentLocale = defaultLocale;
 
   bool loadLocaleStateSavedPrefs({bool notify = true}) {
-    final savedCurrentLocale = getPrefs()?.getString('currentLocale');
+    final savedCurrentLocale = this.getPrefs()?.getString('currentLocale');
     if (savedCurrentLocale != null) {
-      currentLocale = savedCurrentLocale;
+      this.currentLocale = savedCurrentLocale;
       if (notify) {
-        notifyListeners();
+        this.notifyListeners();
       }
       return true;
     }
@@ -27,10 +28,13 @@ mixin LocaleState {
   }
 
   updateLocale(String value) async {
-    if (currentLocale != value) {
-      currentLocale = value;
-      getPrefs()?.setString('currentLocale', value);
-      await reloadAllTracks();
+    if (this.currentLocale != value) {
+      this.currentLocale = value;
+      this.getPrefs()?.setString('currentLocale', value);
+      await Future.wait<dynamic>([
+        this.reloadAllTracks(),
+        this.reloadFavoritesData(),
+      ]);
     }
   }
 }

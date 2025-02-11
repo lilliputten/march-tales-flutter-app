@@ -212,6 +212,11 @@ mixin ActivePlayerState {
   }
 
   void _playerStart(Track track) async {
+    if (this._isTrackPlayedCompletely()) {
+      // Reset playing position...
+      this.activePlayer.seek(Duration.zero);
+      this._savePlayingPosition(null, notify: false);
+    }
     this._setPlayerListener();
     this.activePlayer.play(); // Returns the playback Future
     // this.activePlayer.setVolume(1.0);
@@ -258,11 +263,6 @@ mixin ActivePlayerState {
     if (this.playingTrack?.id != track.id) {
       // Set new track
       await this._setPlayingTrack(track, notify: false);
-    }
-    if (this._isTrackPlayedCompletely()) {
-      // Reset playing position...
-      this.activePlayer.seek(Duration.zero);
-      this._savePlayingPosition(null, notify: false);
     }
     if (play) {
       this._playerStart(track);

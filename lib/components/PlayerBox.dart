@@ -104,6 +104,8 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
     final Duration duration = track.duration;
     final Duration? position = appState.playingPosition;
 
+    const double padding = 15;
+
     return Column(
       spacing: 0,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -117,7 +119,7 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
         ),
         Padding(
           // Show top padding only if there no track slider above
-          padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+          padding: EdgeInsets.fromLTRB(padding, 0, padding, padding),
           // padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           child: Row(
             spacing: 10,
