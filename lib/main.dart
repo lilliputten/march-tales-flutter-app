@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:i18n_extension/i18n_extension.dart';
 
-import 'MyApp.dart';
+import 'RootApp.dart';
 import 'core/config/AppConfig.dart';
 import 'supportedLocales.dart';
 
@@ -65,7 +65,7 @@ void main() async {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        child: MyApp(),
+        child: RootApp(),
       ),
     ),
   );

@@ -18,8 +18,8 @@ import 'shared/states/AppState.dart';
 final formatter = YamlFormatter();
 final logger = Logger();
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class RootApp extends StatelessWidget {
+  const RootApp({super.key});
 
   @override
   Widget build(BuildContext context) {
