@@ -38,6 +38,7 @@ class TrackDetails extends StatelessWidget {
     required this.isAlreadyPlayed,
     required this.isPlaying,
     required this.isFavorite,
+    this.asFavorite,
   });
 
   final Track track;
@@ -45,6 +46,7 @@ class TrackDetails extends StatelessWidget {
   final bool isAlreadyPlayed;
   final bool isPlaying;
   final bool isFavorite;
+  final bool? asFavorite;
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +72,7 @@ class TrackDetails extends StatelessWidget {
           isAlreadyPlayed: isAlreadyPlayed,
           isPlaying: isPlaying,
           isFavorite: isFavorite,
+          asFavorite: asFavorite,
           textColor: textColor,
         ),
       ],

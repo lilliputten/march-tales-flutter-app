@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:i18n_extension/i18n_extension.dart';
+import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/core/helpers/formats.dart';
@@ -8,6 +9,8 @@ import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackAuthorImageThumbnail.dart';
 
 // import 'package:march_tales_app/app/AppColors.dart';
+
+final logger = Logger();
 
 class TrackDetailsInfo extends StatelessWidget {
   const TrackDetailsInfo({
@@ -17,6 +20,7 @@ class TrackDetailsInfo extends StatelessWidget {
     required this.isAlreadyPlayed,
     required this.isPlaying,
     required this.isFavorite,
+    this.asFavorite,
     this.textColor,
   });
   final Track track;
@@ -24,6 +28,7 @@ class TrackDetailsInfo extends StatelessWidget {
   final bool isAlreadyPlayed;
   final bool isPlaying;
   final bool isFavorite;
+  final bool? asFavorite;
   final Color? textColor;
 
   @override
@@ -121,7 +126,7 @@ class TrackDetailsInfo extends StatelessWidget {
                   Text(tag.text, style: textStyle),
                 ]);
               }).toList()),
-      !isFavorite
+      !isFavorite || (asFavorite ?? false)
           ? null
           : Icon(
               Icons.favorite,

@@ -61,8 +61,9 @@ class FavoriteTracksPage extends StatelessWidget {
             tracks: tracks,
             count: tracks.length,
             isLoading: isFavoritesLoading,
+            asFavorite: true,
             onRefresh: () async {
-              await appState.reloadTracks();
+              await appState.reloadFavoritesData();
             },
             // onLoadNext: () {
             //   appState.loadNextTracks();

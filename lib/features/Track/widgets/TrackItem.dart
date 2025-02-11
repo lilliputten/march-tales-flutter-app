@@ -19,9 +19,11 @@ class TrackItem extends StatefulWidget {
   const TrackItem({
     super.key,
     required this.track,
+    this.asFavorite,
   });
 
   final Track track;
+  final bool? asFavorite;
 
   @override
   State<TrackItem> createState() => _TrackItemState();
@@ -122,6 +124,7 @@ class _TrackItemState extends State<TrackItem> {
                     isAlreadyPlayed: isAlreadyPlayed,
                     isPlaying: isPlaying,
                     isFavorite: isFavorite,
+                    asFavorite: this.widget.asFavorite,
                   ),
                 ),
               ),

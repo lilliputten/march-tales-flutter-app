@@ -57,6 +57,7 @@ class TracksList extends StatelessWidget {
     required this.tracks,
     required this.count,
     required this.isLoading,
+    this.asFavorite,
     this.onRefresh,
     this.onLoadNext,
   });
@@ -64,15 +65,12 @@ class TracksList extends StatelessWidget {
   final List<Track> tracks;
   final int count;
   final bool isLoading;
+  final bool? asFavorite;
   final RefreshCallback? onRefresh;
   final void Function()? onLoadNext;
 
   @override
   Widget build(BuildContext context) {
-    // final appState = context.watch<AppState>();
-    // final availableTracksCount = appState.availableTracksCount;
-    // final tracks = appState.tracks;
-
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
 
@@ -83,15 +81,11 @@ class TracksList extends StatelessWidget {
     return RefreshIndicator(
       color: appColors.brandColor,
       strokeWidth: 2,
-      // edgeOffset: 200,
       onRefresh: () async {
         if (onRefresh != null) {
           await onRefresh!();
         }
       },
-      // onRefresh: () async {
-      //   await appState.reloadTracks();
-      // },
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         key: PageStorageKey<String>('TracksList'),
@@ -101,7 +95,8 @@ class TracksList extends StatelessWidget {
           if (i == tracksCount) {
             return MoreButton(onLoadNext: onLoadNext, isLoading: isLoading);
           } else {
-            return TrackItem(track: this.tracks[i]);
+            return TrackItem(
+                track: this.tracks[i], asFavorite: this.asFavorite);
           }
         },
       ),
