@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/features/Track/db/TrackInfo.dart';
-import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
@@ -161,7 +160,7 @@ class PlayerFavoriteControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final appState = context.watch<AppState>();
+    final appState = context.watch<AppState>();
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
     // final colorScheme = theme.colorScheme;
@@ -177,7 +176,7 @@ class PlayerFavoriteControl extends StatelessWidget {
       padding: EdgeInsets.all(0.0),
       onPressed: () {
         final setFavorite = !isFavorite;
-        tracksInfoDb.setFavorite(track.id, favorite: setFavorite);
+        appState.setFavorite(track.id, setFavorite);
       },
     );
   }

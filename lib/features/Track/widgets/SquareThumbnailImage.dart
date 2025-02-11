@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 
+import 'package:march_tales_app/app/AppColors.dart';
+
 const double previewSize = 80;
 
 const double defaultSquareThumbnailImageBorderRadius = 10;
@@ -20,8 +22,8 @@ class SquareThumbnailImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final appState = context.watch<AppState>();
     final theme = Theme.of(context);
+    final AppColors appColors = theme.extension<AppColors>()!;
 
     final previewHalfSize = size / 2;
     final previewProgressPadding = previewHalfSize / 2; // - 16;
@@ -36,7 +38,8 @@ class SquareThumbnailImage extends StatelessWidget {
         fit: BoxFit.cover,
         placeholder: (context, url) => Padding(
           padding: EdgeInsets.all(previewProgressPadding),
-          child: CircularProgressIndicator(strokeWidth: 1),
+          child: CircularProgressIndicator(
+              strokeWidth: 1, color: appColors.brandColor),
         ),
         errorWidget: (context, url, error) => Icon(Icons.error,
             color: theme.primaryColor.withValues(alpha: 0.5),

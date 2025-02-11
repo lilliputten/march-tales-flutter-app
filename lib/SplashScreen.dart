@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:march_tales_app/app/AppColors.dart';
 import 'SplashScreen.i18n.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -30,13 +31,16 @@ class _SplashScreen extends State<SplashScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final style = theme.textTheme.bodySmall!;
+    final AppColors appColors = theme.extension<AppColors>()!;
+
+    final style =
+        theme.textTheme.bodySmall!.copyWith(color: appColors.onBrandColor);
     const double size = 60.0;
-    const double strokeWidth = 3;
 
     return Material(
-      child: Opacity(
-        opacity: 1,
+      surfaceTintColor: Colors.red,
+      child: ColoredBox(
+        color: appColors.brandColor,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -44,7 +48,7 @@ class _SplashScreen extends State<SplashScreen> with TickerProviderStateMixin {
               height: size,
               width: size,
               child: CircularProgressIndicator(
-                strokeWidth: strokeWidth,
+                strokeWidth: 2,
                 valueColor: animationController.drive(
                     ColorTween(begin: Colors.blueAccent, end: Colors.red)),
               ),

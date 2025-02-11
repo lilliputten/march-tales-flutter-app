@@ -144,8 +144,7 @@ class TracksInfoDb {
     }
   }
 
-  Future<TrackInfo> setFavorite(int id,
-      {required bool favorite, DateTime? now}) async {
+  Future<TrackInfo> setFavorite(int id, bool favorite, {DateTime? now}) async {
     try {
       final _now = now ??= DateTime.now();
       return this.db.transaction((txn) async {
@@ -244,6 +243,19 @@ class TracksInfoDb {
       // Pass the TracksInfo's id as a whereArg to prevent SQL injection.
       whereArgs: [trackInfo.id],
     );
+  }
+
+  Future<Iterable<TrackInfo>> getFavorites(
+      {int? limit, Transaction? txn}) async {
+    // final items1 = await db.rawQuery('SELECT * FROM ${tracksInfoDbName} WHERE id=? LIMIT 1', [id]);
+    final _txn = txn ?? this.db;
+    final items = await _txn.query(
+      tracksInfoDbName,
+      limit: limit,
+      where: 'favorite= ?',
+      whereArgs: [1],
+    );
+    return items.map((data) => TrackInfo.fromMap(data));
   }
 
   Future<TrackInfo?> getById(int id, {Transaction? txn}) async {

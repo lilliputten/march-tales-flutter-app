@@ -104,33 +104,37 @@ class _TrackItemState extends State<TrackItem> {
         onTap: () {
           appState.setPlayingTrack(track, play: false);
         },
-        child: Row(
-          spacing: 10,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TrackImageThumbnail(track: track, size: 80),
-            Expanded(
-              flex: 1,
-              child: Opacity(
-                opacity: opacity,
-                child: TrackDetails(
-                  track: track,
-                  isActiveTrack: isActiveTrack,
-                  isAlreadyPlayed: isAlreadyPlayed,
-                  isPlaying: isPlaying,
-                  isFavorite: isFavorite,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          child: Row(
+            spacing: 10,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TrackImageThumbnail(track: track, size: 80),
+              Expanded(
+                flex: 1,
+                child: Opacity(
+                  opacity: opacity,
+                  child: TrackDetails(
+                    track: track,
+                    isActiveTrack: isActiveTrack,
+                    isAlreadyPlayed: isAlreadyPlayed,
+                    isPlaying: isPlaying,
+                    isFavorite: isFavorite,
+                  ),
                 ),
               ),
-            ),
-            // TrackFavoriteIcon(track: track),
-            TrackItemControl(
-              track: track,
-              isActiveTrack: isActiveTrack,
-              isAlreadyPlayed: isAlreadyPlayed,
-              isPlaying: isPlaying,
-              progress: progress,
-            ),
-          ],
+              // TrackFavoriteIcon(track: track),
+              TrackItemControl(
+                track: track,
+                isActiveTrack: isActiveTrack,
+                isAlreadyPlayed: isAlreadyPlayed,
+                isPlaying: isPlaying,
+                progress: progress,
+              ),
+            ],
+          ),
         ),
       ),
     );

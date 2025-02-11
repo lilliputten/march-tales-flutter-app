@@ -7,25 +7,28 @@ import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/features/Track/loaders/LoadTracksListResults.dart';
-import 'package:march_tales_app/features/Track/trackConstants.dart';
 
 final formatter = YamlFormatter();
 final logger = Logger();
 
-Future<LoadTracksListResults> loadTracksList({
-  int offset = 0,
-  int limit = defaultTracksDownloadLimit,
+Future<LoadTracksListResults> loadTracksByIds(
+  Iterable<int> ids, {
+  int? offset,
+  int? limit,
   // TODO: Add filter/sort parameters
 }) async {
   final String url =
-      '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks';
+      '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks/by-ids/';
   try {
     final uri = Uri.parse(url);
     final params = {...uri.queryParameters};
-    if (limit != 0) {
+    if (ids.isNotEmpty) {
+      params['ids'] = ids.join(',');
+    }
+    if (limit != null && limit != 0) {
       params['limit'] = limit.toString();
     }
-    if (offset != 0) {
+    if (offset != null && offset != 0) {
       params['offset'] = offset.toString();
     }
     final jsonData =

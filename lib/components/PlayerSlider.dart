@@ -17,7 +17,7 @@ class CustomTrackShape extends RoundedRectSliderTrackShape {
     bool isEnabled = false,
     bool isDiscrete = false,
   }) {
-    final Offset _offset = Offset(10, 0);
+    final Offset _offset = Offset(15, 0);
     final double trackHeight = sliderTheme.trackHeight!;
     final double trackLeft = _offset.dx;
     final double trackTop =
