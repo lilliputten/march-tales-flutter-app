@@ -1,29 +1,40 @@
 import 'package:flutter/material.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
+import 'package:march_tales_app/core/constants/defaultThumbnailImageBorderRadius.dart';
+import 'package:march_tales_app/core/constants/previewDimensionsRatio.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-import 'package:march_tales_app/features/Track/widgets/SquareThumbnailImage.dart';
+import 'package:march_tales_app/features/Track/widgets/ThumbnailImage.dart';
 
 class TrackImageThumbnail extends StatelessWidget {
   const TrackImageThumbnail({
     super.key,
     required this.track,
-    required this.size,
-    this.borderRadius = defaultSquareThumbnailImageBorderRadius,
+    // One of two dimensions should be defined as a non-zero. If one of them is undefined (zer) then it'll be calculated based on ratio (`previewDimensionsRatio`) value.
+    this.width = 0,
+    this.height = 0,
+    this.borderRadius = defaultThumbnailImageBorderRadius,
   });
 
   final Track track;
-  final double size;
+  final double width;
+  final double height;
   final double borderRadius;
 
   @override
   Widget build(BuildContext context) {
     final String file = track.preview_picture;
-    if (file.isEmpty) {
-      return SizedBox(width: size, height: size);
+
+    if (width == 0 && height == 0) {
+      throw Exception('At least one dimension should be defined');
     }
-    final String url = '${AppConfig.TALES_SERVER_HOST}${file}';
-    return SquareThumbnailImage(
-        url: url, size: size, borderRadius: borderRadius);
+    final imageWidth = width != 0 ? width : height * previewDimensionsRatio;
+    final imageHeight = height != 0 ? height : width * previewDimensionsRatio;
+
+    if (file.isEmpty) {
+      return SizedBox(width: imageWidth, height: imageHeight);
+    }
+    final String url = '${AppConfig.TALES_SERVER_HOST}${file}_';
+    return ThumbnailImage(url: url, width: imageWidth, height: imageHeight, borderRadius: borderRadius);
   }
 }

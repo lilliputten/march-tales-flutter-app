@@ -53,8 +53,7 @@ class TrackDetails extends StatelessWidget {
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
     final colorScheme = theme.colorScheme;
-    final textColor =
-        isActiveTrack ? appColors.brandColor : colorScheme.onSurface;
+    final textColor = isActiveTrack ? appColors.brandColor : colorScheme.onSurface;
 
     return Column(
       spacing: 8,

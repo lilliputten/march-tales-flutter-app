@@ -17,9 +17,7 @@ class LoadTracksListResults {
     try {
       return LoadTracksListResults(
         count: json['count'] as int,
-        results: List<dynamic>.from(json['results'])
-            .map<Track>((data) => Track.fromJson(data))
-            .toList(),
+        results: List<dynamic>.from(json['results']).map<Track>((data) => Track.fromJson(data)).toList(),
       );
     } catch (err, stacktrace) {
       final String msg = 'Can not parse LoadTracksListResults data: $err';

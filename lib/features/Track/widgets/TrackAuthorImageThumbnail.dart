@@ -25,7 +25,6 @@ class TrackAuthorImageThumbnail extends StatelessWidget {
       return SizedBox(width: size, height: size);
     }
     final String url = '${AppConfig.TALES_SERVER_HOST}${file}';
-    return SquareThumbnailImage(
-        url: url, size: size, borderRadius: borderRadius);
+    return SquareThumbnailImage(url: url, size: size, borderRadius: borderRadius);
   }
 }

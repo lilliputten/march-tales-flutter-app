@@ -98,12 +98,10 @@ mixin TrackState {
       }
       final offset = tracks.length;
       // logger.t('Starting loading tracks (offset: ${offset})');
-      final LoadTracksListResults results =
-          await loadTracksList(offset: offset, limit: tracksLimit);
+      final LoadTracksListResults results = await loadTracksList(offset: offset, limit: tracksLimit);
       tracks.addAll(results.results);
       availableTracksCount = results.count;
-      logger.t(
-          'Loaded tracks (count: ${availableTracksCount}):\n${formatter.format(tracks)}');
+      logger.t('Loaded tracks (count: ${availableTracksCount}):\n${formatter.format(tracks)}');
       tracksHasBeenLoaded = true;
       tracksLoadError = null;
       return results;

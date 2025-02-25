@@ -29,8 +29,7 @@ class TracksInfoDb {
       batch.execute(createCommand);
       await batch.commit();
     } catch (err, stacktrace) {
-      logger.e('[TracksInfoDb] onCreate: Error: ${err}',
-          error: err, stackTrace: stacktrace);
+      logger.e('[TracksInfoDb] onCreate: Error: ${err}', error: err, stackTrace: stacktrace);
       debugger();
       rethrow;
     }
@@ -56,23 +55,19 @@ class TracksInfoDb {
         try {
           if (oldVersion < 3) {
             // Add forgotten `lastUpdatedMs`
-            batch.execute(
-                'ALTER TABLE ${tracksInfoDbName} ADD lastUpdatedMs INTEGER');
+            batch.execute('ALTER TABLE ${tracksInfoDbName} ADD lastUpdatedMs INTEGER');
           }
           if (oldVersion < 5) {
             final tempTableName = '${tracksInfoDbName}_temp';
-            final createTempTableCommand =
-                getTracksInfoDbCreateCommand(tempTableName);
+            final createTempTableCommand = getTracksInfoDbCreateCommand(tempTableName);
             debugger();
             batch.execute(createTempTableCommand);
-            final oldColumns =
-                'id, position, playedCount, lastUpdatedMs, lastPlayedMs';
+            final oldColumns = 'id, position, playedCount, lastUpdatedMs, lastPlayedMs';
             final insertCommand =
                 'INSERT INTO ${tempTableName} ($oldColumns) SELECT $oldColumns FROM ${tracksInfoDbName}';
             batch.execute(insertCommand);
             batch.execute('DROP TABLE ${tracksInfoDbName}');
-            batch.execute(
-                'ALTER TABLE ${tempTableName} RENAME TO ${tracksInfoDbName};');
+            batch.execute('ALTER TABLE ${tempTableName} RENAME TO ${tracksInfoDbName};');
             debugger();
             // batch.execute(
             //     'ALTER TABLE ${tracksInfoDbName} ADD favorite INTEGER DEFAULT(0)');
@@ -80,8 +75,7 @@ class TracksInfoDb {
           // etc...
           await batch.commit();
         } catch (err, stacktrace) {
-          logger.e('[TracksInfoDb] onUpgrade: Error: ${err}',
-              error: err, stackTrace: stacktrace);
+          logger.e('[TracksInfoDb] onUpgrade: Error: ${err}', error: err, stackTrace: stacktrace);
           debugger();
           rethrow;
         }
@@ -113,15 +107,13 @@ class TracksInfoDb {
         return trackInfo;
       });
     } catch (err, stacktrace) {
-      logger.e('[TracksInfoDb] incrementPlayedCount: Error: ${err}',
-          error: err, stackTrace: stacktrace);
+      logger.e('[TracksInfoDb] incrementPlayedCount: Error: ${err}', error: err, stackTrace: stacktrace);
       debugger();
       rethrow;
     }
   }
 
-  Future<TrackInfo> updatePosition(int id,
-      {Duration? position, DateTime? now}) async {
+  Future<TrackInfo> updatePosition(int id, {Duration? position, DateTime? now}) async {
     try {
       final _now = now ??= DateTime.now();
       return this.db.transaction((txn) async {
@@ -137,8 +129,7 @@ class TracksInfoDb {
         return trackInfo;
       });
     } catch (err, stacktrace) {
-      logger.e('[TracksInfoDb] updatePosition: Error: ${err}',
-          error: err, stackTrace: stacktrace);
+      logger.e('[TracksInfoDb] updatePosition: Error: ${err}', error: err, stackTrace: stacktrace);
       debugger();
       rethrow;
     }
@@ -156,8 +147,7 @@ class TracksInfoDb {
         return trackInfo;
       });
     } catch (err, stacktrace) {
-      logger.e('[TracksInfoDb] updatePosition: Error: ${err}',
-          error: err, stackTrace: stacktrace);
+      logger.e('[TracksInfoDb] updatePosition: Error: ${err}', error: err, stackTrace: stacktrace);
       debugger();
       rethrow;
     }
@@ -175,8 +165,7 @@ class TracksInfoDb {
         return trackInfo;
       });
     } catch (err, stacktrace) {
-      logger.e('[TracksInfoDb] updatePosition: Error: ${err}',
-          error: err, stackTrace: stacktrace);
+      logger.e('[TracksInfoDb] updatePosition: Error: ${err}', error: err, stackTrace: stacktrace);
       debugger();
       rethrow;
     }
@@ -202,18 +191,18 @@ class TracksInfoDb {
     return trackInfo ?? this.createNewRecord(id);
   }
 
+  // XXX: Is it used?
   Future<List<TrackInfo>> get(int id, {Transaction? txn}) async {
     final _txn = txn ?? this.db;
     // Query the table for all the trackInfos.
-    final List<Map<String, Object?>> trackInfoMaps =
-        await _txn.query(tracksInfoDbName);
+    final List<Map<String, Object?>> trackInfoMaps = await _txn.query(tracksInfoDbName);
     // Convert the list of each trackInfo's fields into a list of `TrackInfo` objects.
     return [
       for (final item in trackInfoMaps) TrackInfo.fromMap(item),
     ];
   }
 
-  /// Returns inserted/updated record id
+  /// Create or update the record. (Returns inserted/updated record id.)
   Future<int> insert(TrackInfo trackInfo, {Transaction? txn}) async {
     final _txn = txn ?? this.db;
     try {
@@ -224,14 +213,14 @@ class TracksInfoDb {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     } catch (err, stacktrace) {
-      logger.e('[TracksInfoDb] insert: Error: ${err}',
-          error: err, stackTrace: stacktrace);
+      logger.e('[TracksInfoDb] insert: Error: ${err}', error: err, stackTrace: stacktrace);
       debugger();
       rethrow;
     }
   }
 
-  /// Returns updated records count
+  // XXX: Is it used?
+  /// Update existed record. (Returns updated records count.)
   Future<int> update(TrackInfo trackInfo, {Transaction? txn}) async {
     final _txn = txn ?? this.db;
     // Update the given TracksInfo.
@@ -245,8 +234,7 @@ class TracksInfoDb {
     );
   }
 
-  Future<Iterable<TrackInfo>> getFavorites(
-      {int? limit, Transaction? txn}) async {
+  Future<Iterable<TrackInfo>> getFavorites({int? limit, Transaction? txn}) async {
     // final items1 = await db.rawQuery('SELECT * FROM ${tracksInfoDbName} WHERE id=? LIMIT 1', [id]);
     final _txn = txn ?? this.db;
     final items = await _txn.query(
@@ -273,8 +261,7 @@ class TracksInfoDb {
   Future<List<TrackInfo>> getAll({Transaction? txn}) async {
     final _txn = txn ?? this.db;
     // Query the table for all the trackInfos.
-    final List<Map<String, Object?>> trackInfoMaps =
-        await _txn.query(tracksInfoDbName);
+    final List<Map<String, Object?>> trackInfoMaps = await _txn.query(tracksInfoDbName);
     // Convert the list of each trackInfo's fields into a list of `TrackInfo` objects.
     return [
       for (final item in trackInfoMaps) TrackInfo.fromMap(item),

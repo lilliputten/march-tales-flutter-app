@@ -55,8 +55,7 @@ class HomePage extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(100),
                   child: Image(
-                    image: AssetImage(
-                        'assets/images/march-cat/march-cat-sq-48.jpg'),
+                    image: AssetImage('assets/images/march-cat/march-cat-sq-48.jpg'),
                   ),
                 ),
                 Text(

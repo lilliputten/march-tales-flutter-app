@@ -25,8 +25,7 @@ void main() {
         {"id": 1, "text": "Сказки"},
         {"id": 2, "text": "Рассказы"}
       ],
-      "audio_file":
-          "http://localhost:8000/media/samples/sample-with-wrong-metadata-duration.mp3",
+      "audio_file": "http://localhost:8000/media/samples/sample-with-wrong-metadata-duration.mp3",
       "audio_duration": 167.183673,
       "audio_size": 1031154,
       "preview_picture": "http://localhost:8000/media/samples/ny-800x450.jpg",
@@ -46,8 +45,7 @@ void main() {
     }
   });
   group('Track details', () {
-    test('TrackTag list should be created from a dynamic list (parsed json)',
-        () {
+    test('TrackTag list should be created from a dynamic list (parsed json)', () {
       final list = [
         {
           'id': 1,

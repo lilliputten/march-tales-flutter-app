@@ -20,8 +20,7 @@ class CustomTrackShape extends RoundedRectSliderTrackShape {
     final Offset _offset = Offset(15, 0);
     final double trackHeight = sliderTheme.trackHeight!;
     final double trackLeft = _offset.dx;
-    final double trackTop =
-        _offset.dy + (parentBox.size.height - trackHeight) / 2;
+    final double trackTop = _offset.dy + (parentBox.size.height - trackHeight) / 2;
     final double trackWidth = parentBox.size.width - _offset.dx * 2;
     return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
   }

@@ -29,8 +29,7 @@ class FavoriteTracksPage extends StatelessWidget {
         children: [
           Expanded(
             child: Center(
-              child: CircularProgressIndicator(
-                  strokeWidth: 2, color: appColors.brandColor),
+              child: CircularProgressIndicator(strokeWidth: 2, color: appColors.brandColor),
             ),
           ),
         ],
@@ -43,8 +42,7 @@ class FavoriteTracksPage extends StatelessWidget {
           Expanded(
             child: Center(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                 child: Text('No tracks'.i18n),
               ),
             ),

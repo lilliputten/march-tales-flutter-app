@@ -18,8 +18,7 @@ class MyHttpOverrides extends HttpOverrides {
   HttpClient createHttpClient(SecurityContext? context) {
     final client = super.createHttpClient(context);
     // Try to allow fetching urls with expired certificate (eg, for `https://api.quotable.io/random`)
-    client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => true;
+    client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
     // Set request timeout
     client.connectionTimeout = const Duration(seconds: connectionTimeoutDelay);
     return client;
@@ -33,12 +32,10 @@ void checkEnvironmentVariables() {
   print("LOCAL: ${AppConfig.LOCAL}");
   print("DEBUG: ${AppConfig.DEBUG}");
   if (AppConfig.GOOGLE_API_KEY.isEmpty) {
-    throw Exception(
-        'Required environment variables is undefined: GOOGLE_API_KEY');
+    throw Exception('Required environment variables is undefined: GOOGLE_API_KEY');
   }
   if (AppConfig.GOOGLE_CSE_ID.isEmpty) {
-    throw Exception(
-        'Required environment variables is undefined: GOOGLE_CSE_ID');
+    throw Exception('Required environment variables is undefined: GOOGLE_CSE_ID');
   }
 }
 

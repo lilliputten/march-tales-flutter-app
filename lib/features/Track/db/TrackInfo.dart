@@ -13,10 +13,8 @@ class TrackInfo {
   bool favorite;
   int playedCount; // track.played_count (but only for current user!).
   Duration position; // position?.inMilliseconds ?? 0
-  DateTime
-      lastUpdated; // DateTime.now().millisecondsSinceEpoch <-> DateTime.fromMillisecondsSinceEpoch(ms)
-  DateTime
-      lastPlayed; // DateTime.now().millisecondsSinceEpoch <-> DateTime.fromMillisecondsSinceEpoch(ms)
+  DateTime lastUpdated; // DateTime.now().millisecondsSinceEpoch <-> DateTime.fromMillisecondsSinceEpoch(ms)
+  DateTime lastPlayed; // DateTime.now().millisecondsSinceEpoch <-> DateTime.fromMillisecondsSinceEpoch(ms)
 
   TrackInfo({
     required this.id,
@@ -53,8 +51,7 @@ class TrackInfo {
     } catch (err, stacktrace) {
       final String msg = 'Can not parse track info data: $err';
       logger.e(msg, error: err, stackTrace: stacktrace);
-      logger
-          .d('Raw data for the previous error is: : ${formatter.format(data)}');
+      logger.d('Raw data for the previous error is: : ${formatter.format(data)}');
       debugger();
       throw FormatException(msg);
     }

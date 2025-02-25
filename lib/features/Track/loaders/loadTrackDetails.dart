@@ -14,8 +14,7 @@ final logger = Logger();
 Future<Track> loadTrackDetails({
   int id = 0,
 }) async {
-  final String url =
-      '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks/${id}';
+  final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks/${id}';
   try {
     final uri = Uri.parse(url);
     final jsonData = await serverSession.get(uri);

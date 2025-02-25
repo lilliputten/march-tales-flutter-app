@@ -54,9 +54,7 @@ class _HistoryListViewState extends State<HistoryListView> {
                 onPressed: () {
                   appState.toggleFavorite(pair);
                 },
-                icon: appState.favorites.contains(pair)
-                    ? Icon(Icons.favorite, size: 12)
-                    : SizedBox(),
+                icon: appState.favorites.contains(pair) ? Icon(Icons.favorite, size: 12) : SizedBox(),
                 label: MergeSemantics(
                   child: Wrap(
                     children: [

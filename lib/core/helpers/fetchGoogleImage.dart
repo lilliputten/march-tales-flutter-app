@@ -35,8 +35,7 @@ Future<String> fetchGoogleImage(String search) async {
       return link;
     } else {
       // throw Exception("Failed to load an image ($urlString)");
-      final reason =
-          decoded!['statusMessage'] ?? response.reasonPhrase ?? 'Unknown error';
+      final reason = decoded!['statusMessage'] ?? response.reasonPhrase ?? 'Unknown error';
       final errMsg = "Error returned (${response.statusCode}): $reason";
       throw Exception(errMsg);
     }

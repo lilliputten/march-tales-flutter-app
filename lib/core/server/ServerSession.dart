@@ -60,9 +60,7 @@ class _ServerSession {
   }
 
   void _setCookie(String? rawCookie) {
-    if (rawCookie != null &&
-        rawCookie.isNotEmpty &&
-        !rawCookie.startsWith(' ')) {
+    if (rawCookie != null && rawCookie.isNotEmpty && !rawCookie.startsWith(' ')) {
       final keyValue = rawCookie.split('=');
       if (keyValue.length == 2) {
         final key = keyValue[0].trim();
@@ -77,8 +75,7 @@ class _ServerSession {
   _getHeaders() {
     final headers = Map<String, String>.from(this.headers);
     headers['cookie'] = this._generateCookieHeader();
-    if (this.cookies['csrftoken'] != null &&
-        this.cookies['csrftoken']!.isNotEmpty) {
+    if (this.cookies['csrftoken'] != null && this.cookies['csrftoken']!.isNotEmpty) {
       headers['X-CSRFToken'] = this.cookies['csrftoken']!;
     }
     if (!AppConfig.LOCAL) {
@@ -126,8 +123,7 @@ class _ServerSession {
           reason = data['detail'].toString();
         }
         final message = 'GET error ${statusCode}: ${reason}';
-        logger.e(
-            '[ServerSession:get] ${message}, url: ${uri} requestHeaders: ${requestHeaders}');
+        logger.e('[ServerSession:get] ${message}, url: ${uri} requestHeaders: ${requestHeaders}');
         debugger();
         throw Exception(message);
       }
@@ -163,8 +159,7 @@ class _ServerSession {
           reason = data['detail'].toString();
         }
         final message = 'POST error ${statusCode}: ${reason}';
-        logger.e(
-            '[ServerSession] ${message}, url: ${uri} body: ${body} requestHeaders: ${requestHeaders}');
+        logger.e('[ServerSession] ${message}, url: ${uri} body: ${body} requestHeaders: ${requestHeaders}');
         debugger();
         throw Exception(message);
       }
@@ -200,8 +195,7 @@ class _ServerSession {
           reason = data['detail'].toString();
         }
         final message = 'PUT error ${statusCode}: ${reason}';
-        logger.e(
-            '[ServerSession] ${message}, url: ${uri} body: ${body} requestHeaders: ${requestHeaders}');
+        logger.e('[ServerSession] ${message}, url: ${uri} body: ${body} requestHeaders: ${requestHeaders}');
         debugger();
         throw Exception(message);
       }

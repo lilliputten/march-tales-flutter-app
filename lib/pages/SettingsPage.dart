@@ -158,10 +158,8 @@ class AppInfo extends StatelessWidget {
               appVersion!,
               style: style.copyWith(fontWeight: FontWeight.bold),
             ),
-            SelectableText('/',
-                style: style.copyWith(fontWeight: FontWeight.w200)),
-            SelectableText(appTimestamp!,
-                style: style.copyWith(fontWeight: FontWeight.w300)),
+            SelectableText('/', style: style.copyWith(fontWeight: FontWeight.w200)),
+            SelectableText(appTimestamp!, style: style.copyWith(fontWeight: FontWeight.w300)),
           ],
         ),
         Wrap(
@@ -176,10 +174,8 @@ class AppInfo extends StatelessWidget {
               serverVersion!,
               style: style.copyWith(fontWeight: FontWeight.bold),
             ),
-            SelectableText('/',
-                style: style.copyWith(fontWeight: FontWeight.w200)),
-            SelectableText(serverTimestamp!,
-                style: style.copyWith(fontWeight: FontWeight.w300)),
+            SelectableText('/', style: style.copyWith(fontWeight: FontWeight.w200)),
+            SelectableText(serverTimestamp!, style: style.copyWith(fontWeight: FontWeight.w300)),
           ],
         ),
         Wrap(
@@ -191,8 +187,7 @@ class AppInfo extends StatelessWidget {
               style: style,
             ),
             InkWell(
-              onTap: () => launchUrl(Uri.parse(
-                  '${AppConfig.WEB_SITE_PROTOCOL}${AppConfig.WEB_SITE_DOMAIN}')),
+              onTap: () => launchUrl(Uri.parse('${AppConfig.WEB_SITE_PROTOCOL}${AppConfig.WEB_SITE_DOMAIN}')),
               child: Text(
                 AppConfig.WEB_SITE_DOMAIN,
                 style: linkStyle,
@@ -209,8 +204,7 @@ class AppInfo extends StatelessWidget {
               style: style,
             ),
             InkWell(
-              onTap: () =>
-                  launchUrl(Uri.parse('mailto:${AppConfig.CONTACT_EMAIL}')),
+              onTap: () => launchUrl(Uri.parse('mailto:${AppConfig.CONTACT_EMAIL}')),
               child: Text(
                 AppConfig.CONTACT_EMAIL,
                 style: linkStyle,
@@ -227,8 +221,7 @@ class AppInfo extends StatelessWidget {
               style: style,
             ),
             InkWell(
-              onTap: () =>
-                  launchUrl(Uri.parse('https://${AppConfig.DEVELOPER_URL}')),
+              onTap: () => launchUrl(Uri.parse('https://${AppConfig.DEVELOPER_URL}')),
               child: Text(
                 AppConfig.DEVELOPER_URL,
                 style: linkStyle,

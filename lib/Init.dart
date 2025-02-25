@@ -69,16 +69,14 @@ class Init {
 
   static _loadTick() async {
     // final String url = 'http://10.0.2.2:8000/_allauth/app/v1/config';
-    final String url =
-        '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tick';
+    final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tick';
     // logger.t('[Init:_loadTick] Starting loading tick data: ${url}');
     dynamic jsonData;
     try {
       jsonData = await serverSession.get(Uri.parse(url));
     } catch (err, stacktrace) {
       final String msg = 'Can not fetch url $url: $err';
-      logger.e('[Init:_loadTick] error $msg',
-          error: err, stackTrace: stacktrace);
+      logger.e('[Init:_loadTick] error $msg', error: err, stackTrace: stacktrace);
       showErrorToast(msg);
       // debugger();
       throw Exception(msg);
@@ -88,8 +86,7 @@ class Init {
     try {
       // logger.t('[Init:_loadTick] done: serverProjectInfo: ${serverProjectInfo}');
       if (serverProjectInfo != null) {
-        final Iterable<RegExpMatch> found =
-            parseProjectInfoReg.allMatches(serverProjectInfo!);
+        final Iterable<RegExpMatch> found = parseProjectInfoReg.allMatches(serverProjectInfo!);
         final matches = found.elementAt(0);
         serverId = matches.group(1);
         serverVersion = matches.group(2);
@@ -98,8 +95,7 @@ class Init {
       return '_loadTick: ok';
     } catch (err, stacktrace) {
       final String msg = 'Can not parse received tick data: ${err}';
-      logger.e('[Init:_loadTick] error ${msg}',
-          error: err, stackTrace: stacktrace);
+      logger.e('[Init:_loadTick] error ${msg}', error: err, stackTrace: stacktrace);
       // debugger();
       showErrorToast(msg);
       throw Exception(msg);
@@ -108,8 +104,7 @@ class Init {
 
   static _loadConfig() async {
     // final String url = 'http://10.0.2.2:8000/_allauth/app/v1/config';
-    final String url =
-        '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_AUTH_PREFIX}/config';
+    final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_AUTH_PREFIX}/config';
     // logger.t('[Init:_loadConfig] Starting loading settings: $url');
     try {
       final jsonData = await serverSession.get(Uri.parse(url));
@@ -120,8 +115,7 @@ class Init {
       return '_loadConfig: ok';
     } catch (err, stacktrace) {
       final String msg = 'Can not fetch url $url: $err';
-      logger.e('[Init:_loadConfig] error $msg',
-          error: err, stackTrace: stacktrace);
+      logger.e('[Init:_loadConfig] error $msg', error: err, stackTrace: stacktrace);
       debugger();
       showErrorToast(msg);
       throw Exception(msg);
@@ -130,13 +124,11 @@ class Init {
 
   static _loadLocalData() async {
     try {
-      final String dataString =
-          await rootBundle.loadString('assets/project-info.json');
+      final String dataString = await rootBundle.loadString('assets/project-info.json');
       final jsonData = await json.decode(dataString);
       appProjectInfo = jsonData!['projectInfo'];
       if (appProjectInfo != null) {
-        final Iterable<RegExpMatch> found =
-            parseProjectInfoReg.allMatches(appProjectInfo!);
+        final Iterable<RegExpMatch> found = parseProjectInfoReg.allMatches(appProjectInfo!);
         final matches = found.elementAt(0);
         appId = matches.group(1);
         appVersion = matches.group(2);
@@ -145,8 +137,7 @@ class Init {
       return '_loadLocalData: ok';
     } catch (err, stacktrace) {
       final String msg = 'Can not parse local data: ${err}';
-      logger.e('[Init:_loadTick] error ${msg}',
-          error: err, stackTrace: stacktrace);
+      logger.e('[Init:_loadTick] error ${msg}', error: err, stackTrace: stacktrace);
       // debugger();
       showErrorToast(msg);
       throw Exception(msg);
@@ -159,8 +150,7 @@ class Init {
       return '_initPrefs: ok';
     } catch (err, stacktrace) {
       final String msg = 'Can not initialize a persistent instance: ${err}';
-      logger.e('[Init:_loadTick] error ${msg}',
-          error: err, stackTrace: stacktrace);
+      logger.e('[Init:_loadTick] error ${msg}', error: err, stackTrace: stacktrace);
       // debugger();
       showErrorToast(msg);
       throw Exception(msg);
@@ -174,8 +164,7 @@ class Init {
       return '_initTracksInfoDb: ok';
     } catch (err, stacktrace) {
       final String msg = 'Can not initialize a local database: ${err}';
-      logger.e('[Init:_loadTick] error ${msg}',
-          error: err, stackTrace: stacktrace);
+      logger.e('[Init:_loadTick] error ${msg}', error: err, stackTrace: stacktrace);
       debugger();
       showErrorToast(msg);
       throw Exception(msg);

@@ -17,8 +17,7 @@ class _SplashScreen extends State<SplashScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    animationController =
-        AnimationController(duration: Duration(seconds: 2), vsync: this);
+    animationController = AnimationController(duration: Duration(seconds: 2), vsync: this);
     animationController.repeat();
   }
 
@@ -33,8 +32,7 @@ class _SplashScreen extends State<SplashScreen> with TickerProviderStateMixin {
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
 
-    final style =
-        theme.textTheme.bodySmall!.copyWith(color: appColors.onBrandColor);
+    final style = theme.textTheme.bodySmall!.copyWith(color: appColors.onBrandColor);
     const double size = 60.0;
 
     return Material(
@@ -49,8 +47,7 @@ class _SplashScreen extends State<SplashScreen> with TickerProviderStateMixin {
               width: size,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                valueColor: animationController.drive(
-                    ColorTween(begin: Colors.blueAccent, end: Colors.red)),
+                valueColor: animationController.drive(ColorTween(begin: Colors.blueAccent, end: Colors.red)),
               ),
             ),
             SizedBox(height: 40),

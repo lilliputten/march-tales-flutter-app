@@ -83,8 +83,7 @@ class _QuoteImageState extends State<QuoteImage> {
   @override
   Widget build(BuildContext context) {
     checkData();
-    print(
-        "[QuoteImage:build] Start build with author:$author isLoading=$isLoading imgIdx=$imgIdx errorStr=$errorStr");
+    print("[QuoteImage:build] Start build with author:$author isLoading=$isLoading imgIdx=$imgIdx errorStr=$errorStr");
     if (isLoading) {
       return Text('Loading...');
       // return const CircularProgressIndicator(strokeWidth: 2);

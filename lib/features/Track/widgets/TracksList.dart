@@ -95,8 +95,7 @@ class TracksList extends StatelessWidget {
           if (i == tracksCount) {
             return MoreButton(onLoadNext: onLoadNext, isLoading: isLoading);
           } else {
-            return TrackItem(
-                track: this.tracks[i], asFavorite: this.asFavorite);
+            return TrackItem(track: this.tracks[i], asFavorite: this.asFavorite);
           }
         },
       ),

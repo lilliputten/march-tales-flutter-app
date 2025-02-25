@@ -92,8 +92,7 @@ mixin ActivePlayerState {
     }
   }
 
-  Future<Track?> _loadPlayingTrackDetails(
-      {required int id, bool notify = true}) async {
+  Future<Track?> _loadPlayingTrackDetails({required int id, bool notify = true}) async {
     if (id != 0) {
       // Update `playingTrack` if language has been changed
       final track = await loadTrackDetails(id: id);
@@ -116,8 +115,7 @@ mixin ActivePlayerState {
   Future<Track?> ensureLoadedPlayingTrackDetails({bool notify = true}) async {
     if (this.playingTrack != null) {
       // Update `playingTrack` if language has been changed
-      await this
-          ._loadPlayingTrackDetails(id: this.playingTrack!.id, notify: notify);
+      await this._loadPlayingTrackDetails(id: this.playingTrack!.id, notify: notify);
     }
     return this.playingTrack;
   }
@@ -144,9 +142,7 @@ mixin ActivePlayerState {
   }
 
   void _incrementCurrentTrackPlayedCount() async {
-    if (this.playingTrack == null ||
-        this.hasIncremented ||
-        this.isIncrementingNow) {
+    if (this.playingTrack == null || this.hasIncremented || this.isIncrementingNow) {
       return;
     }
     this.isIncrementingNow = true;
@@ -163,8 +159,7 @@ mixin ActivePlayerState {
       this.hasIncremented = true;
       this.updateSingleTrack(updatedTrack, notify: true);
     } catch (err, stacktrace) {
-      logger.e('[_incrementCurrentTrackPlayedCount] ${err}',
-          error: err, stackTrace: stacktrace);
+      logger.e('[_incrementCurrentTrackPlayedCount] ${err}', error: err, stackTrace: stacktrace);
       debugger();
     } finally {
       this.isIncrementingNow = false;
@@ -185,8 +180,7 @@ mixin ActivePlayerState {
       // logger.t('[ActivePlayerState:_updatePlayerStatus] playing=${playing} processingState=${processingState} position=${position}');
       this._savePlayingPosition(position, notify: false);
       // Update the data in the local db (and don't wait for the finish)
-      tracksInfoDb.updatePosition(this.playingTrack!.id,
-          position: position); // await!
+      tracksInfoDb.updatePosition(this.playingTrack!.id, position: position); // await!
     }
     if (processingState == ProcessingState.completed) {
       this._incrementCurrentTrackPlayedCount();
@@ -207,8 +201,7 @@ mixin ActivePlayerState {
 
   void _playerTimerStart() {
     // XXX: To use player updater callback?
-    this.activeTimer = Timer.periodic(Duration(milliseconds: playerTickDelayMs),
-        (_) => this._updatePlayerStatus());
+    this.activeTimer = Timer.periodic(Duration(milliseconds: playerTickDelayMs), (_) => this._updatePlayerStatus());
   }
 
   void _playerStart(Track track) async {
@@ -294,8 +287,7 @@ mixin ActivePlayerState {
         position = Duration.zero;
       }
       this.activePlayer.seek(position);
-      tracksInfoDb.updatePosition(this.playingTrack!.id,
-          position: position); // await!
+      tracksInfoDb.updatePosition(this.playingTrack!.id, position: position); // await!
       this._savePlayingPosition(position);
     }
   }
