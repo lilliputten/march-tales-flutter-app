@@ -34,7 +34,7 @@ class TrackImageThumbnail extends StatelessWidget {
     if (file.isEmpty) {
       return SizedBox(width: imageWidth, height: imageHeight);
     }
-    final String url = '${AppConfig.TALES_SERVER_HOST}${file}_';
+    final String url = '${AppConfig.TALES_SERVER_HOST}${file}';
     return ThumbnailImage(url: url, width: imageWidth, height: imageHeight, borderRadius: borderRadius);
   }
 }

@@ -6,8 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:march_tales_app/features/Track/db/TrackInfo.dart';
 import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackItemAsRow.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemAsCard.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
+
+// import 'package:march_tales_app/features/Track/widgets/TrackItemAsRow.dart';
 
 final logger = Logger();
 
@@ -95,7 +97,7 @@ class _TrackItemState extends State<TrackItem> {
 
     final isAlreadyPlayed = !isActiveTrack && progress >= 1;
 
-    return TrackItemAsRow(
+    return TrackItemAsCard(
       track: track,
       isActiveTrack: isActiveTrack,
       isAlreadyPlayed: isAlreadyPlayed,

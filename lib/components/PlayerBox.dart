@@ -124,7 +124,7 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
             spacing: 10,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TrackImageThumbnail(track: track, height: 50),
+              TrackImageThumbnail(track: track, height: 50, borderRadius: 5),
               Expanded(
                 flex: 1,
                 child: PlayerTrackDetails(track: track, trackInfo: this._trackInfo),

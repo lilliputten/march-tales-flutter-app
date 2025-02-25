@@ -78,6 +78,12 @@ class TracksList extends StatelessWidget {
     final hasMoreTracks = this.count > tracksCount;
     final showItems = hasMoreTracks ? tracksCount + 1 : tracksCount;
 
+    final listKey = PageStorageKey<String>('TracksList');
+    // final GlobalKey listKey = GlobalKey();
+    // final box = listKey.currentContext?.findRenderObject(); // as RenderBox;
+    // // double width = box.size.width;
+    // logger.t('Box: ${box}');
+
     return RefreshIndicator(
       color: appColors.brandColor,
       strokeWidth: 2,
@@ -88,7 +94,7 @@ class TracksList extends StatelessWidget {
       },
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        key: PageStorageKey<String>('TracksList'),
+        key: listKey,
         separatorBuilder: (context, index) => SizedBox(),
         itemCount: showItems,
         itemBuilder: (context, i) {
