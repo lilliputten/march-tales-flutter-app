@@ -37,8 +37,7 @@ class YamlFormatter {
     String str = '\n';
 
     for (var item in yaml) {
-      str +=
-          "${_indent(indent)}- ${_writeInternal(item, indent: indent + 1)}\n";
+      str += "${_indent(indent)}- ${_writeInternal(item, indent: indent + 1)}\n";
     }
 
     return str;
@@ -51,8 +50,7 @@ class YamlFormatter {
 
     for (var key in yaml.keys) {
       var value = yaml[key];
-      str +=
-          "${_indent(indent)}${key.toString()}: ${_writeInternal(value, indent: indent + 1)}\n";
+      str += "${_indent(indent)}${key.toString()}: ${_writeInternal(value, indent: indent + 1)}\n";
     }
 
     return str;

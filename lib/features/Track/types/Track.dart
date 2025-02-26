@@ -148,16 +148,11 @@ class Track {
         description: json['description'].toString(),
         track_status: json['track_status'].toString(),
         author: TrackAuthor.fromJson(json['author']),
-        tags: List<dynamic>.from(json['tags'])
-            .map((data) => TrackTag.fromJson(data))
-            .toList(),
-        rubrics: List<dynamic>.from(json['rubrics'])
-            .map((data) => TrackRubric.fromJson(data))
-            .toList(),
+        tags: List<dynamic>.from(json['tags']).map((data) => TrackTag.fromJson(data)).toList(),
+        rubrics: List<dynamic>.from(json['rubrics']).map((data) => TrackRubric.fromJson(data)).toList(),
         audio_file: json['audio_file'].toString(),
         // audio_duration: json['audio_duration'].toDouble(),
-        duration: Duration(
-            milliseconds: durationMs), // json['audio_duration'].toDouble(),
+        duration: Duration(milliseconds: durationMs), // json['audio_duration'].toDouble(),
         audio_size: json['audio_size'],
         preview_picture: json['preview_picture'].toString(),
         for_members: json['for_members'],
@@ -171,8 +166,7 @@ class Track {
     } catch (err, stacktrace) {
       final String msg = 'Can not parse Track data: $err';
       logger.e(msg, error: err, stackTrace: stacktrace);
-      logger.d(
-          'Raw json data for the previous error is: : ${formatter.format(json)}');
+      logger.d('Raw json data for the previous error is: : ${formatter.format(json)}');
       debugger();
       throw FormatException(msg);
     }

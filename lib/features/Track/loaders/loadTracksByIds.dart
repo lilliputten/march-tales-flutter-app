@@ -17,8 +17,7 @@ Future<LoadTracksListResults> loadTracksByIds(
   int? limit,
   // TODO: Add filter/sort parameters
 }) async {
-  final String url =
-      '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks/by-ids/';
+  final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks/by-ids/';
   try {
     final uri = Uri.parse(url);
     final params = {...uri.queryParameters};
@@ -31,8 +30,7 @@ Future<LoadTracksListResults> loadTracksByIds(
     if (offset != null && offset != 0) {
       params['offset'] = offset.toString();
     }
-    final jsonData =
-        await serverSession.get(uri.replace(queryParameters: params));
+    final jsonData = await serverSession.get(uri.replace(queryParameters: params));
     return LoadTracksListResults.fromJson(jsonData);
   } catch (err, stacktrace) {
     final String msg = 'Error fetching tracks with an url $url: $err';

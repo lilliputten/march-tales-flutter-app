@@ -6,10 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:march_tales_app/features/Track/db/TrackInfo.dart';
 import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackDetails.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackItemControl.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemAsCard.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
+
+// import 'package:march_tales_app/features/Track/widgets/TrackItemAsRow.dart';
 
 final logger = Logger();
 
@@ -97,49 +97,14 @@ class _TrackItemState extends State<TrackItem> {
 
     final isAlreadyPlayed = !isActiveTrack && progress >= 1;
 
-    final double opacity = isAlreadyPlayed ? 0.5 : 1;
-
-    return new Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.all(Radius.circular(10)),
-      child: InkWell(
-        onTap: () {
-          appState.setPlayingTrack(track, play: false);
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-          child: Row(
-            spacing: 10,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TrackImageThumbnail(track: track, size: 80),
-              Expanded(
-                flex: 1,
-                child: Opacity(
-                  opacity: opacity,
-                  child: TrackDetails(
-                    track: track,
-                    isActiveTrack: isActiveTrack,
-                    isAlreadyPlayed: isAlreadyPlayed,
-                    isPlaying: isPlaying,
-                    isFavorite: isFavorite,
-                    asFavorite: this.widget.asFavorite,
-                  ),
-                ),
-              ),
-              // TrackFavoriteIcon(track: track),
-              TrackItemControl(
-                track: track,
-                isActiveTrack: isActiveTrack,
-                isAlreadyPlayed: isAlreadyPlayed,
-                isPlaying: isPlaying,
-                progress: progress,
-              ),
-            ],
-          ),
-        ),
-      ),
+    return TrackItemAsCard(
+      track: track,
+      isActiveTrack: isActiveTrack,
+      isAlreadyPlayed: isAlreadyPlayed,
+      isPlaying: isPlaying,
+      progress: progress,
+      isFavorite: isFavorite,
+      asFavorite: this.widget.asFavorite,
     );
   }
 }

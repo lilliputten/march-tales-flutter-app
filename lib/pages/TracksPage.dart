@@ -36,8 +36,7 @@ class TracksPage extends StatelessWidget {
             Expanded(
               child: Center(
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                   child: Text(tracksLoadError),
                 ),
               ),
@@ -52,8 +51,7 @@ class TracksPage extends StatelessWidget {
         children: [
           Expanded(
             child: Center(
-              child: CircularProgressIndicator(
-                  strokeWidth: 2, color: appColors.brandColor),
+              child: CircularProgressIndicator(strokeWidth: 2, color: appColors.brandColor),
             ),
           ),
         ],
@@ -66,8 +64,7 @@ class TracksPage extends StatelessWidget {
           Expanded(
             child: Center(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                 child: Text('No tracks'.i18n),
               ),
             ),

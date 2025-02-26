@@ -27,14 +27,12 @@ class AppColors extends ThemeExtension<AppColors> {
     }
     return AppColors(
       brandColor: Color.lerp(brandColor, other.brandColor, t) ?? brandColor,
-      onBrandColor:
-          Color.lerp(onBrandColor, other.onBrandColor, t) ?? onBrandColor,
+      onBrandColor: Color.lerp(onBrandColor, other.onBrandColor, t) ?? onBrandColor,
     );
   }
 
   @override
-  String toString() =>
-      'AppColors(brandColor: ${brandColor}, onBrandColor: ${onBrandColor})';
+  String toString() => 'AppColors(brandColor: ${brandColor}, onBrandColor: ${onBrandColor})';
 }
 
 const appColors = AppColors(

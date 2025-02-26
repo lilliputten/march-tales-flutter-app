@@ -8,8 +8,7 @@ mixin PrefsState {
   bool loadThemeStateSavedPrefs({bool notify = true});
   bool loadLocaleStateSavedPrefs({bool notify = true});
   bool loadActivePlayerStateSavedPrefs({bool notify = true});
-  bool loadNavigationStateSavedPrefs(
-      {bool notify = true}); // From `NavigationState`
+  bool loadNavigationStateSavedPrefs({bool notify = true}); // From `NavigationState`
 
   /// Persistent storage
   SharedPreferences? _prefs;

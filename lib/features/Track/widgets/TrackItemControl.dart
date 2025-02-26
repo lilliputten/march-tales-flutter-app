@@ -35,9 +35,7 @@ class TrackItemControl extends StatelessWidget {
     // final colorScheme = theme.colorScheme;
     final AppColors appColors = theme.extension<AppColors>()!;
 
-    final mainColor = !isAlreadyPlayed
-        ? appColors.brandColor
-        : appColors.brandColor.withValues(alpha: 0.3);
+    final mainColor = !isAlreadyPlayed ? appColors.brandColor : appColors.brandColor.withValues(alpha: 0.3);
 
     return Stack(
       alignment: AlignmentDirectional.center,

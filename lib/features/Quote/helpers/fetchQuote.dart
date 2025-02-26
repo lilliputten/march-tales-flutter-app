@@ -27,8 +27,7 @@ Future<Quote> fetchQuote() async {
   } else {
     // If the server did not return a 200 OK response,
     // then throw an exception.
-    final reason =
-        decoded!['statusMessage'] ?? response.reasonPhrase ?? 'Unknown error';
+    final reason = decoded!['statusMessage'] ?? response.reasonPhrase ?? 'Unknown error';
     final errMsg = "Failed to load quote (${response.statusCode}): $reason";
     print("ERROR: $errMsg");
     throw Exception(errMsg);

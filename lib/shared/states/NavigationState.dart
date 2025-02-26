@@ -15,8 +15,7 @@ mixin NavigationState {
   int _selectedTabIndex = _defaultTabIndex;
 
   bool loadNavigationStateSavedPrefs({bool notify = true}) {
-    final savedTabIndex =
-        this.getPrefs()?.getInt('selectedTabIndex') ?? _defaultTabIndex;
+    final savedTabIndex = this.getPrefs()?.getInt('selectedTabIndex') ?? _defaultTabIndex;
     if (savedTabIndex != this._selectedTabIndex) {
       this._selectedTabIndex = savedTabIndex;
       if (notify) {

@@ -72,16 +72,12 @@ mixin FavoritesState {
   }
 
   _removeUnusedFavoritesData() {
-    this
-        ._favoriteTracksData
-        .removeWhere((id, _) => !this._favoriteIds.contains(id));
+    this._favoriteTracksData.removeWhere((id, _) => !this._favoriteIds.contains(id));
     // final unusedKeys = this._favoriteTracksData.keys.where((id) => !this._favoriteIds.contains(id));
   }
 
   _loadMissedFavoritesData() async {
-    final missedIds = this
-        ._favoriteIds
-        .where((id) => !this._favoriteTracksData.containsKey(id));
+    final missedIds = this._favoriteIds.where((id) => !this._favoriteTracksData.containsKey(id));
     if (missedIds.isNotEmpty) {
       final results = await loadTracksByIds(missedIds);
       // this._favoriteTracksData = {}..addAll(this._favoriteTracksData);
