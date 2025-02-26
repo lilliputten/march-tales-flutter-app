@@ -9,6 +9,10 @@ import 'RootApp.dart';
 import 'core/config/AppConfig.dart';
 import 'supportedLocales.dart';
 
+// import 'package:flutter/foundation.dart';
+
+// import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
 // Make it depending on a LOCAL flag, put to the constants/config
 const connectionTimeoutDelay = 5;
 
@@ -47,6 +51,10 @@ void main() async {
 
   // Setup http request options
   HttpOverrides.global = MyHttpOverrides();
+
+  // if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+  //   await InAppWebViewController.setWebContentsDebuggingEnabled(kDebugMode);
+  // }
 
   // Start app
   runApp(

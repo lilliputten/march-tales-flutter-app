@@ -1,11 +1,16 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:i18n_extension/i18n_extension.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:march_tales_app/Init.dart';
+import 'package:march_tales_app/components/LoginBrowser.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
@@ -235,6 +240,92 @@ class AppInfo extends StatelessWidget {
   }
 }
 
+class LoginButton extends StatefulWidget {
+  @override
+  State<LoginButton> createState() => _LoginButtonState();
+}
+
+class _LoginButtonState extends State<LoginButton> {
+  // @see https://inappwebview.dev/docs/in-app-browsers/in-app-browser
+  final LoginBrowser browser = new LoginBrowser(
+      // webViewEnvironment: webViewEnvironment,
+      );
+
+  String loginUrl = '${AppConfig.TALES_SERVER_HOST}/accounts/login/';
+
+  // final options = InAppBrowserClassOptions(
+  //     crossPlatform: InAppBrowserOptions(hideUrlBar: false),
+  //     inAppWebViewGroupOptions:
+  //         InAppWebViewGroupOptions(crossPlatform: InAppWebViewOptions(javaScriptEnabled: true)));
+
+  final settings = InAppBrowserClassSettings(
+    browserSettings: InAppBrowserSettings(
+      hideUrlBar: true,
+    ),
+    webViewSettings: InAppWebViewSettings(
+      javaScriptEnabled: false,
+      isInspectable: kDebugMode,
+    ),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    browser.addMenuItem(InAppBrowserMenuItem(
+      id: 0,
+      title: 'Reload',
+      iconColor: Colors.black,
+      order: 0,
+      onClick: () {
+        debugger();
+        browser.webViewController?.reload();
+      },
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final style = theme.textTheme.bodySmall!;
+    final ButtonStyle buttonStyle = ElevatedButton.styleFrom(textStyle: style);
+
+    final webUrl = WebUri(loginUrl, forceToStringRawValue: false);
+
+    return SizedBox(
+      width: double.infinity,
+      // height: double.infinity,
+      child: ElevatedButton(
+        style: buttonStyle,
+        onPressed: () {
+          browser.openUrlRequest(
+            urlRequest: URLRequest(url: webUrl),
+            settings: settings,
+            // options: options,
+          );
+        },
+        child: const Text('Log in'),
+      ),
+    );
+  }
+}
+
+class LoginBlock extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // final theme = Theme.of(context);
+    // final style = theme.textTheme.bodySmall!;
+    // final ButtonStyle buttonStyle = ElevatedButton.styleFrom(textStyle: style);
+
+    return Column(
+      spacing: 10,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        LoginButton(),
+      ],
+    );
+  }
+}
+
 class SectionTitle extends StatelessWidget {
   const SectionTitle({
     super.key,
@@ -277,6 +368,8 @@ class SettingsWidget extends StatelessWidget {
           SectionTitle(title: 'Basic settings'.i18n),
           LanguageSelector(),
           ThemeSelector(),
+          SectionTitle(title: 'Log in / Sign up'.i18n),
+          LoginBlock(),
           SectionTitle(title: 'Application info'.i18n),
           AppInfo(),
         ],
