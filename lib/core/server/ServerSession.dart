@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:http/http.dart' as http;
+import 'package:i18n_extension/i18n_extension.dart';
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
@@ -17,11 +18,14 @@ final defaultHeaders = {
 
 final logger = Logger();
 
+// TODO: To collect `sessionId`?
+
 class _ServerSession {
   final JsonDecoder _decoder = const JsonDecoder();
   final JsonEncoder _encoder = const JsonEncoder();
 
-  String currentLocale = defaultLocale;
+  String currentLocale = I18n.locale.languageCode; // ?? defaultLocale;
+  String csrfToken = '';
 
   Map<String, String> headers = Map.from(defaultHeaders);
   Map<String, String> cookies = {};
@@ -38,7 +42,16 @@ class _ServerSession {
   }
 
   updateCSRFToken(String token) {
+    this.csrfToken = token;
     this.cookies['csrftoken'] = token;
+  }
+
+  getLocale() {
+    return this.currentLocale;
+  }
+
+  getCSRFToken() {
+    return this.csrfToken;
   }
 
   void _updateCookie(http.Response response) {
@@ -72,7 +85,7 @@ class _ServerSession {
     }
   }
 
-  _getHeaders() {
+  _createHeaders() {
     final headers = Map<String, String>.from(this.headers);
     headers['cookie'] = this._generateCookieHeader();
     if (this.cookies['csrftoken'] != null && this.cookies['csrftoken']!.isNotEmpty) {
@@ -98,7 +111,7 @@ class _ServerSession {
   }
 
   Future<dynamic> get(Uri uri) {
-    final requestHeaders = this._getHeaders();
+    final requestHeaders = this._createHeaders();
     // logger.t('[ServerSession] GET starting uri=${uri} headers=${requestHeaders}');
     return http
         .get(
@@ -133,7 +146,7 @@ class _ServerSession {
   }
 
   Future<dynamic> post(Uri uri, {dynamic body, Encoding? encoding}) {
-    final requestHeaders = this._getHeaders();
+    final requestHeaders = this._createHeaders();
     // logger.t('[ServerSession] POST starting uri=${uri} headers=${requestHeaders}');
     return http
         .post(
@@ -169,7 +182,7 @@ class _ServerSession {
   }
 
   Future<dynamic> put(Uri uri, {dynamic body, Encoding? encoding}) {
-    final requestHeaders = this._getHeaders();
+    final requestHeaders = this._createHeaders();
     // logger.t('[ServerSession] PUT starting uri=${uri} headers=${requestHeaders}');
     return http
         .put(
