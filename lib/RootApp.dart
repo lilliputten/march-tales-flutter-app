@@ -36,7 +36,9 @@ class RootApp extends StatelessWidget {
         initFuture.then((initData) async {
           // TODO: Check for valid app version?
           appState.setPrefs(Init.prefs);
-
+          appState.updateUserId(Init.userId ?? 0);
+          appState.updateUserName(Init.userName ?? '');
+          appState.updateUserEmail(Init.userEmail ?? '');
           // Retrieve tracks
           await Future.wait<dynamic>([
             appState.loadFavorites(),

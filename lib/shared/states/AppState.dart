@@ -8,9 +8,11 @@ import 'PrefsState.dart';
 import 'TestState.dart';
 import 'ThemeState.dart';
 import 'TrackState.dart';
+import 'UserState.dart';
 
 class AppState extends ChangeNotifier
     with
+        UserState,
         ActivePlayerState,
         FavoritesState,
         LocaleState,
