@@ -24,6 +24,7 @@ class LoginBrowser extends InAppBrowser {
 
   @override
   Future onLoadStart(url) async {
+    // logger.t('[onLoadStart] ${url}');
     if (url == null) {
       return;
     }

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:i18n_extension/i18n_extension.dart';
@@ -14,8 +12,6 @@ import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/supportedLocales.dart';
 import 'SettingsPage.i18n.dart';
-
-// import 'package:flutter/services.dart';
 
 final logger = Logger();
 
@@ -250,13 +246,18 @@ class AuthInfo extends StatelessWidget {
     final ButtonStyle buttonStyle = ElevatedButton.styleFrom(textStyle: style);
 
     logout() async {
-      logger.t('[signout] Log out start');
       final String signoutUrl = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/logout/';
       final result = await serverSession.get(Uri.parse(signoutUrl));
       logger.t('[signout] Log out done: result=${result}');
-      debugger();
       serverSession.updateSessionId('');
       appState.updateUserData();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          showCloseIcon: true,
+          backgroundColor: Colors.green,
+          content: Text("You've been succcessfully logged out".i18n),
+        ));
+      }
     }
 
     return Column(
@@ -265,8 +266,6 @@ class AuthInfo extends StatelessWidget {
       children: [
         Wrap(
           spacing: 5,
-          // runAlignment: WrapAlignment.center,
-          // alignment: WrapAlignment.center,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             SelectableText(
@@ -281,7 +280,6 @@ class AuthInfo extends StatelessWidget {
         ),
         SizedBox(
           width: double.infinity,
-          // height: double.infinity,
           child: ElevatedButton(
             style: buttonStyle,
             onPressed: logout,
@@ -321,7 +319,6 @@ class SectionTitle extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final textStyle = theme.textTheme.bodyLarge!.copyWith(
       color: colorScheme.primary,
-      // fontWeight: FontWeight.bold,
     );
     final delimiterColor = colorScheme.onSurface.withValues(alpha: 0.2);
     return Container(

@@ -28,19 +28,23 @@ class _LoginButtonState extends State<LoginButton> {
   // @see https://inappwebview.dev/docs/in-app-browsers/in-app-browser
   final LoginBrowser browser = new LoginBrowser();
 
-  AppState? appState;
+  BuildContext? _context;
+  AppState? _appState;
 
   CookieManager cookieManager = CookieManager.instance();
 
   final webUrl = WebUri('${AppConfig.TALES_SERVER_HOST}/accounts/login/');
 
-  final settings = InAppBrowserClassSettings(
+  final browserSettings = InAppBrowserClassSettings(
     browserSettings: InAppBrowserSettings(
       hideUrlBar: true,
     ),
     webViewSettings: InAppWebViewSettings(
-      javaScriptEnabled: false,
+      javaScriptEnabled: true,
       isInspectable: kDebugMode,
+      userAgent: 'random',
+      useOnLoadResource: true,
+      cacheEnabled: true,
     ),
   );
 
@@ -58,6 +62,13 @@ class _LoginButtonState extends State<LoginButton> {
     // Get account data...
     try {
       await Init.loadServerStatus();
+      if (this._context != null && this._context!.mounted) {
+        ScaffoldMessenger.of(this._context!).showSnackBar(SnackBar(
+          showCloseIcon: true,
+          backgroundColor: Colors.green,
+          content: Text("You've been succcessfully logged in".i18n),
+        ));
+      }
     } catch (err, stacktrace) {
       final String msg = 'Can not parse user data: ${err}';
       logger.e('[LoginButton:onFinished] error ${msg}', error: err, stackTrace: stacktrace);
@@ -65,9 +76,9 @@ class _LoginButtonState extends State<LoginButton> {
       showErrorToast(msg);
       throw Exception(msg);
     } finally {
-      this.appState?.updateUserId(Init.userId ?? 0);
-      this.appState?.updateUserName(Init.userName ?? '');
-      this.appState?.updateUserEmail(Init.userEmail ?? '');
+      this._appState?.updateUserId(Init.userId ?? 0);
+      this._appState?.updateUserName(Init.userName ?? '');
+      this._appState?.updateUserEmail(Init.userEmail ?? '');
       logger.t(
           '[onFinished] isSuccess cookies=${cookies} userId=${Init.userId} userEmail=${Init.userEmail} userName=${Init.userName}');
     }
@@ -87,8 +98,9 @@ class _LoginButtonState extends State<LoginButton> {
 
   @override
   Widget build(BuildContext context) {
+    this._context = context;
     final AppState appState = context.watch<AppState>();
-    this.appState = appState;
+    this._appState = appState;
     final theme = Theme.of(context);
     final style = theme.textTheme.bodySmall!;
     final ButtonStyle buttonStyle = ElevatedButton.styleFrom(textStyle: style);
@@ -101,7 +113,7 @@ class _LoginButtonState extends State<LoginButton> {
         onPressed: () {
           browser.openUrlRequest(
             urlRequest: URLRequest(url: this.webUrl),
-            settings: this.settings,
+            settings: this.browserSettings,
           );
         },
         child: Text('Log in'.i18n),

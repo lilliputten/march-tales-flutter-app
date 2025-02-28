@@ -5,6 +5,7 @@ extension Localization on String {
       {
         'ru': {
           'Log in': 'Войти',
+          "You've been succcessfully logged in": 'Вы успешно вошли в систему',
         },
       };
   String get i18n => localize(this, _t);
