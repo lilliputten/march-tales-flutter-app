@@ -76,9 +76,7 @@ class _LoginButtonState extends State<LoginButton> {
       showErrorToast(msg);
       throw Exception(msg);
     } finally {
-      this._appState?.updateUserId(Init.userId ?? 0);
-      this._appState?.updateUserName(Init.userName ?? '');
-      this._appState?.updateUserEmail(Init.userEmail ?? '');
+      this._appState?.setUser(userId: Init.userId ?? 0, userName: Init.userName ?? '', userEmail: Init.userEmail ?? '');
       logger.t(
           '[onFinished] isSuccess cookies=${cookies} userId=${Init.userId} userEmail=${Init.userEmail} userName=${Init.userName}');
     }

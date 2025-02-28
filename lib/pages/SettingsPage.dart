@@ -250,7 +250,7 @@ class AuthInfo extends StatelessWidget {
       final result = await serverSession.get(Uri.parse(signoutUrl));
       logger.t('[signout] Log out done: result=${result}');
       serverSession.updateSessionId('');
-      appState.updateUserData();
+      appState.setUser();
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           showCloseIcon: true,

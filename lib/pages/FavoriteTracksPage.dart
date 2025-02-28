@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
@@ -10,7 +12,6 @@ import 'TracksPage.i18n.dart';
 
 final logger = Logger();
 
-// @see https://docs.flutter.dev/cookbook/networking/fetch-data
 class FavoriteTracksPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -18,6 +19,8 @@ class FavoriteTracksPage extends StatelessWidget {
     final favoritesHasBeenLoaded = appState.favoritesHasBeenLoaded;
     final isFavoritesLoading = appState.isFavoritesLoading;
     final tracks = appState.getSortedFavorites();
+
+    logger.d('[FavoriteTracksPage] tracks=${tracks}');
 
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
@@ -61,7 +64,7 @@ class FavoriteTracksPage extends StatelessWidget {
             isLoading: isFavoritesLoading,
             asFavorite: true,
             onRefresh: () async {
-              await appState.reloadFavoritesData();
+              await appState.loadFavorites();
             },
             // onLoadNext: () {
             //   appState.loadNextTracks();

@@ -22,4 +22,7 @@ class AppState extends ChangeNotifier
         ThemeState,
         TrackState {
   // NOTE: All the states are separated into dedicated mixin modules
+  initialize() {
+    this.initFavoritesState();
+  }
 }

@@ -165,7 +165,7 @@ class PlayerFavoriteControl extends StatelessWidget {
     final AppColors appColors = theme.extension<AppColors>()!;
     // final colorScheme = theme.colorScheme;
 
-    final isFavorite = trackInfo?.favorite ?? false;
+    final isFavorite = appState.isFavoriteTrackId(track.id); // trackInfo?.favorite ?? false;
 
     return IconButton(
       icon: Icon(

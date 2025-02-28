@@ -250,4 +250,3 @@ class _ServerSession {
 }
 
 final serverSession = _ServerSession();
-// serverSession.initialize();

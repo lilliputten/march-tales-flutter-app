@@ -88,7 +88,7 @@ class _TrackItemState extends State<TrackItem> {
       }
     }
 
-    final isFavorite = this._trackInfo?.favorite ?? false;
+    final isFavorite = appState.isFavoriteTrackId(track.id); // this._trackInfo?.favorite ?? false;
 
     double progress = 0;
     if (duration != 0 && position != null) {

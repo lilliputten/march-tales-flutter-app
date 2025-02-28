@@ -10,9 +10,16 @@ import 'package:sqflite/sqflite.dart';
 import 'TrackInfo.dart';
 import 'TracksInfoDbStructure.dart';
 
+enum TracksInfoDbUpdateType { incrementPlayedCount, updatePosition, setFavorite, save }
+
+// TODO: To extract the event manager to the dedicated module in `lib/core/singletons/`?
 class TracksInfoDbUpdate extends EventArgs {
   TrackInfo trackInfo;
-  TracksInfoDbUpdate(this.trackInfo);
+  TracksInfoDbUpdateType type;
+  TracksInfoDbUpdate({
+    required this.trackInfo,
+    this.type = TracksInfoDbUpdateType.save,
+  });
 }
 
 /// It manages sqlite database connection.
@@ -103,7 +110,9 @@ class TracksInfoDb {
         trackInfo.lastPlayed = _now;
         trackInfo.lastUpdated = _now;
         final _ = await this.insert(trackInfo, txn: txn);
-        this.updateEvents.broadcast(TracksInfoDbUpdate(trackInfo));
+        this
+            .updateEvents
+            .broadcast(TracksInfoDbUpdate(trackInfo: trackInfo, type: TracksInfoDbUpdateType.incrementPlayedCount));
         return trackInfo;
       });
     } catch (err, stacktrace) {
@@ -125,7 +134,9 @@ class TracksInfoDb {
         trackInfo.lastPlayed = _now; // ???
         trackInfo.lastUpdated = _now;
         final _ = await this.insert(trackInfo, txn: txn);
-        this.updateEvents.broadcast(TracksInfoDbUpdate(trackInfo));
+        this
+            .updateEvents
+            .broadcast(TracksInfoDbUpdate(trackInfo: trackInfo, type: TracksInfoDbUpdateType.updatePosition));
         return trackInfo;
       });
     } catch (err, stacktrace) {
@@ -143,7 +154,7 @@ class TracksInfoDb {
         trackInfo.favorite = favorite;
         trackInfo.lastUpdated = _now;
         final _ = await this.insert(trackInfo, txn: txn);
-        this.updateEvents.broadcast(TracksInfoDbUpdate(trackInfo));
+        this.updateEvents.broadcast(TracksInfoDbUpdate(trackInfo: trackInfo, type: TracksInfoDbUpdateType.setFavorite));
         return trackInfo;
       });
     } catch (err, stacktrace) {
@@ -160,7 +171,7 @@ class TracksInfoDb {
         trackInfo.lastPlayed = _now; // ???
         trackInfo.lastUpdated = _now;
         final _ = await this.insert(trackInfo, txn: txn);
-        this.updateEvents.broadcast(TracksInfoDbUpdate(trackInfo));
+        this.updateEvents.broadcast(TracksInfoDbUpdate(trackInfo: trackInfo, type: TracksInfoDbUpdateType.save));
         // final testTrackInfo = await this.getById(id, txn: txn);
         return trackInfo;
       });
