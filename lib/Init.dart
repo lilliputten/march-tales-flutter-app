@@ -46,9 +46,9 @@ class Init {
     List<Future> futures = [
       _initPrefs(),
       _loadLocalData(),
-      // _loadConfig(),
-      _loadTick(),
+      loadServerStatus(),
       _initTracksInfoDb(),
+      // _loadConfig(),
       // _registerServices(),
     ];
     final List<dynamic> waitResults = await Future.wait(futures);
@@ -71,24 +71,29 @@ class Init {
     return results;
   }
 
-  static _loadTick() async {
+  static loadServerStatus() async {
     // final String url = 'http://10.0.2.2:8000/_allauth/app/v1/config';
-    final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tick';
-    // logger.t('[Init:_loadTick] Starting loading tick data: ${url}');
+    final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tick/';
+    // Reset user data first...
+    userId = 0;
+    userName = '';
+    userEmail = '';
+    // Raw data storage
     dynamic tickData;
     try {
+      // logger.t('[Init:loadServerStatus] Started loading tick data: ${url}');
       tickData = await serverSession.get(Uri.parse(url));
     } catch (err, stacktrace) {
       final String msg = 'Can not fetch url ${url}: ${err}';
-      logger.e('[Init:_loadTick] error ${msg}', error: err, stackTrace: stacktrace);
+      logger.e('[Init:loadServerStatus] error ${msg}', error: err, stackTrace: stacktrace);
       showErrorToast(msg);
       // debugger();
       throw Exception(msg);
     }
-    logger.t('[Init:_loadTick] done: tickData: ${tickData}');
-    serverProjectInfo = tickData!['PROJECT_INFO'];
+    logger.t('[Init:loadServerStatus] done: tickData: ${tickData}');
+    serverProjectInfo = tickData!['projectInfo'];
     try {
-      // logger.t('[Init:_loadTick] done: serverProjectInfo: ${serverProjectInfo}');
+      // logger.t('[Init:loadServerStatus] done: serverProjectInfo: ${serverProjectInfo}');
       if (serverProjectInfo != null) {
         final Iterable<RegExpMatch> found = parseProjectInfoReg.allMatches(serverProjectInfo!);
         final matches = found.elementAt(0);
@@ -98,7 +103,7 @@ class Init {
       }
     } catch (err, stacktrace) {
       final String msg = 'Can not parse received tick data: ${err}';
-      logger.e('[Init:_loadTick] error ${msg}', error: err, stackTrace: stacktrace);
+      logger.e('[Init:loadServerStatus] error ${msg}', error: err, stackTrace: stacktrace);
       // debugger();
       showErrorToast(msg);
       throw Exception(msg);
@@ -109,7 +114,7 @@ class Init {
       userEmail = tickData['user_email'] != null ? tickData['user_email'].toString() : '';
     } catch (err, stacktrace) {
       final String msg = 'Can not parse received tick data: ${err}';
-      logger.e('[Init:_loadTick] error ${msg}', error: err, stackTrace: stacktrace);
+      logger.e('[Init:loadServerStatus] error ${msg}', error: err, stackTrace: stacktrace);
       debugger();
       showErrorToast(msg);
       throw Exception(msg);

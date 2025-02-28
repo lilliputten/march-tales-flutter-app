@@ -32,16 +32,6 @@ mixin UserState {
       this.updateUserEmail(savedUserEmail, notify: false);
       hasUpdates = true;
     }
-    // final savedUserSessionId = this.getPrefs()?.getString('userSessionId');
-    // if (savedUserSessionId != null && savedUserSessionId != this.userSessionId) {
-    //   this.updateUserSessionId(savedUserSessionId, notify: false);
-    //   hasUpdates = true;
-    // }
-    // final savedUserCSRFToken = this.getPrefs()?.getString('userCSRFToken');
-    // if (savedUserCSRFToken != null && savedUserCSRFToken != this.userCSRFToken) {
-    //   this.updateUserCSRFToken(savedUserCSRFToken, notify: false);
-    //   hasUpdates = true;
-    // }
     if (hasUpdates && notify) {
       this.notifyListeners();
     }
@@ -90,29 +80,28 @@ mixin UserState {
     }
   }
 
-  // getUserSessionId() {
-  //   return this.userSessionId;
-  // }
-  // updateUserSessionId(String value, {bool notify = true}) {
-  //   if (this.userSessionId != value) {
-  //     this.userSessionId = value;
-  //     this.getPrefs()?.setString('userSessionId', value);
-  //     if (notify) {
-  //       this.notifyListeners();
-  //     }
-  //   }
-  // }
-  //
-  // getUserCSRFToken() {
-  //   return this.userCSRFToken;
-  // }
-  // updateUserCSRFToken(String value, {bool notify = true}) {
-  //   if (this.userCSRFToken != value) {
-  //     this.userCSRFToken = value;
-  //     this.getPrefs()?.setString('userCSRFToken', value);
-  //     if (notify) {
-  //       this.notifyListeners();
-  //     }
-  //   }
-  // }
+  updateUserData({int userId = 0, String userName = '', String userEmail = '', notify = true}) {
+    bool hasUpdates = false;
+    if (userId != this.userId) {
+      this.updateUserId(userId, notify: false);
+      hasUpdates = true;
+    }
+    final userName = this.getPrefs()?.getString('userName');
+    if (userName != this.userName) {
+      this.updateUserName(userName ?? '', notify: false);
+      hasUpdates = true;
+    }
+    final userEmail = this.getPrefs()?.getString('userEmail');
+    if (userEmail != this.userEmail) {
+      this.updateUserEmail(userEmail ?? '', notify: false);
+      hasUpdates = true;
+    }
+    if (hasUpdates && notify) {
+      this.notifyListeners();
+    }
+  }
+
+  isAuthorized() {
+    return this.userId != 0 && this.userEmail.isNotEmpty;
+  }
 }

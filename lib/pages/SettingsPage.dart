@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:i18n_extension/i18n_extension.dart';
@@ -236,18 +238,71 @@ class AppInfo extends StatelessWidget {
   }
 }
 
-class LoginBlock extends StatelessWidget {
+class AuthInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // final theme = Theme.of(context);
-    // final style = theme.textTheme.bodySmall!;
-    // final ButtonStyle buttonStyle = ElevatedButton.styleFrom(textStyle: style);
+    final appState = context.watch<AppState>();
 
+    final userName = appState.getUserName();
+
+    final theme = Theme.of(context);
+    final style = theme.textTheme.bodySmall!;
+    final ButtonStyle buttonStyle = ElevatedButton.styleFrom(textStyle: style);
+
+    logout() async {
+      logger.t('[signout] Log out start');
+      final String signoutUrl = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/logout/';
+      final result = await serverSession.get(Uri.parse(signoutUrl));
+      logger.t('[signout] Log out done: result=${result}');
+      debugger();
+      serverSession.updateSessionId('');
+      appState.updateUserData();
+    }
+
+    return Column(
+      spacing: 10,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Wrap(
+          spacing: 5,
+          // runAlignment: WrapAlignment.center,
+          // alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SelectableText(
+              'User:'.i18n,
+              style: style,
+            ),
+            SelectableText(
+              userName,
+              style: style.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        SizedBox(
+          width: double.infinity,
+          // height: double.infinity,
+          child: ElevatedButton(
+            style: buttonStyle,
+            onPressed: logout,
+            child: Text('Log out'.i18n),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class AuthBlock extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+    final isAuthorized = appState.isAuthorized();
     return Column(
       spacing: 10,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        LoginButton(),
+        isAuthorized ? AuthInfo() : LoginButton(),
       ],
     );
   }
@@ -295,8 +350,8 @@ class SettingsWidget extends StatelessWidget {
           SectionTitle(title: 'Basic settings'.i18n),
           LanguageSelector(),
           ThemeSelector(),
-          SectionTitle(title: 'Log in / Sign up'.i18n),
-          LoginBlock(),
+          SectionTitle(title: 'Authorization'.i18n),
+          AuthBlock(),
           SectionTitle(title: 'Application info'.i18n),
           AppInfo(),
         ],

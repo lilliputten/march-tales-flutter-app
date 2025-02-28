@@ -7,14 +7,14 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
+import 'package:march_tales_app/Init.dart';
 import 'package:march_tales_app/components/LoginBrowser.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
-
-// import 'LoginButton.i18n.dart';
+import 'LoginButton.i18n.dart';
 
 final logger = Logger();
 final formatter = YamlFormatter();
@@ -57,23 +57,19 @@ class _LoginButtonState extends State<LoginButton> {
     }
     // Get account data...
     try {
-      final String tickUrl = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tick';
-      final tickData = await serverSession.get(Uri.parse(tickUrl));
-      final userId = tickData['user_id'] != null ? tickData['user_id'] as int : 0;
-      final userName = tickData['user_name'] != null ? tickData['user_name'].toString() : '';
-      final userEmail = tickData['user_email'] != null ? tickData['user_email'].toString() : '';
-      this.appState?.updateUserId(userId);
-      this.appState?.updateUserName(userName);
-      this.appState?.updateUserEmail(userEmail);
-      logger.t(
-          '[onFinished] isSuccess ${tickData} cookies=${cookies} userId=${userId} userEmail=${userEmail} userName=${userName}');
-      debugger();
+      await Init.loadServerStatus();
     } catch (err, stacktrace) {
       final String msg = 'Can not parse user data: ${err}';
       logger.e('[LoginButton:onFinished] error ${msg}', error: err, stackTrace: stacktrace);
       debugger();
       showErrorToast(msg);
       throw Exception(msg);
+    } finally {
+      this.appState?.updateUserId(Init.userId ?? 0);
+      this.appState?.updateUserName(Init.userName ?? '');
+      this.appState?.updateUserEmail(Init.userEmail ?? '');
+      logger.t(
+          '[onFinished] isSuccess cookies=${cookies} userId=${Init.userId} userEmail=${Init.userEmail} userName=${Init.userName}');
     }
   }
 
@@ -108,7 +104,7 @@ class _LoginButtonState extends State<LoginButton> {
             settings: this.settings,
           );
         },
-        child: const Text('Log in'),
+        child: Text('Log in'.i18n),
       ),
     );
   }
