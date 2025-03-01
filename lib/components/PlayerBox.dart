@@ -127,7 +127,12 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
               TrackImageThumbnail(track: track, height: 50, borderRadius: 5),
               Expanded(
                 flex: 1,
-                child: PlayerTrackDetails(track: track, trackInfo: this._trackInfo),
+                child: PlayerTrackDetails(
+                  title: track.title,
+                  // trackInfo: this._trackInfo,
+                  position: position,
+                  duration: duration,
+                ),
               ),
               PlayerControls(track: track, trackInfo: this._trackInfo),
             ],
