@@ -59,6 +59,7 @@ class FavoriteTracksPage extends StatelessWidget {
       children: [
         Expanded(
           child: TracksList(
+            // key: ValueKey('FavoritesList'),
             tracks: tracks,
             count: tracks.length,
             isLoading: isFavoritesLoading,

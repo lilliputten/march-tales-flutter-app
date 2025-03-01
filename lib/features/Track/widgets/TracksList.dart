@@ -10,6 +10,7 @@ import 'TracksList.i18n.dart';
 final logger = Logger();
 
 class MoreButton extends StatelessWidget {
+  // TODO: To use auto-update and lazy-scroll
   const MoreButton({
     super.key,
     required this.isLoading,
@@ -57,7 +58,7 @@ class TracksList extends StatelessWidget {
     required this.tracks,
     required this.count,
     required this.isLoading,
-    this.asFavorite,
+    this.asFavorite = false,
     this.onRefresh,
     this.onLoadNext,
   });
@@ -65,7 +66,7 @@ class TracksList extends StatelessWidget {
   final List<Track> tracks;
   final int count;
   final bool isLoading;
-  final bool? asFavorite;
+  final bool asFavorite;
   final RefreshCallback? onRefresh;
   final void Function()? onLoadNext;
 
@@ -78,11 +79,8 @@ class TracksList extends StatelessWidget {
     final hasMoreTracks = this.count > tracksCount;
     final showItems = hasMoreTracks ? tracksCount + 1 : tracksCount;
 
-    final listKey = PageStorageKey<String>('TracksList');
-    // final GlobalKey listKey = GlobalKey();
-    // final box = listKey.currentContext?.findRenderObject(); // as RenderBox;
-    // // double width = box.size.width;
-    // logger.t('Box: ${box}');
+    final keyId = this.asFavorite ? 'FavoritesList': 'TracksList';
+    final listKey = PageStorageKey<String>(keyId);
 
     return RefreshIndicator(
       color: appColors.brandColor,
@@ -93,8 +91,8 @@ class TracksList extends StatelessWidget {
         }
       },
       child: ListView.separated(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         key: listKey,
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         separatorBuilder: (context, index) => SizedBox(),
         itemCount: showItems,
         itemBuilder: (context, i) {

@@ -79,6 +79,7 @@ class TracksPage extends StatelessWidget {
         // TopMenuBox(), // TODO
         Expanded(
           child: TracksList(
+            // key: ValueKey('TracksList'),
             tracks: tracks,
             count: appState.availableTracksCount,
             isLoading: tracksIsLoading,
