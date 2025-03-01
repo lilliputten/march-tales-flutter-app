@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
@@ -103,6 +105,23 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
     final Duration duration = track.duration;
     final Duration? position = appState.playingPosition;
 
+    const double minTreshold = 320;
+    final double screenWidth = MediaQuery.sizeOf(context).width;
+
+    final items = [
+      screenWidth < minTreshold + 100 ? null : TrackImageThumbnail(track: track, height: 50, borderRadius: 5),
+      screenWidth < minTreshold ? null : Expanded(
+        flex: 1,
+        child: PlayerTrackDetails(
+          title: track.title,
+          // trackInfo: this._trackInfo,
+          position: position,
+          duration: duration,
+        ),
+      ),
+      PlayerControls(track: track, trackInfo: this._trackInfo),
+    ].nonNulls;
+
     const double padding = 15;
 
     return Column(
@@ -123,19 +142,7 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
           child: Row(
             spacing: 10,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TrackImageThumbnail(track: track, height: 50, borderRadius: 5),
-              Expanded(
-                flex: 1,
-                child: PlayerTrackDetails(
-                  title: track.title,
-                  // trackInfo: this._trackInfo,
-                  position: position,
-                  duration: duration,
-                ),
-              ),
-              PlayerControls(track: track, trackInfo: this._trackInfo),
-            ],
+            children: items.toList(),
           ),
         ),
       ],
