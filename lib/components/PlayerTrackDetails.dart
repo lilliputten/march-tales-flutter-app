@@ -10,7 +10,7 @@ class TrackTimes extends StatelessWidget {
   const TrackTimes({
     super.key,
     required this.duration,
-    this.position = Duration.zero,
+    this.position,
   });
   final Duration duration;
   final Duration? position;
@@ -28,7 +28,11 @@ class TrackTimes extends StatelessWidget {
     final dimmedColor = textColor.withValues(alpha: secondAlpha);
     final textStyle = style.copyWith(color: dimmedColor);
 
-    final showPosition = position! > duration ? duration : position!;
+    final showPosition = position == null
+        ? Duration.zero
+        : position! > duration
+            ? duration
+            : position!;
 
     return Row(
       spacing: 4,

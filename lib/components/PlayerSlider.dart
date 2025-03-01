@@ -36,7 +36,7 @@ class PlayerSlider extends StatelessWidget {
 
   final Duration? position;
   final Duration duration;
-  final Function onSeek;
+  final ValueSetter<Duration> onSeek;
 
   @override
   Widget build(BuildContext context) {

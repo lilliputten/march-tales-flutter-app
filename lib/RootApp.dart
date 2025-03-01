@@ -35,7 +35,7 @@ class RootApp extends StatelessWidget {
         appState.updateLocale(locale);
         // Wait for the config & tick initialization and request for the first track record
         initFuture.then((initData) async {
-          // TODO: Check for valid app version?
+          // TODO: Check for the valid app version?
           appState.setPrefs(Init.prefs);
           appState.setUser(
               userId: Init.userId ?? 0,

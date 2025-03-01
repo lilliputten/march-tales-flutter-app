@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
+
 import 'package:just_audio/just_audio.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:march_tales_app/core/config/AppConfig.dart';
-import 'package:march_tales_app/core/constants/player.dart';
+import 'package:march_tales_app/components/PlayerBox.dart';
 import 'package:march_tales_app/features/Track/api-methods/incrementPlayedCount.dart';
 import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
-import 'package:march_tales_app/features/Track/trackConstants.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 
 final logger = Logger();
@@ -23,6 +23,9 @@ mixin ActivePlayerState {
 
   // Player & active track
 
+  // TODO: To use PlayerBox as an audio controller (use it via `playerBoxKey?.currentState`)
+  GlobalKey<PlayerBoxState>? playerBoxKey; // NOTE: One-way flow!
+
   Track? playingTrack;
 
   Duration? playingPosition;
@@ -33,10 +36,17 @@ mixin ActivePlayerState {
   bool isPlaying = false;
   bool isPaused = false;
 
-  /// @see https://github.com/ryanheise/just_audio/tree/minor/just_audio
-  AudioPlayer activePlayer = AudioPlayer();
+  // Timer? activeTimer;
 
-  Timer? activeTimer;
+  PlayerBoxState? getPlayerBoxState() {
+    return this.playerBoxKey?.currentState;
+  }
+
+  AudioPlayer? getPlayer() {
+    final playerBoxState = getPlayerBoxState();
+    final AudioPlayer? player = playerBoxState?.getPlayer();
+    return player;
+  }
 
   /// Callback to initalize player state from shared memory
   bool loadActivePlayerStateSavedPrefs({bool notify = true}) {
@@ -52,47 +62,72 @@ mixin ActivePlayerState {
     return hasChanges;
   }
 
-  /// Get currently playing track
-  Track? getPlayingTrack() {
-    return this.playingTrack;
-  }
+  // /// Get currently playing track
+  // Track? getPlayingTrack() {
+  //   return this.playingTrack;
+  // }
 
-  _loadPositionForTrack(Track? track, {bool notify = true}) async {
-    if (track == null) {
-      return;
-    }
-    final trackInfo = await tracksInfoDb.getById(track.id);
-    this.playingPosition = trackInfo?.position; // ?? Duration.zero;
-    if (notify) {
-      this.notifyListeners();
-    }
-  }
+  /*
+   * _loadPositionForTrack(Track? track, {bool notify = true}) async {
+   *   if (track == null) {
+   *     return;
+   *   }
+   *   final trackInfo = await tracksInfoDb.getById(track.id);
+   *   this.playingPosition = trackInfo?.position; // ?? Duration.zero;
+   *   if (notify) {
+   *     this.notifyListeners();
+   *   }
+   * }
+   */
 
   Future _setPlayingTrack(Track? track, {bool notify = true}) async {
     if (this.playingTrack?.id != track?.id) {
       this.playingTrack = track;
-      this.getPrefs()?.setInt('playingTrackId', track?.id ?? 0);
-      if (track != null) {
-        await this._loadPositionForTrack(track, notify: false);
-        final String url = '${AppConfig.TALES_SERVER_HOST}${track.audio_file}';
-        await this.activePlayer.setUrl(url);
-        // logger.t('[ActivePlayerState:_setPlayingTrack]: Start playing track ${track}: url=${url} playingPosition=${this.playingPosition}');
-        this.activePlayer.seek(this.playingPosition ?? Duration.zero);
-      }
+      /*
+       * this.getPrefs()?.setInt('playingTrackId', track?.id ?? 0);
+       * if (track != null) {
+       *   await this._loadPositionForTrack(track, notify: false);
+       *   final String url = '${AppConfig.TALES_SERVER_HOST}${track.audio_file}';
+       *   final String previewUrl =
+       *       track.preview_picture.isNotEmpty ? '${AppConfig.TALES_SERVER_HOST}${track.preview_picture}' : '';
+       *   final audioUri = AudioSource.uri(
+       *     Uri.parse(url),
+       *     tag: MediaItem(
+       *       playable: true,
+       *       duration: track.duration,
+       *       // Specify a unique ID for each media item:
+       *       id: track.id.toString(),
+       *       // Metadata to display in the notification:
+       *       album: "March Cat Tales",
+       *       title: track.title,
+       *       artUri: previewUrl.isNotEmpty ? Uri.parse(previewUrl) : null,
+       *     ),
+       *   );
+       *   logger.t('[ActivePlayerState:_setPlayingTrack] audioUri=${audioUri}');
+       *   final activePlayer = this.getPlayer();
+       *   await activePlayer?.setAudioSource(audioUri);
+       *   // await this.activePlayer.setUrl(url);
+       *   // logger.t('[ActivePlayerState:_setPlayingTrack]: Start playing track ${track}: url=${url} playingPosition=${this.playingPosition}');
+       *   activePlayer?.seek(this.playingPosition ?? Duration.zero);
+       * }
+       */
       if (notify) {
         this.notifyListeners();
       }
     }
   }
 
+  /*
   void _savePlayingPosition(Duration? position, {bool notify = true}) {
     this.playingPosition = position;
     if (notify) {
       this.notifyListeners();
     }
   }
+  */
 
   Future<Track?> _loadPlayingTrackDetails({required int id, bool notify = true}) async {
+    // TODO: Move to PlayerBox?
     if (id != 0) {
       // Update `playingTrack` if language has been changed
       final track = await loadTrackDetails(id: id);
@@ -102,6 +137,7 @@ mixin ActivePlayerState {
   }
 
   Future<Track?> updatePlayingTrackDetails({bool notify = true}) async {
+    // TODO: Move to PlayerBox
     if (this.playingTrack != null) {
       this.playingTrack = await loadTrackDetails(id: this.playingTrack!.id);
       if (notify) {
@@ -120,10 +156,12 @@ mixin ActivePlayerState {
     return this.playingTrack;
   }
 
+  /*
   void _playerStop({bool notify = true}) {
     this._playerTimerStop();
-    if (this.activePlayer.playing) {
-      this.activePlayer.stop();
+    final activePlayer = this.getPlayer();
+    if (activePlayer != null && activePlayer.playing) {
+      activePlayer.stop();
     }
     this.isPlaying = false;
     this.isPaused = false;
@@ -136,12 +174,15 @@ mixin ActivePlayerState {
 
   void _setPlayerListener() {
     if (!_listenerInstalled) {
-      this.activePlayer.playerStateStream.listen(this._updatePlayerStatus);
+      final activePlayer = this.getPlayer();
+      activePlayer?.playerStateStream.listen(this._updatePlayerStatus);
       _listenerInstalled = true;
     }
   }
+  */
 
   void _incrementCurrentTrackPlayedCount() async {
+    // TODO: Move to `PlayerBox`
     if (this.playingTrack == null || this.hasIncremented || this.isIncrementingNow) {
       return;
     }
@@ -166,12 +207,17 @@ mixin ActivePlayerState {
     }
   }
 
+  /*
   void _updatePlayerStatus([PlayerState? _]) {
-    final PlayerState playerState = this.activePlayer.playerState;
+    final activePlayer = this.getPlayer();
+    if (activePlayer == null) {
+      return;
+    }
+    final PlayerState playerState = activePlayer.playerState;
     final bool playing = playerState.playing;
     final ProcessingState processingState = playerState.processingState;
-    final position = this.activePlayer.position;
-    final duration = this.activePlayer.duration;
+    final position = activePlayer.position;
+    final duration = activePlayer.duration;
     // Update only if player is playing or completed
     if (playing &&
         processingState != ProcessingState.loading &&
@@ -205,14 +251,19 @@ mixin ActivePlayerState {
   }
 
   void _playerStart(Track track) async {
-    if (this._isTrackPlayedCompletely()) {
+    final activePlayer = this.getPlayer();
+    if (activePlayer == null) {
+      return;
+    }
+    final playerBoxState = this.getPlayerBoxState();
+    final isTrackPlayedCompletely = playerBoxState?.isTrackPlayedCompletely() ?? false;
+    if (isTrackPlayedCompletely) {
       // Reset playing position...
-      this.activePlayer.seek(Duration.zero);
+      activePlayer.seek(Duration.zero);
       this._savePlayingPosition(null, notify: false);
     }
     this._setPlayerListener();
-    this.activePlayer.play(); // Returns the playback Future
-    // this.activePlayer.setVolume(1.0);
+    activePlayer.play(); // Returns the playback Future
     this.isPlaying = true;
     this.isPaused = false;
     this.hasIncremented = false;
@@ -222,48 +273,54 @@ mixin ActivePlayerState {
     // Update all...
     this.notifyListeners();
   }
-
-  bool _isTrackPlayedCompletely() {
-    final positionMs = this.playingPosition?.inMilliseconds;
-    final durationMs = this.activePlayer.duration?.inMilliseconds;
-    if (positionMs != null && durationMs != null && positionMs >= durationMs) {
-      return true;
-    }
-    return false;
-  }
+  */
 
   /// Track's play button handler
   void setPlayingTrack(Track track, {bool play = true}) async {
-    if (this.playingTrack != null) {
-      if (this.isPlaying && this.playingTrack!.id == track.id) {
-        // Just pause/resume and exit if it was actively playing current track
-        if (!this.isPaused) {
-          this.activePlayer.pause();
-          this.isPaused = true;
-          this._playerTimerStop();
-        } else {
-          this.activePlayer.play();
-          this.isPaused = false;
-          _playerTimerStart();
-        }
-        this.notifyListeners();
+    debugger();
+    final playerBoxState = this.getPlayerBoxState();
+    if (playerBoxState == null) {
+      return;
+    }
+    final Track? playingTrack = playerBoxState.getTrack();
+    if (playingTrack != null) {
+      if (this.isPlaying && playingTrack.id == track.id) {
+        playerBoxState.togglePause(notify: true);
+        /*
+         * final activePlayer = this.getPlayer();
+         * // Just pause/resume and exit if it was actively playing current track
+         * if (!this.isPaused) {
+         *   activePlayer?.pause();
+         *   this.isPaused = true;
+         *   this._playerTimerStop();
+         * } else {
+         *   activePlayer?.play();
+         *   this.isPaused = false;
+         *   _playerTimerStart();
+         * }
+         * this.notifyListeners();
+         */
         return;
       }
       // Else stop playback and continue
-      this._playerStop(notify: false);
+      // this._playerStop(notify: false);
+      playerBoxState.stop(notify: false);
     }
-    // Start playing the track
-    if (this.playingTrack?.id != track.id) {
-      // Set new track
-      await this._setPlayingTrack(track, notify: false);
-    }
-    if (play) {
-      this._playerStart(track);
-    } else {
-      this.notifyListeners();
-    }
+    // // Start playing the track
+    // if (playingTrack?.id != track.id) {
+    //   // Set new track
+    //   await this._setPlayingTrack(track, notify: false);
+    // }
+    await this._setPlayingTrack(track, notify: false);
+    // if (play) {
+    //   // this._playerStart(track);
+    //   playerBoxState.play(notify: true);
+    // } else {
+    //   // this.notifyListeners();
+    // }
   }
 
+  /*
   void playSeekBackward() {
     final currentPosition = this.playingPosition ?? this.playingTrack?.duration;
     if (currentPosition != null) {
@@ -286,9 +343,11 @@ mixin ActivePlayerState {
       if (position < Duration.zero) {
         position = Duration.zero;
       }
-      this.activePlayer.seek(position);
+      final activePlayer = this.getPlayer();
+      activePlayer?.seek(position);
       tracksInfoDb.updatePosition(this.playingTrack!.id, position: position); // await!
       this._savePlayingPosition(position);
     }
   }
+  */
 }

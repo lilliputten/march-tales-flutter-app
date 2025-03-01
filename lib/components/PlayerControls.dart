@@ -18,9 +18,13 @@ class PlayerControls extends StatelessWidget {
     super.key,
     required this.track,
     required this.trackInfo,
+    required this.playSeekBackward,
+    required this.playSeekForward,
   });
   final Track track;
   final TrackInfo? trackInfo;
+  final VoidCallback playSeekBackward;
+  final VoidCallback playSeekForward;
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +32,9 @@ class PlayerControls extends StatelessWidget {
       spacing: 0,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        PlayerBackwardControl(track: track, trackInfo: trackInfo),
+        PlayerBackwardControl(track: track, trackInfo: trackInfo, playSeekBackward: this.playSeekBackward),
         PlayerPlayControl(track: track, trackInfo: trackInfo),
-        PlayerForwardControl(track: track, trackInfo: trackInfo),
+        PlayerForwardControl(track: track, trackInfo: trackInfo, playSeekForward: this.playSeekForward),
         PlayerFavoriteControl(track: track, trackInfo: trackInfo),
       ],
     );
@@ -94,13 +98,15 @@ class PlayerBackwardControl extends StatelessWidget {
     super.key,
     required this.track,
     required this.trackInfo,
+    required this.playSeekBackward,
   });
   final Track track;
   final TrackInfo? trackInfo;
+  final VoidCallback playSeekBackward;
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
+    // final appState = context.watch<AppState>();
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
     // final colorScheme = theme.colorScheme;
@@ -112,9 +118,7 @@ class PlayerBackwardControl extends StatelessWidget {
       ),
       alignment: Alignment.center,
       padding: EdgeInsets.all(0.0),
-      onPressed: () {
-        appState.playSeekBackward();
-      },
+      onPressed: this.playSeekBackward,
     );
   }
 }
@@ -124,13 +128,15 @@ class PlayerForwardControl extends StatelessWidget {
     super.key,
     required this.track,
     required this.trackInfo,
+    required this.playSeekForward,
   });
   final Track track;
   final TrackInfo? trackInfo;
+  final VoidCallback playSeekForward;
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
+    // final appState = context.watch<AppState>();
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
     // final colorScheme = theme.colorScheme;
@@ -142,9 +148,7 @@ class PlayerForwardControl extends StatelessWidget {
       ),
       alignment: Alignment.center,
       padding: EdgeInsets.all(0.0),
-      onPressed: () {
-        appState.playSeekForward();
-      },
+      onPressed: this.playSeekForward,
     );
   }
 }
