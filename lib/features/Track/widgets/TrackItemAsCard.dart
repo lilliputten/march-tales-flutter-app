@@ -12,6 +12,8 @@ import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
+const double _screenHorizontalPadding = 15;
+
 class TrackItemAsCard extends StatelessWidget {
   const TrackItemAsCard({
     super.key,
@@ -43,7 +45,7 @@ class TrackItemAsCard extends StatelessWidget {
     final showVertical = height >= width;
 
     final itemsList = showVertical
-        ? trackItemAsCardItemsVertical(
+        ? _trackItemAsCardItemsVertical(
             width: showVertical ? width : width / 3,
             detailsOpacity: opacity,
             appState: appState,
@@ -55,7 +57,7 @@ class TrackItemAsCard extends StatelessWidget {
             isFavorite: isFavorite,
             asFavorite: asFavorite,
           )
-        : trackItemAsCardItemsHorizontal(
+        : _trackItemAsCardItemsHorizontal(
             width: width,
             detailsOpacity: opacity,
             appState: appState,
@@ -97,7 +99,7 @@ class TrackItemAsCard extends StatelessWidget {
   }
 }
 
-List<Widget> trackItemAsCardDetailItems({
+List<Widget> _trackItemAsCardDetailItems({
   required final double width,
   required final double detailsOpacity,
   required final AppState appState,
@@ -136,7 +138,7 @@ List<Widget> trackItemAsCardDetailItems({
   ];
 }
 
-List<Widget> trackItemAsCardItemsHorizontal({
+List<Widget> _trackItemAsCardItemsHorizontal({
   required final double width,
   required final double detailsOpacity,
   required final AppState appState,
@@ -151,7 +153,7 @@ List<Widget> trackItemAsCardItemsHorizontal({
   // final double height = width / previewDimensionsRatio;
   return [
     TrackImageThumbnail(track: track, height: 100),
-    ...trackItemAsCardDetailItems(
+    ..._trackItemAsCardDetailItems(
       width: width,
       detailsOpacity: detailsOpacity,
       appState: appState,
@@ -166,7 +168,7 @@ List<Widget> trackItemAsCardItemsHorizontal({
   ];
 }
 
-List<Widget> trackItemAsCardItemsVertical({
+List<Widget> _trackItemAsCardItemsVertical({
   required final double width,
   required final double detailsOpacity,
   required final AppState appState,
@@ -178,14 +180,14 @@ List<Widget> trackItemAsCardItemsVertical({
   required final bool isFavorite,
   final bool? asFavorite = false,
 }) {
-  final double height = width / previewDimensionsRatio;
+  final double height = (width - _screenHorizontalPadding * 2) / previewDimensionsRatio;
   return [
     TrackImageThumbnail(track: track, width: width, height: height),
     Row(
       spacing: 10,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: trackItemAsCardDetailItems(
+      children: _trackItemAsCardDetailItems(
         width: width,
         detailsOpacity: detailsOpacity,
         appState: appState,

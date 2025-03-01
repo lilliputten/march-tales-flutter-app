@@ -6,13 +6,12 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:march_tales_app/Init.dart';
+import 'package:march_tales_app/components/LoginButton.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/supportedLocales.dart';
 import 'SettingsPage.i18n.dart';
-
-// import 'package:flutter/services.dart';
 
 final logger = Logger();
 
@@ -235,6 +234,78 @@ class AppInfo extends StatelessWidget {
   }
 }
 
+class AuthInfo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+
+    final userName = appState.getUserName();
+
+    final theme = Theme.of(context);
+    final style = theme.textTheme.bodySmall!;
+    final ButtonStyle buttonStyle = ElevatedButton.styleFrom(textStyle: style);
+
+    logout() async {
+      final String signoutUrl = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/logout/';
+      final result = await serverSession.get(Uri.parse(signoutUrl));
+      logger.t('[signout] Log out done: result=${result}');
+      serverSession.updateSessionId('');
+      appState.setUser();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          showCloseIcon: true,
+          backgroundColor: Colors.green,
+          content: Text("You've been succcessfully logged out".i18n),
+        ));
+      }
+    }
+
+    return Column(
+      spacing: 10,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SelectableText(
+              'User:'.i18n,
+              style: style,
+            ),
+            SelectableText(
+              userName,
+              style: style.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: buttonStyle,
+            onPressed: logout,
+            child: Text('Log out'.i18n),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class AuthBlock extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+    final isAuthorized = appState.isAuthorized();
+    return Column(
+      spacing: 10,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        isAuthorized ? AuthInfo() : LoginButton(),
+      ],
+    );
+  }
+}
+
 class SectionTitle extends StatelessWidget {
   const SectionTitle({
     super.key,
@@ -248,7 +319,6 @@ class SectionTitle extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final textStyle = theme.textTheme.bodyLarge!.copyWith(
       color: colorScheme.primary,
-      // fontWeight: FontWeight.bold,
     );
     final delimiterColor = colorScheme.onSurface.withValues(alpha: 0.2);
     return Container(
@@ -277,6 +347,8 @@ class SettingsWidget extends StatelessWidget {
           SectionTitle(title: 'Basic settings'.i18n),
           LanguageSelector(),
           ThemeSelector(),
+          SectionTitle(title: 'Authorization'.i18n),
+          AuthBlock(),
           SectionTitle(title: 'Application info'.i18n),
           AppInfo(),
         ],

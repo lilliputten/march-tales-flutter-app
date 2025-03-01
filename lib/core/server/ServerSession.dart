@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:http/http.dart' as http;
+import 'package:i18n_extension/i18n_extension.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/supportedLocales.dart';
@@ -18,13 +20,31 @@ final defaultHeaders = {
 final logger = Logger();
 
 class _ServerSession {
+  SharedPreferences? prefs;
+
   final JsonDecoder _decoder = const JsonDecoder();
   final JsonEncoder _encoder = const JsonEncoder();
 
-  String currentLocale = defaultLocale;
+  String currentLocale = I18n.locale.languageCode; // ?? defaultLocale;
+  String csrfToken = '';
+  String sessionId = '';
 
   Map<String, String> headers = Map.from(defaultHeaders);
   Map<String, String> cookies = {};
+
+  initialize() async {
+    this.prefs = await SharedPreferences.getInstance();
+    final userSessionId = this.prefs?.getString('userSessionId');
+    if (userSessionId != null) {
+      this.sessionId = userSessionId;
+      this.cookies['sessionid'] = userSessionId;
+    }
+    final userCSRFToken = this.prefs?.getString('userCSRFToken');
+    if (userCSRFToken != null) {
+      this.csrfToken = userCSRFToken;
+      this.cookies['csrftoken'] = userCSRFToken;
+    }
+  }
 
   updateLocale(String locale) {
     // Store language
@@ -37,20 +57,42 @@ class _ServerSession {
     // this.headers['cookie'] = _generateCookieHeader();
   }
 
-  updateCSRFToken(String token) {
-    this.cookies['csrftoken'] = token;
+  updateCSRFToken(String value) {
+    this.csrfToken = value;
+    this.cookies['csrftoken'] = value;
+    this.prefs?.setString('userCSRFToken', value);
+  }
+
+  updateSessionId(String value) {
+    this.sessionId = value;
+    this.cookies['sessionid'] = value;
+    this.prefs?.setString('userSessionId', value);
+  }
+
+  getLocale() {
+    return this.currentLocale;
+  }
+
+  getCSRFToken() {
+    return this.csrfToken;
+  }
+
+  getSessionId() {
+    return this.sessionId;
   }
 
   void _updateCookie(http.Response response) {
     String? allSetCookie = response.headers['set-cookie'];
 
     if (allSetCookie != null) {
-      var setCookies = allSetCookie.split(',');
+      final setCookies = allSetCookie.split(',');
 
-      for (var setCookie in setCookies) {
-        var cookies = setCookie.split(';');
+      logger.t('[Init:_updateCookie] setCookies=${setCookies} allSetCookie=${allSetCookie}');
 
-        for (var cookie in cookies) {
+      for (final setCookie in setCookies) {
+        final cookies = setCookie.split(';');
+
+        for (final cookie in cookies) {
           this._setCookie(cookie);
         }
       }
@@ -72,7 +114,7 @@ class _ServerSession {
     }
   }
 
-  _getHeaders() {
+  _createHeaders() {
     final headers = Map<String, String>.from(this.headers);
     headers['cookie'] = this._generateCookieHeader();
     if (this.cookies['csrftoken'] != null && this.cookies['csrftoken']!.isNotEmpty) {
@@ -89,17 +131,17 @@ class _ServerSession {
 
     for (var key in this.cookies.keys) {
       if (cookie.isNotEmpty) {
-        cookie += ';';
+        cookie += '; ';
       }
-      cookie += '$key=${cookies[key]!}';
+      cookie += '$key=${cookies[key]!}; Path=/; SameSite=Lax';
     }
 
     return cookie;
   }
 
   Future<dynamic> get(Uri uri) {
-    final requestHeaders = this._getHeaders();
-    // logger.t('[ServerSession] GET starting uri=${uri} headers=${requestHeaders}');
+    final requestHeaders = this._createHeaders();
+    logger.t('[ServerSession] GET starting uri=${uri} headers=${requestHeaders}');
     return http
         .get(
       uri,
@@ -109,7 +151,9 @@ class _ServerSession {
       final String res = response.body;
       final int statusCode = response.statusCode;
 
-      // logger.t('[ServerSession:get] response uri=${uri} cookie=${response.headers["set-cookie"]} headers=${response.headers} requestHeaders=${requestHeaders}');
+      final cookies = response.headers["set-cookie"];
+      logger.t(
+          '[ServerSession:get] response uri=${uri} cookies=${cookies} headers=${response.headers} requestHeaders=${requestHeaders}');
       dynamic data = {};
       try {
         data = _decoder.convert(res);
@@ -133,7 +177,7 @@ class _ServerSession {
   }
 
   Future<dynamic> post(Uri uri, {dynamic body, Encoding? encoding}) {
-    final requestHeaders = this._getHeaders();
+    final requestHeaders = this._createHeaders();
     // logger.t('[ServerSession] POST starting uri=${uri} headers=${requestHeaders}');
     return http
         .post(
@@ -169,7 +213,7 @@ class _ServerSession {
   }
 
   Future<dynamic> put(Uri uri, {dynamic body, Encoding? encoding}) {
-    final requestHeaders = this._getHeaders();
+    final requestHeaders = this._createHeaders();
     // logger.t('[ServerSession] PUT starting uri=${uri} headers=${requestHeaders}');
     return http
         .put(

@@ -8,9 +8,11 @@ import 'PrefsState.dart';
 import 'TestState.dart';
 import 'ThemeState.dart';
 import 'TrackState.dart';
+import 'UserState.dart';
 
 class AppState extends ChangeNotifier
     with
+        UserState,
         ActivePlayerState,
         FavoritesState,
         LocaleState,
@@ -20,4 +22,7 @@ class AppState extends ChangeNotifier
         ThemeState,
         TrackState {
   // NOTE: All the states are separated into dedicated mixin modules
+  initialize() {
+    this.initFavoritesState();
+  }
 }
