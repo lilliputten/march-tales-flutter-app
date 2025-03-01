@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
     final selectedIndex = appState.getNavigationTabIndex();
-    final playingTrack = appState.playingTrack;
+    // final playingTrack = appState.playingTrack;
 
     appState.playerBoxKey = playerBoxKey;
 
@@ -99,7 +99,7 @@ class HomePage extends StatelessWidget {
                 Expanded(child: pageArea),
                 PlayerBox(
                   key: playerBoxKey,
-                  track: playingTrack,
+                  // track: playingTrack,
                 ),
               ],
             );

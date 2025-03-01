@@ -1,16 +1,17 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
-import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/components/PlayerControls.dart';
 import 'package:march_tales_app/components/PlayerSlider.dart';
 import 'package:march_tales_app/components/PlayerTrackDetails.dart';
-import 'package:march_tales_app/features/Track/db/TrackInfo.dart';
-import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
-import 'package:march_tales_app/shared/states/AppState.dart';
+
+// import 'package:march_tales_app/features/Track/db/TrackInfo.dart';
+// import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 
 final logger = Logger();
 
@@ -21,23 +22,33 @@ class PlayerWrapper extends StatefulWidget {
     required this.playSeek,
     required this.playSeekBackward,
     required this.playSeekForward,
+    required this.togglePause,
+    this.position,
+    required this.isPlaying,
+    required this.isPaused,
   });
 
   final Track track;
   final ValueSetter<Duration> playSeek;
+  // final void Function(Duration value) playSeek;
   final VoidCallback playSeekBackward;
   final VoidCallback playSeekForward;
+  final VoidCallback togglePause;
+  final Duration? position;
+  final bool isPlaying;
+  final bool isPaused;
 
   @override
   State<PlayerWrapper> createState() => _PlayerWrapperState();
 }
 
 class _PlayerWrapperState extends State<PlayerWrapper> {
-  TrackInfo? _trackInfo;
+  // TrackInfo? _trackInfo;
 
+  /*
   void updateTrackInfo(TracksInfoDbUpdate update) {
-    final trackInfo = update.trackInfo;
     final Track track = this.widget.track;
+    final trackInfo = update.trackInfo;
     if (trackInfo.id == track.id) {
       setState(() {
         this._trackInfo = trackInfo;
@@ -66,20 +77,22 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
     tracksInfoDb.updateEvents.unsubscribe(this.updateTrackInfo);
     super.dispose();
   }
+  */
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
+    // final appState = context.watch<AppState>();
     // final theme = Theme.of(context);
     // final colorScheme = theme.colorScheme;
 
     final Track track = widget.track;
-
     final Duration duration = track.duration;
-    final Duration? position = appState.playingPosition;
+    final Duration? position = widget.position; // appState.playingPosition;
 
     const double minTreshold = 320;
     final double screenWidth = MediaQuery.sizeOf(context).width;
+
+    logger.t('[PlayerWrapper:build] isPlaying=${widget.isPlaying}');
 
     final items = [
       screenWidth < minTreshold + 100 ? null : TrackImageThumbnail(track: track, height: 50, borderRadius: 5),
@@ -96,9 +109,12 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
             ),
       PlayerControls(
         track: track,
-        trackInfo: this._trackInfo,
+        // trackInfo: this._trackInfo,
         playSeekBackward: widget.playSeekBackward,
         playSeekForward: widget.playSeekForward,
+        togglePause: widget.togglePause,
+        isPlaying: widget.isPlaying,
+        isPaused: widget.isPaused,
       ),
     ].nonNulls;
 

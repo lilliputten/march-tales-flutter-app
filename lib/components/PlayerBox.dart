@@ -26,10 +26,10 @@ final logger = Logger();
 class PlayerBox extends StatefulWidget {
   const PlayerBox({
     super.key,
-    this.track,
+    // this.track,
   });
 
-  final Track? track;
+  // final Track? track;
 
   @override
   State<PlayerBox> createState() => PlayerBoxState();
@@ -171,7 +171,7 @@ class PlayerBoxState extends State<PlayerBox> {
         processingState != ProcessingState.loading &&
         processingState != ProcessingState.buffering &&
         processingState != ProcessingState.idle) {
-      // logger.t('[ActivePlayerState:_updatePlayerStatus] playing=${playing} processingState=${processingState} position=${position}');
+      // logger.t('[PlayerBox:_updatePlayerStatus] playing=${playing} processingState=${processingState} position=${position}');
       this._savePlayingPosition(position, notify: false);
     }
     if (processingState == ProcessingState.completed) {
@@ -246,8 +246,7 @@ class PlayerBoxState extends State<PlayerBox> {
         artUri: previewUrl.isNotEmpty ? Uri.parse(previewUrl) : null,
       ),
     );
-    logger.t('[ActivePlayerState:_setPlayingTrack] audioUri=${audioUri}');
-    debugger();
+    logger.t('[PlayerBox:_setTrack] track=${track} play=${play} notify=${notify} audioUri=${audioUri}');
     try {
       final List<Future> futures = [
         this._player.setAudioSource(audioUri),
@@ -378,10 +377,6 @@ class PlayerBoxState extends State<PlayerBox> {
       return Container();
     }
 
-    // if (track != this._track) {
-    //   this._setTrack(track);
-    // }
-
     return StreamBuilder(
       // key: _key,
       stream: player.playerStateStream,
@@ -400,6 +395,10 @@ class PlayerBoxState extends State<PlayerBox> {
           playSeek: this.playSeek,
           playSeekBackward: this.playSeekBackward,
           playSeekForward: this.playSeekForward,
+          togglePause: this.togglePause,
+          position: this._position,
+          isPlaying: this._isPlaying,
+          isPaused: this._isPaused,
         );
       },
     );

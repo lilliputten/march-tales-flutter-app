@@ -277,11 +277,12 @@ mixin ActivePlayerState {
 
   /// Track's play button handler
   void setPlayingTrack(Track track, {bool play = true}) async {
-    debugger();
     final playerBoxState = this.getPlayerBoxState();
     if (playerBoxState == null) {
       return;
     }
+    playerBoxState.setTrack(track, play: play);
+    return;
     final Track? playingTrack = playerBoxState.getTrack();
     if (playingTrack != null) {
       if (this.isPlaying && playingTrack.id == track.id) {
