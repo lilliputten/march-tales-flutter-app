@@ -37,6 +37,7 @@ class TrackItemAsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
+    final playerBoxState = appState.getPlayerBoxState();
 
     final double opacity = isAlreadyPlayed ? 0.5 : 1;
 
@@ -44,6 +45,7 @@ class TrackItemAsCard extends StatelessWidget {
     final double height = MediaQuery.sizeOf(context).height;
     final showVertical = height >= width;
 
+    // Build track info widget items list...
     final itemsList = showVertical
         ? _trackItemAsCardItemsVertical(
             width: showVertical ? width : width / 3,
@@ -69,6 +71,8 @@ class TrackItemAsCard extends StatelessWidget {
             isFavorite: isFavorite,
             asFavorite: asFavorite,
           );
+
+    // Build wrapper...
     final content = showVertical
         ? Column(
             spacing: 10,
@@ -83,12 +87,15 @@ class TrackItemAsCard extends StatelessWidget {
             children: itemsList,
           );
 
+    // Create the widget...
     return new Material(
       color: Colors.transparent,
       borderRadius: BorderRadius.all(Radius.circular(10)),
       child: InkWell(
         onTap: () {
-          appState.setPlayingTrack(track, play: false);
+          // TODO: Call setTrack from `PlayerBoxState`
+          playerBoxState?.setTrack(track, play: false);
+          // appState.setPlayingTrack(track, play: false);
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),

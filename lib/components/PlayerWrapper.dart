@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
@@ -91,8 +89,6 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
 
     const double minTreshold = 320;
     final double screenWidth = MediaQuery.sizeOf(context).width;
-
-    logger.t('[PlayerWrapper:build] isPlaying=${widget.isPlaying}');
 
     final items = [
       screenWidth < minTreshold + 100 ? null : TrackImageThumbnail(track: track, height: 50, borderRadius: 5),

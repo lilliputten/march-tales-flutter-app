@@ -23,6 +23,7 @@ class AppState extends ChangeNotifier
         TrackState {
   // NOTE: All the states are separated into dedicated mixin modules
   initialize() {
+    this.initActivePlayerState();
     this.initFavoritesState();
   }
 }

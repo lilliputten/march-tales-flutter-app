@@ -50,7 +50,7 @@ class _LoginButtonState extends State<LoginButton> {
 
   onFinished(String session) async {
     serverSession.updateSessionId(session);
-    final List<Cookie> cookies = await cookieManager.getCookies(url: webUrl);
+    // final List<Cookie> cookies = await cookieManager.getCookies(url: webUrl);
     final csrftoken = await cookieManager.getCookie(url: webUrl, name: 'csrftoken');
     final sessionId = await cookieManager.getCookie(url: webUrl, name: 'sessionid');
     if (csrftoken?.value.isNotEmpty) {
@@ -77,8 +77,7 @@ class _LoginButtonState extends State<LoginButton> {
       throw Exception(msg);
     } finally {
       this._appState?.setUser(userId: Init.userId ?? 0, userName: Init.userName ?? '', userEmail: Init.userEmail ?? '');
-      logger.t(
-          '[onFinished] isSuccess cookies=${cookies} userId=${Init.userId} userEmail=${Init.userEmail} userName=${Init.userName}');
+      // logger.t('[onFinished] isSuccess cookies=${cookies} userId=${Init.userId} userEmail=${Init.userEmail} userName=${Init.userName}');
     }
   }
 

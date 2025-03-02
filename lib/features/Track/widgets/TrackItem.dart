@@ -68,10 +68,6 @@ class _TrackItemState extends State<TrackItem> {
 
     final appState = context.watch<AppState>();
 
-    // final theme = Theme.of(context);
-    // final colorScheme = theme.colorScheme;
-    // final AppColors appColors = theme.extension<AppColors>()!;
-
     // Determine this track state...
     final playingTrack = appState.playingTrack;
     final isActiveTrack = playingTrack != null && playingTrack.id == track.id;
@@ -80,11 +76,12 @@ class _TrackItemState extends State<TrackItem> {
     final TrackInfo? trackInfo = this._trackInfo;
     int? position = trackInfo?.position.inMilliseconds;
     int? duration = track.duration.inMilliseconds;
-    if (isActiveTrack) {
-      if (appState.playingPosition != null) {
-        position = appState.playingPosition!.inMilliseconds;
-      }
-    }
+    // NOTEL It's possible ti get a position from the `PlayerBoxState`
+    // if (isActiveTrack) {
+    //   if (appState.playingPosition != null) {
+    //     position = appState.playingPosition!.inMilliseconds;
+    //   }
+    // }
 
     final isFavorite = appState.isFavoriteTrackId(track.id); // this._trackInfo?.favorite ?? false;
 

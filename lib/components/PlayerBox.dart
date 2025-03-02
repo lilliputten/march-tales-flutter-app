@@ -8,13 +8,17 @@ import 'package:audio_session/audio_session.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart' hide TrackInfo;
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:march_tales_app/Init.dart';
 import 'package:march_tales_app/components/PlayerWrapper.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/constants/player.dart';
 import 'package:march_tales_app/core/singletons/playingTrackEvents.dart';
 import 'package:march_tales_app/core/types/PlayingTrackUpdate.dart';
+import 'package:march_tales_app/features/Track/api-methods/incrementPlayedCount.dart';
 import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
+import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
 import 'package:march_tales_app/features/Track/trackConstants.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 
@@ -38,13 +42,14 @@ class PlayerBox extends StatefulWidget {
 class PlayerBoxState extends State<PlayerBox> {
   late AudioPlayer _player;
   Track? _track;
+  late SharedPreferences _prefs;
   Duration? _position;
+  bool _hasIncremented = false;
+  bool _isIncrementingNow = false;
   bool _isPlaying = false;
   bool _isPaused = false;
   bool __listenerInstalled = false;
   Timer? __activeTimer;
-
-  bool _checkConfiguration() => true;
 
   @override
   void dispose() {
@@ -55,33 +60,33 @@ class PlayerBoxState extends State<PlayerBox> {
   @override
   void initState() {
     super.initState();
+    this._prefs = Init.prefs!;
     this._player = AudioPlayer();
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.black,
     ));
-    _init();
-    if (_checkConfiguration()) {
-      this._initWithContext();
-    }
+    this._initCore();
+    this._initWithContext();
   }
 
   _initWithContext() {
-    /* // DEBUG: Access context during initState stage
-     * Future.delayed(Duration.zero, () {
-     *   if (context.mounted) {
-     *     final appState = context.read<AppState>(); // .watch<AppState>();
-     *     final playerState = appState.playerBoxKey?.currentState;
-     *     final playerWidget = appState.playerBoxKey?.currentWidget;
-     *     logger.t(
-     *         '[PlayerBox:initState] playerWidget=${playerWidget} playerState=${playerState} context=${context} appState=${appState} player=${this._player}');
-     *     debugger();
-     *     appState.setAudioPlayer(this._player);
-     *   }
-     * });
-     */
+    Future.delayed(Duration.zero, () {
+      this._loadSavedPrefs();
+      /* // DEBUG: Access context during initState stage
+       * if (context.mounted) {
+       *   final appState = context.read<AppState>(); // .watch<AppState>();
+       *   final playerState = appState.playerBoxKey?.currentState;
+       *   final playerWidget = appState.playerBoxKey?.currentWidget;
+       *   logger.t(
+       *       '[PlayerBox:initState] playerWidget=${playerWidget} playerState=${playerState} context=${context} appState=${appState} player=${this._player}');
+       *   debugger();
+       *   appState.setAudioPlayer(this._player);
+       * }
+       */
+    });
   }
 
-  Future<void> _init() async {
+  Future<void> _initCore() async {
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.speech());
   }
@@ -89,13 +94,14 @@ class PlayerBoxState extends State<PlayerBox> {
   void _savePlayingPosition(Duration? position, {bool notify = true}) {
     setState(() {
       this._position = position;
-      if (notify) {
-        this._sendBroadcastUpdate(PlayingTrackUpdateType.position);
-      }
     });
+    if (notify) {
+      this._sendBroadcastUpdate(PlayingTrackUpdateType.position);
+    }
     // Save position to local db
     tracksInfoDb.updatePosition(this._track!.id, position: position ?? Duration.zero); // await!
     // TODO -- 2025.03.01, 21:06 -- Update position on the server
+    // TODO: Involve last saved position and save once in a period, eg, 5 secs
   }
 
   Future<void> _loadTrackPosition() async {
@@ -119,7 +125,73 @@ class PlayerBoxState extends State<PlayerBox> {
     playingTrackEvents.broadcast(update);
   }
 
+  // Network API
+
+  void _incrementCurrentTrackPlayedCount() async {
+    if (this._track == null || this._hasIncremented || this._isIncrementingNow) {
+      return;
+    }
+    this._isIncrementingNow = true;
+    final id = this._track!.id;
+    try {
+      // Increment the count simultaneously on the server and in the local database...
+      final List<Future> futures = [
+        incrementPlayedCount(id: id),
+        tracksInfoDb.incrementPlayedCount(this._track!.id),
+      ];
+      final results = await Future.wait(futures);
+      // Get and store udpated server track data
+      final Track updatedTrack = results[0];
+      this._track = updatedTrack;
+      this._hasIncremented = true;
+      // this.updateSingleTrack(updatedTrack, notify: true);
+      this._sendBroadcastUpdate(PlayingTrackUpdateType.playedCount);
+    } catch (err, stacktrace) {
+      logger.e('[_incrementCurrentTrackPlayedCount] ${err}', error: err, stackTrace: stacktrace);
+      debugger();
+    } finally {
+      this._isIncrementingNow = false;
+    }
+  }
+
+  Future<Track?> _loadPlayingTrackDetails({required int id, bool notify = true, bool onInit = false}) async {
+    if (id != 0) {
+      // Update `playingTrack` if language has been changed
+      final track = await loadTrackDetails(id: id);
+      this._track = track;
+      // await this._configurePlayerForTrack();
+      await this._setTrack(track, notify: notify);
+    }
+    return this._track;
+  }
+
+  Future<Track?> updatePlayingTrackDetails({bool notify = true}) async {
+    if (this._track != null) {
+      final track = this._track = await loadTrackDetails(id: this._track!.id);
+      setState(() {
+        this._track = track;
+      });
+      if (notify) {
+        this._sendBroadcastUpdate(PlayingTrackUpdateType.trackData);
+      }
+    }
+    return this._track;
+  }
+
   // Local API
+
+  bool _loadSavedPrefs({bool notify = true, bool onInit = false}) {
+    bool hasChanges = false;
+    final trackId = this._prefs.getInt('playingTrackId');
+    if (trackId != null && trackId != 0) {
+      this._loadPlayingTrackDetails(id: trackId, notify: notify, onInit: onInit);
+      hasChanges = true;
+    }
+    if (hasChanges && notify) {
+      this._sendBroadcastUpdate(PlayingTrackUpdateType.track);
+    }
+    return hasChanges;
+  }
 
   void _playerStop({bool notify = true}) {
     this._playerTimerStop();
@@ -130,31 +202,25 @@ class PlayerBoxState extends State<PlayerBox> {
     setState(() {
       this._isPlaying = false;
       this._isPaused = false;
-      if (notify) {
-        this._sendBroadcastUpdate(PlayingTrackUpdateType.playingStatus);
-      }
     });
+    if (notify) {
+      this._sendBroadcastUpdate(PlayingTrackUpdateType.playingStatus);
+    }
   }
 
   void _playerStart({bool notify = true}) async {
-    final isTrackPlayedCompletely = this.isTrackPlayedCompletely();
-    if (isTrackPlayedCompletely) {
-      // Reset playing position...
-      this._player.seek(Duration.zero);
-      this._savePlayingPosition(null, notify: false);
-    }
-    this._setPlayerListener();
+    this._rewindIfPlayedCompletely();
+    this._ensurePlayerListener();
     this._player.play(); // Returns the playback Future
     setState(() {
+      this._hasIncremented = false;
+      this._isIncrementingNow = false;
       this._isPlaying = true;
       this._isPaused = false;
-      if (notify) {
-        this._sendBroadcastUpdate(PlayingTrackUpdateType.playingStatus);
-      }
     });
-    // TODO? 2025.03.01, 20:54
-    // this.hasIncremented = false;
-    // this.isIncrementingNow = false;
+    if (notify) {
+      this._sendBroadcastUpdate(PlayingTrackUpdateType.playingStatus);
+    }
     // Start timer...
     _playerTimerStart();
   }
@@ -163,8 +229,45 @@ class PlayerBoxState extends State<PlayerBox> {
     final PlayerState playerState = this._player.playerState;
     final bool playing = playerState.playing;
     final ProcessingState processingState = playerState.processingState;
-    final position = this._player.position;
+    // logger.t('[_updatePlayerStatus] playing=${playing} processingState=${processingState}');
+    // final position = this._player.position;
     final duration = this._player.duration;
+    // Update only if player is playing or completed
+    PlayingTrackUpdateType updateType = PlayingTrackUpdateType.position;
+    // if (playing &&
+    //     processingState != ProcessingState.loading &&
+    //     processingState != ProcessingState.buffering &&
+    //     processingState != ProcessingState.idle) {
+    //   // logger.t('[PlayerBox:_updatePlayerStatus] playing=${playing} processingState=${processingState} position=${position}');
+    //   this._savePlayingPosition(position, notify: false);
+    // }
+    if (playing && this._isPlaying && processingState == ProcessingState.completed) {
+      this._incrementCurrentTrackPlayedCount(); // TODO: 2025.03.01, 20:50
+      this._playerStop(notify: false);
+      // Set position to the full dration value: as sign of the finished playback
+      this._savePlayingPosition(duration, notify: false);
+      // logger.t('_updatePlayerStatus: Finished! ${position}/${duration}');
+      updateType = PlayingTrackUpdateType.playingStatus;
+    }
+    // TODO: Use background player controls
+    // if (playing && (!this._isPlaying || this._isPaused)) {
+    //   debugger();
+    //   this._playerStart(notify: false);
+    //   updateType = PlayingTrackUpdateType.pausedStatus;
+    // } else if (!playing && this._isPlaying && !this._isPaused) {
+    //   debugger();
+    //   this.pause(notify: false);
+    //   updateType = PlayingTrackUpdateType.playingStatus;
+    // }
+    this._sendBroadcastUpdate(updateType);
+  }
+
+  void _updatePlayerPosition(Timer timer) {
+    final PlayerState playerState = this._player.playerState;
+    final bool playing = playerState.playing;
+    final ProcessingState processingState = playerState.processingState;
+    // logger.t('[_updatePlayerPosition] position=${position} playing=${playing} processingState=${processingState}');
+    final position = this._player.position;
     // Update only if player is playing or completed
     PlayingTrackUpdateType updateType = PlayingTrackUpdateType.position;
     if (playing &&
@@ -174,19 +277,10 @@ class PlayerBoxState extends State<PlayerBox> {
       // logger.t('[PlayerBox:_updatePlayerStatus] playing=${playing} processingState=${processingState} position=${position}');
       this._savePlayingPosition(position, notify: false);
     }
-    if (processingState == ProcessingState.completed) {
-      // this._incrementCurrentTrackPlayedCount(); // TODO: 2025.03.01, 20:50
-      this._playerStop(notify: false);
-      // Set position to the full dration value: as sign of the finished playback
-      this._savePlayingPosition(duration, notify: false);
-      // logger.t('_updatePlayerStatus: Finished! ${position}/${duration}');
-      updateType = PlayingTrackUpdateType.playingStatus;
-    }
-    // this.notifyListeners();
     this._sendBroadcastUpdate(updateType);
   }
 
-  void _setPlayerListener() {
+  void _ensurePlayerListener() {
     if (!this.__listenerInstalled) {
       this._player.playerStateStream.listen(this._updatePlayerStatus);
       this.__listenerInstalled = true;
@@ -202,7 +296,7 @@ class PlayerBoxState extends State<PlayerBox> {
 
   void _playerTimerStart() {
     // XXX: To use player updater callback?
-    this.__activeTimer = Timer.periodic(Duration(milliseconds: playerTickDelayMs), (_) => this._updatePlayerStatus());
+    this.__activeTimer = Timer.periodic(Duration(milliseconds: playerTickDelayMs), this._updatePlayerPosition);
   }
 
   void _clearTrack({bool notify = true}) {
@@ -217,10 +311,35 @@ class PlayerBoxState extends State<PlayerBox> {
       this._position = null;
       this._isPlaying = false;
       this._isPaused = false;
-      if (notify) {
-        this._sendBroadcastUpdate(PlayingTrackUpdateType.track);
-      }
     });
+    if (notify) {
+      this._sendBroadcastUpdate(PlayingTrackUpdateType.track);
+    }
+    this._prefs.setInt('playingTrackId', 0);
+  }
+
+  Future _configurePlayerForTrack() async {
+    final track = this._track;
+    if (track != null) {
+      final String url = '${AppConfig.TALES_SERVER_HOST}${track.audio_file}';
+      final String previewUrl =
+          track.preview_picture.isNotEmpty ? '${AppConfig.TALES_SERVER_HOST}${track.preview_picture}' : '';
+      final audioUri = AudioSource.uri(
+        Uri.parse(url),
+        tag: MediaItem(
+          playable: true,
+          duration: track.duration,
+          // Specify a unique ID for each media item:
+          id: track.id.toString(),
+          // Metadata to display in the notification:
+          album: "March Cat Tales",
+          title: track.title,
+          artUri: previewUrl.isNotEmpty ? Uri.parse(previewUrl) : null,
+        ),
+      );
+      // logger.t('[PlayerBox:_setTrack] track=${track} play=${play} notify=${notify} audioUri=${audioUri}');
+      return this._player.setAudioSource(audioUri);
+    }
   }
 
   Future<void> _setTrack(Track track, {bool play = false, bool notify = true}) async {
@@ -230,26 +349,10 @@ class PlayerBoxState extends State<PlayerBox> {
       this._isPlaying = play;
       this._isPaused = false;
     });
-    final String url = '${AppConfig.TALES_SERVER_HOST}${track.audio_file}';
-    final String previewUrl =
-        track.preview_picture.isNotEmpty ? '${AppConfig.TALES_SERVER_HOST}${track.preview_picture}' : '';
-    final audioUri = AudioSource.uri(
-      Uri.parse(url),
-      tag: MediaItem(
-        playable: true,
-        duration: track.duration,
-        // Specify a unique ID for each media item:
-        id: track.id.toString(),
-        // Metadata to display in the notification:
-        album: "March Cat Tales",
-        title: track.title,
-        artUri: previewUrl.isNotEmpty ? Uri.parse(previewUrl) : null,
-      ),
-    );
-    logger.t('[PlayerBox:_setTrack] track=${track} play=${play} notify=${notify} audioUri=${audioUri}');
+    this._prefs.setInt('playingTrackId', track.id);
     try {
       final List<Future> futures = [
-        this._player.setAudioSource(audioUri),
+        this._configurePlayerForTrack(),
         this._loadTrackPosition(),
       ];
       await Future.wait(futures);
@@ -268,6 +371,26 @@ class PlayerBoxState extends State<PlayerBox> {
     }
   }
 
+  bool _isTrackPlayedCompletely() {
+    final positionMs = this._position?.inMilliseconds;
+    final durationMs = this._player.duration?.inMilliseconds;
+    if (positionMs != null && durationMs != null && positionMs >= durationMs) {
+      return true;
+    }
+    return false;
+  }
+
+  bool _rewindIfPlayedCompletely() {
+    final isTrackPlayedCompletely = this._isTrackPlayedCompletely();
+    if (isTrackPlayedCompletely) {
+      // Reset playing position...
+      this._player.seek(Duration.zero);
+      this._savePlayingPosition(null, notify: false);
+      return true;
+    }
+    return false;
+  }
+
   // Public API
 
   AudioPlayer? getPlayer() {
@@ -276,15 +399,6 @@ class PlayerBoxState extends State<PlayerBox> {
 
   Track? getTrack() {
     return this._track;
-  }
-
-  bool isTrackPlayedCompletely() {
-    final positionMs = this._position?.inMilliseconds;
-    final durationMs = this._player.duration?.inMilliseconds;
-    if (positionMs != null && durationMs != null && positionMs >= durationMs) {
-      return true;
-    }
-    return false;
   }
 
   void playSeekBackward() {
@@ -318,29 +432,53 @@ class PlayerBoxState extends State<PlayerBox> {
     this._player.pause();
     setState(() {
       this._isPaused = true;
-      if (notify) {
-        this._sendBroadcastUpdate(PlayingTrackUpdateType.pausedStatus);
-      }
     });
+    if (notify) {
+      this._sendBroadcastUpdate(PlayingTrackUpdateType.pausedStatus);
+    }
     this._playerTimerStop();
   }
 
-  void resume({bool notify = true}) {
-    this._player.play();
-    setState(() {
-      this._isPaused = false;
-      if (notify) {
-        this._sendBroadcastUpdate(PlayingTrackUpdateType.pausedStatus);
-      }
-    });
-    this._playerTimerStart();
+  void playOrResume({bool notify = true}) {
+    this._playerStart(notify: notify);
+    /*
+     * this._player.play();
+     * final updateType = this._isPlaying ? PlayingTrackUpdateType.pausedStatus : PlayingTrackUpdateType.playingStatus;
+     * // logger.t('[PlayerBox:playOrResume] before _isPlaying=${this._isPlaying} _isPaused=${this._isPaused}');
+     * setState(() {
+     *   this._isPlaying = true;
+     *   this._isPaused = false;
+     * });
+     * // logger.t('[PlayerBox:playOrResume] after _isPlaying=${this._isPlaying} _isPaused=${this._isPaused}');
+     * if (notify) {
+     *   this._sendBroadcastUpdate(updateType);
+     * }
+     * this._playerTimerStart();
+     */
   }
 
   void togglePause({bool notify = true}) {
-    if (!this._isPaused) {
+    if (this._track == null) {
+      return;
+    }
+    final isPlaying = this._isPlaying && !this._isPaused;
+    if (isPlaying) {
       this.pause(notify: notify);
     } else {
-      this.resume(notify: notify);
+      this.playOrResume(notify: notify);
+    }
+  }
+
+  void togglePlay({bool? play, bool notify = true}) {
+    if (this._track == null) {
+      return;
+    }
+    final isPlaying = this._isPlaying && !this._isPaused;
+    final setPlay = play ?? !isPlaying;
+    if (!setPlay) {
+      this.pause(notify: notify);
+    } else {
+      this.playOrResume(notify: notify);
     }
   }
 
@@ -361,6 +499,14 @@ class PlayerBoxState extends State<PlayerBox> {
       return this._clearTrack(notify: notify);
     }
     this._setTrack(track, play: play, notify: notify);
+  }
+
+  void toggleTrackPlay(Track? track, {bool play = false, bool notify = true}) {
+    if (track != null && this._track != null && track.id == this._track!.id) {
+      this.togglePlay(play: play, notify: notify);
+    } else {
+      this.setTrack(track, play: play, notify: notify);
+    }
   }
 
   // Widget build

@@ -17,7 +17,7 @@ Future<LoadTracksListResults> loadTracksList({
   int limit = defaultTracksDownloadLimit,
   // TODO: Add filter/sort parameters
 }) async {
-  final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks';
+  final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks/';
   try {
     final uri = Uri.parse(url);
     final params = {...uri.queryParameters};

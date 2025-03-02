@@ -33,10 +33,10 @@ mixin FavoritesState {
   }
 
   _handleUpdateUserState(UserStateUpdate update) {
-    final type = update.type;
-    final isAuthorized = this.isAuthorized();
-    logger.t('[FavoritesState:_handleUpdateUserState] type=${type} isAuthorized=${isAuthorized} update=${update}');
-    debugger();
+    // final type = update.type;
+    // final isAuthorized = this.isAuthorized();
+    // logger.t('[FavoritesState:_handleUpdateUserState] type=${type} isAuthorized=${isAuthorized} update=${update}');
+    // debugger();
     this.loadFavorites();
   }
 
@@ -54,19 +54,19 @@ mixin FavoritesState {
 
   _loadServerFavoriteIds() async {
     final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/favorites/ids/';
-    logger.t('[FavoritesState:_loadServerFavoriteIds] url=${url}');
+    // logger.t('[FavoritesState:_loadServerFavoriteIds] url=${url}');
     final jsonData = await serverSession.get(Uri.parse(url));
     final List<int> ids =
         jsonData['ids'] != null ? List<dynamic>.from(jsonData['ids']).map((id) => id as int).toList() : [];
-    logger.t('[FavoritesState:_loadServerFavoriteIds] done ids=${ids}');
+    // logger.t('[FavoritesState:_loadServerFavoriteIds] done ids=${ids}');
     return ids;
   }
 
   _loadLocalFavoriteIds() async {
     final trackInfos = await tracksInfoDb.getFavorites();
-    logger.t('[FavoritesState:_loadLocalFavoriteIds] trackInfos=${trackInfos}');
+    // logger.t('[FavoritesState:_loadLocalFavoriteIds] trackInfos=${trackInfos}');
     final ids = trackInfos.map((trackInfo) => trackInfo.id);
-    logger.t('[FavoritesState:_loadLocalFavoriteIds] done ids=${ids}');
+    // logger.t('[FavoritesState:_loadLocalFavoriteIds] done ids=${ids}');
     return ids.toList();
   }
 

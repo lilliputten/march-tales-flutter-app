@@ -4,9 +4,11 @@ import 'package:march_tales_app/features/Track/types/Track.dart';
 
 enum PlayingTrackUpdateType {
   track,
+  trackData,
   position,
   playingStatus,
   pausedStatus,
+  playedCount,
 }
 
 class PlayingTrackUpdate extends EventArgs {

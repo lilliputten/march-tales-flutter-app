@@ -31,6 +31,8 @@ class TrackItemControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
+    final playerBoxState = appState.getPlayerBoxState();
+
     final theme = Theme.of(context);
     // final colorScheme = theme.colorScheme;
     final AppColors appColors = theme.extension<AppColors>()!;
@@ -74,7 +76,8 @@ class TrackItemControl extends StatelessWidget {
           alignment: Alignment.center,
           padding: EdgeInsets.all(0.0),
           onPressed: () {
-            appState.setPlayingTrack(track, play: true);
+            playerBoxState?.toggleTrackPlay(track, play: !isPlaying);
+            // appState.setPlayingTrack(track, play: true);
           },
         ),
       ],
