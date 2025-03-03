@@ -25,4 +25,9 @@ class PlayingTrackUpdate extends EventArgs {
     this.track,
     this.position,
   });
+
+  @override
+  String toString() {
+    return 'PlayingTrackUpdate(type=${type}; track=${track}; isPlaying=${isPlaying}; isPaused=${isPaused}; position=${position})';
+  }
 }

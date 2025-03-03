@@ -27,18 +27,24 @@ mixin ActivePlayerState {
 
   _processPlayingTrackUpdate(PlayingTrackUpdate update) {
     bool updateRequires = false;
-    if (update.track != null && update.type == PlayingTrackUpdateType.playedCount) {
-      this.updateSingleTrack(update.track!);
+    final type = update.type;
+    final track = update.track;
+    // logger.d('[ActivePlayerState:_processPlayingTrackUpdate] update=${update}');
+    if (track != null && type == PlayingTrackUpdateType.playedCount) {
+      // logger.t('[ActivePlayerState:_processPlayingTrackUpdate] playedCount track=${track}');
+      this.updateSingleTrack(track);
     }
-    if (update.type == PlayingTrackUpdateType.track) {
-      this.playingTrack = update.track;
+    if (type == PlayingTrackUpdateType.trackData || type == PlayingTrackUpdateType.track) {
+      // logger.t('[ActivePlayerState:_processPlayingTrackUpdate] track track=${track}');
+      this.playingTrack = track;
       updateRequires = true;
     }
-    if ((update.type == PlayingTrackUpdateType.track ||
-            update.type == PlayingTrackUpdateType.trackData ||
-            update.type == PlayingTrackUpdateType.playingStatus ||
-            update.type == PlayingTrackUpdateType.pausedStatus) &&
+    if ((type == PlayingTrackUpdateType.track ||
+            type == PlayingTrackUpdateType.trackData ||
+            type == PlayingTrackUpdateType.playingStatus ||
+            type == PlayingTrackUpdateType.pausedStatus) &&
         (update.isPlaying != this.isPlaying || update.isPaused != this.isPaused)) {
+      // logger.t('[ActivePlayerState:_processPlayingTrackUpdate] status track=${track}');
       this.isPlaying = update.isPlaying;
       this.isPaused = update.isPaused;
       updateRequires = true;
