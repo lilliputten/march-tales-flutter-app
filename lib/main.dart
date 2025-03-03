@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:i18n_extension/i18n_extension.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:march_tales_app/features/Track/trackConstants.dart';
 
 import 'RootApp.dart';
 import 'core/config/AppConfig.dart';
@@ -54,11 +55,15 @@ void main() async {
   HttpOverrides.global = MyHttpOverrides();
 
   await JustAudioBackground.init(
-    // androidNotificationChannelId: 'team.march.march-tales-app.channel.audio',
-    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+    androidNotificationChannelId: 'team.march.march-tales-app.channel.audio',
+    // androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
     androidShowNotificationBadge: true,
+    // B/W Icon
+    androidNotificationIcon: 'drawable/ic_stat_cat',
+    fastForwardInterval: playerSeekGap,
+    rewindInterval: playerSeekGap,
   );
 
   // Start app

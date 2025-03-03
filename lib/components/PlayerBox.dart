@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:audio_session/audio_session.dart';
+// import 'package:audio_session/audio_session.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart' hide TrackInfo;
 import 'package:logger/logger.dart';
@@ -22,9 +22,11 @@ import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
 import 'package:march_tales_app/features/Track/trackConstants.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 
+import 'PlayerBox.i18n.dart';
+
 final logger = Logger();
 
-// NOTE: This module can't use `AppState` due to one-way control flow (it's used in `ActivePlayerState`)
+// NOTE: This module shouldn't use `AppState` due to one-way control flow (it's used in `ActivePlayerState`)
 
 // @see https://docs.flutter.dev/cookbook/networking/fetch-data
 class PlayerBox extends StatefulWidget {
@@ -87,8 +89,8 @@ class PlayerBoxState extends State<PlayerBox> {
   }
 
   Future<void> _initCore() async {
-    final session = await AudioSession.instance;
-    await session.configure(const AudioSessionConfiguration.speech());
+    // final session = await AudioSession.instance;
+    // await session.configure(const AudioSessionConfiguration.speech());
   }
 
   void _savePlayingPosition(Duration? position, {bool notify = true}) {
@@ -332,7 +334,7 @@ class PlayerBoxState extends State<PlayerBox> {
           // Specify a unique ID for each media item:
           id: track.id.toString(),
           // Metadata to display in the notification:
-          album: "March Cat Tales",
+          album: 'March Cat Tales'.i18n,
           title: track.title,
           artUri: previewUrl.isNotEmpty ? Uri.parse(previewUrl) : null,
         ),
