@@ -10,6 +10,8 @@
       "type": "dart",
       "program": "lib/main.dart",
       "args": [
+        // "-Xlint:deprecation",
+        // "-Xlint:unchecked",
         "--dart-define=DEBUG=true",
         "--dart-define-from-file=.env.local",
         // "--dart-define-from-file=.env",

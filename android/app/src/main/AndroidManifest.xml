@@ -8,10 +8,12 @@
     <application
         android:label="@string/appName"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon"
         android:usesCleartextTraffic="true"
+        android:icon="@mipmap/launcher_icon"
     >
         <!--
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/launcher_icon"
             just_audio_background:
             android:name=".MainActivity"
         -->

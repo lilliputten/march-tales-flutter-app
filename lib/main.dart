@@ -61,6 +61,7 @@ void main() async {
     androidShowNotificationBadge: true,
     // B/W Icon
     androidNotificationIcon: 'drawable/ic_stat_cat',
+    // androidNotificationIcon: '@mipmap/ic_launcher',
     fastForwardInterval: playerSeekGap,
     rewindInterval: playerSeekGap,
   );

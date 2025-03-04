@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -16,12 +17,13 @@ final logger = Logger();
 
 final playerBoxKey = GlobalKey<PlayerBoxState>();
 
+const double logoSize = 48;
+
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
     final selectedIndex = appState.getNavigationTabIndex();
-    // final playingTrack = appState.playingTrack;
 
     appState.playerBoxKey = playerBoxKey;
 
@@ -55,14 +57,22 @@ class HomePage extends StatelessWidget {
           title: FittedBox(
             fit: BoxFit.contain,
             child: Row(
-              spacing: 10,
+              spacing: 8,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: Image(
-                    image: AssetImage('assets/images/march-cat/march-cat-sq-48.jpg'),
-                  ),
+                SvgPicture.asset(
+                  'assets/images/march-cat/cat-icon.svg',
+                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                  width: logoSize,
+                  height: logoSize,
                 ),
+                /* // Use raster logo
+                 * ClipRRect(
+                 *   borderRadius: BorderRadius.circular(100),
+                 *   child: Image(
+                 *     image: AssetImage('assets/images/march-cat/march-cat-sq-48.jpg'),
+                 *   ),
+                 * ),
+                 */
                 Text(
                   appTitle.i18n,
                   maxLines: 1,
