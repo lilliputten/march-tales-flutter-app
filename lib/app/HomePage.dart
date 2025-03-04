@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -11,7 +10,9 @@ import 'package:march_tales_app/components/PlayerBox.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
 
-// import 'package:march_tales_app/app/AppDrawer.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
+
+// import 'package:march_tales_app/app/AppDrawer.dart'; // XXX UUse for app menu
 
 final logger = Logger();
 
@@ -59,20 +60,22 @@ class HomePage extends StatelessWidget {
             child: Row(
               spacing: 8,
               children: [
-                SvgPicture.asset(
-                  'assets/images/march-cat/cat-icon.svg',
-                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                  width: logoSize,
-                  height: logoSize,
-                ),
-                /* // Use raster logo
-                 * ClipRRect(
-                 *   borderRadius: BorderRadius.circular(100),
-                 *   child: Image(
-                 *     image: AssetImage('assets/images/march-cat/march-cat-sq-48.jpg'),
-                 *   ),
+                /* // Use svg vector logo (it's crispy)
+                 * SvgPicture.asset(
+                 *   'assets/images/march-cat/cat-icon.svg',
+                 *   // colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                 *   width: logoSize,
+                 *   height: logoSize,
                  * ),
                  */
+                // Use raster logo
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: Image(
+                    // image: AssetImage('assets/images/march-cat/march-cat-sq-48.jpg'), // Raster full-color ai image
+                    image: AssetImage('assets/images/march-cat/cat-icon-48.png'), // White only cat logo
+                  ),
+                ),
                 Text(
                   appTitle.i18n,
                   maxLines: 1,
@@ -99,7 +102,7 @@ class HomePage extends StatelessWidget {
           },
         ),
         // bottomSheet: Text('bottomSheet'),
-        // endDrawer: AppDrawer(), // TODO: Side navigation panel
+        // endDrawer: AppDrawer(), // XXX Side navigation panel
         // onTap: (int i){setState((){index = i;});},
         body: LayoutBuilder(
           builder: (context, constraints) {

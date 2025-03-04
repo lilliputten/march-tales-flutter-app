@@ -74,7 +74,7 @@ class ThemeSelector extends StatelessWidget {
           appState.toggleDarkTheme(isDarkTheme);
         }
       },
-      // TODO; Make selected item distinctive using `selectedItemBuilder`?
+      // XXX Make selected item distinctive using `selectedItemBuilder`?
       items: items,
     );
   }
@@ -119,7 +119,7 @@ class LanguageSelector extends StatelessWidget {
           context.locale = Locale(locale);
         }
       },
-      // TODO; Make selected item distinctive using `selectedItemBuilder`?
+      // XXX Make selected item distinctive using `selectedItemBuilder`?
       items: items,
     );
   }
@@ -228,7 +228,7 @@ class AppInfo extends StatelessWidget {
             ),
           ],
         ),
-        // TODO: Show other info (developer, project site etc)
+        // XXX Show other info (developer, project site etc)
       ],
     );
   }

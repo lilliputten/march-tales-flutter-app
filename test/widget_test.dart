@@ -11,10 +11,16 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:march_tales_app/RootApp.dart';
 
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const RootApp());
+    // final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+    await tester.pumpWidget(RootApp(
+        // flutterLocalNotificationsPlugin: flutterLocalNotificationsPlugin,
+        ));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

@@ -93,7 +93,7 @@ class TrackItemAsCard extends StatelessWidget {
       borderRadius: BorderRadius.all(Radius.circular(10)),
       child: InkWell(
         onTap: () {
-          // TODO: Call setTrack from `PlayerBoxState`
+          // XXX Call setTrack from `PlayerBoxState`
           playerBoxState?.setTrack(track, play: false);
           // appState.setPlayingTrack(track, play: false);
         },

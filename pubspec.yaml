@@ -33,6 +33,8 @@ dependencies:
   event: ^3.1.0
   flutter_inappwebview: ^6.1.5
   flutter_svg: ^2.0.17
+  android_notification_icons: ^0.0.1
+  # flutter_local_notifications: ^18.0.1
   # firebase_core: ^3.12.1
   # firebase_auth: ^5.5.1
   # google_sign_in: ^6.2.2
@@ -54,6 +56,9 @@ import_sorter:
   # ignored_files: # Optional, defaults to []
   #   - \/lib\/*
 
+android_notification_icons:
+  image_path: "assets/launcher/cat-icon-white-transp-1024.png"
+  icon_name: 'ic_notification' # optional
 
 flutter:
   uses-material-design: true
@@ -68,6 +73,7 @@ flutter:
     - assets/
     - assets/images/march-cat/march-cat-sq-48.jpg
     - assets/images/march-cat/cat-icon.svg
+    - assets/images/march-cat/cat-icon-48.png
     - assets/project-info.json
     # - assets/fonts/ # TODO: Use lobser font for titles
 

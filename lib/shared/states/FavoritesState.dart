@@ -148,7 +148,7 @@ mixin FavoritesState {
       } catch (err, stacktrace) {
         logger.e('[setFavorite] ${err}', error: err, stackTrace: stacktrace);
         debugger();
-        // TODO: Show error toast?
+        // XXX Show error toast?
         rethrow;
       } finally {
         this.notifyListeners();

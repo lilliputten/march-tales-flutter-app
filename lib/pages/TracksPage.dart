@@ -24,7 +24,7 @@ class TracksPage extends StatelessWidget {
     final AppColors appColors = theme.extension<AppColors>()!;
 
     if (tracksLoadError != null) {
-      // TODO: Display the error inside the RefreshIndicator to allow refresh data?
+      // XXX Display the error inside the RefreshIndicator to allow refresh data?
       return RefreshIndicator(
         onRefresh: () async {
           await appState.reloadTracks();
@@ -76,7 +76,7 @@ class TracksPage extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // TopMenuBox(), // TODO
+        // TopMenuBox(), // XXX: Show top menu
         Expanded(
           child: TracksList(
             // key: ValueKey('TracksList'),

@@ -19,7 +19,50 @@ final formatter = YamlFormatter();
 final logger = Logger();
 
 class RootApp extends StatelessWidget {
-  const RootApp({super.key});
+  const RootApp({
+    super.key,
+    // required this.flutterLocalNotificationsPlugin,
+  });
+
+  /* TEST: flutter_local_notifications
+   * final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+   * testLocalNotification() async {
+   *   try {
+   *     logger.t('[RootApp:testNotification] start');
+   *     // debugger();
+   *     // DEMO: Show notification
+   *     final details1 = AndroidNotificationDetails(
+   *       'your channel id',
+   *       'your channel name',
+   *       channelDescription: 'your channel description',
+   *       importance: Importance.max,
+   *       priority: Priority.high,
+   *       ticker: 'ticker',
+   *       icon: '@mipmap/ic_launcher',
+   *     );
+   *     final details2 = AndroidNotificationDetails(
+   *       'channel id',
+   *       'channel name',
+   *       channelDescription: 'channel description',
+   *       importance: Importance.max,
+   *       icon: '@mipmap/ic_launcher',
+   *     );
+   *     final NotificationDetails notificationDetails = NotificationDetails(android: details2);
+   *     await flutterLocalNotificationsPlugin.show(
+   *       1,
+   *       'plain title',
+   *       'plain body',
+   *       notificationDetails,
+   *       payload: 'item x',
+   *     );
+   *     logger.t('[RootApp:testNotification] done');
+   *     // debugger();
+   *   } catch (err, stacktrace) {
+   *     logger.e('[RootApp:testNotification] ${err}', error: err, stackTrace: stacktrace);
+   *     debugger();
+   *   }
+   * }
+   */
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +78,7 @@ class RootApp extends StatelessWidget {
         appState.updateLocale(locale);
         // Wait for the config & tick initialization and request for the first track record
         initFuture.then((initData) async {
-          // TODO: Check for the valid app version?
+          // XXX Check for the valid app version?
           appState.setPrefs(Init.prefs);
           appState.setUser(
               userId: Init.userId ?? 0,
@@ -44,13 +87,11 @@ class RootApp extends StatelessWidget {
               omitEvents: true);
           // Retrieve data
           final List<Future> futures = [
-            appState.loadFavorites(), // TODO: Don't load favorites if had been already loaded on `setUser`
+            appState.loadFavorites(), // XXX Don't load favorites if had been already loaded on `setUser`
             appState.reloadTracks(),
           ];
-          // if (!appState.favoritesHasBeenLoaded && !appState.isFavoritesLoading) {
-          //   futures.add(appState.loadFavorites());
-          // }
           await Future.wait<dynamic>(futures);
+          // await this.testNotification();
         }).catchError((err) {
           logger.e('Error: ${err}');
           // appState.setGlobalError(err);

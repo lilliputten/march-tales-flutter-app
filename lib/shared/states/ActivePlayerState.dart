@@ -17,7 +17,7 @@ mixin ActivePlayerState {
 
   // Player & active track
 
-  // TODO: To use PlayerBox as an audio controller (use it via `playerBoxKey?.currentState`)
+  // XXX To use PlayerBox as an audio controller (use it via `playerBoxKey?.currentState`)
   GlobalKey<PlayerBoxState>? playerBoxKey; // NOTE: One-way flow!
 
   Track? playingTrack;
