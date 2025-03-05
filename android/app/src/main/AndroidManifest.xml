@@ -12,9 +12,20 @@
         android:usesCleartextTraffic="true"
     >
         <!--
-            just_audio_background:
-            android:name=".MainActivity"
+          @see https://pub.dev/packages/flutter_local_notifications#androidmanifestxml-setup
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver" />
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
         -->
+
+        <!-- just_audio_background -->
         <activity
             android:name="com.ryanheise.audioservice.AudioServiceActivity"
             android:exported="true"
@@ -31,16 +42,21 @@
             <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
-              />
+            />
+            <meta-data
+              android:name="com.google.firebase.messaging.default_notification_icon"
+              android:resource="@drawable/ic_launcher_foreground"
+            />
+            <meta-data
+              android:name="com.google.firebase.messaging.default_notification_color"
+              android:resource="@drawable/launch_background"
+            />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
-        <!-- just_audio_background: ADD THIS "SERVICE" element
-            tools:ignore="Instantiatable"
-        -->
         <service android:name="com.ryanheise.audioservice.AudioService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="true"
@@ -50,9 +66,6 @@
           </intent-filter>
         </service>
 
-        <!-- just_audio_background: ADD THIS "RECEIVER" element
-            tools:ignore="Instantiatable"
-        -->
         <receiver android:name="com.ryanheise.audioservice.MediaButtonReceiver"
             android:exported="true"
         >

@@ -59,9 +59,7 @@ void main() async {
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
     androidShowNotificationBadge: true,
-    // B/W Icon
-    // androidNotificationIcon: 'drawable/ic_stat_cat',
-    // androidNotificationIcon: 'drawable/ic_stat_cat',
+    androidNotificationIcon: 'mipmap/ic_launcher',
     fastForwardInterval: playerSeekGap,
     rewindInterval: playerSeekGap,
   );
@@ -71,7 +69,6 @@ void main() async {
       restorationId: 'root',
       child: I18n(
         initialLocale: await I18n.loadLocale(),
-        // initialLocale: 'ru'.asLocale, // DEBUG
         autoSaveLocale: true,
         supportedLocales: supportedLocales,
         localizationsDelegates: [
