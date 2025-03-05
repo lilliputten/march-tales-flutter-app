@@ -60,7 +60,8 @@ void main() async {
     androidNotificationOngoing: true,
     androidShowNotificationBadge: true,
     // B/W Icon
-    androidNotificationIcon: 'drawable/ic_stat_cat',
+    // androidNotificationIcon: 'drawable/ic_stat_cat',
+    // androidNotificationIcon: 'drawable/ic_stat_cat',
     fastForwardInterval: playerSeekGap,
     rewindInterval: playerSeekGap,
   );
