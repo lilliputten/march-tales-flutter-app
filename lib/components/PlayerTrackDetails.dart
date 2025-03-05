@@ -1,50 +1,97 @@
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
-import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/features/Track/db/TrackInfo.dart';
-import 'package:march_tales_app/features/Track/types/Track.dart';
-import 'package:march_tales_app/shared/states/AppState.dart';
+import 'package:march_tales_app/core/helpers/formats.dart';
 
 final logger = Logger();
+
+class TrackTimes extends StatelessWidget {
+  const TrackTimes({
+    super.key,
+    required this.duration,
+    this.position,
+  });
+  final Duration duration;
+  final Duration? position;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textColor = colorScheme.onSurface;
+    final style = theme.textTheme.bodySmall!;
+    final double basicAlpha = 1;
+    final double secondAlpha = basicAlpha / 2;
+    final double thirdAlpha = basicAlpha / 4;
+    final delimiterColor = textColor.withValues(alpha: thirdAlpha);
+    final dimmedColor = textColor.withValues(alpha: secondAlpha);
+    final textStyle = style.copyWith(color: dimmedColor);
+
+    final showPosition = position == null
+        ? Duration.zero
+        : position! > duration
+            ? duration
+            : position!;
+
+    return Row(
+      spacing: 4,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          formatDuration(showPosition),
+          overflow: TextOverflow.ellipsis,
+          style: textStyle,
+        ),
+        Text(
+          '/',
+          style: style.copyWith(color: delimiterColor),
+        ),
+        Text(
+          formatDuration(duration),
+          overflow: TextOverflow.ellipsis,
+          style: textStyle,
+        ),
+      ],
+    );
+  }
+}
 
 class PlayerTrackDetails extends StatelessWidget {
   const PlayerTrackDetails({
     super.key,
-    required this.track,
-    required this.trackInfo,
+    required this.title,
+    required this.duration,
+    this.position,
   });
-  final Track track;
-  final TrackInfo? trackInfo;
+  final String? title;
+  final Duration duration;
+  final Duration? position;
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
-
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textColor = colorScheme.onSurface;
     final style = theme.textTheme.bodyMedium!;
 
-    final track = appState.playingTrack;
-
-    // No active track?
-    if (track == null) {
+    if (this.title == null) {
       return Container();
     }
 
     return Column(
-      spacing: 8,
+      spacing: 4,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          track.title,
+          this.title!,
           overflow: TextOverflow.ellipsis,
           style: style.copyWith(color: textColor),
         ),
-        // TrackTitle(track: track, textColor: textColor),
-        // TrackDetailsInfo(track: track, isActive: isActive, textColor: textColor),
+        TrackTimes(
+          position: position,
+          duration: duration,
+        ),
       ],
     );
   }

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:i18n_extension/i18n_extension.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 
+import 'package:march_tales_app/features/Track/trackConstants.dart';
 import 'RootApp.dart';
 import 'core/config/AppConfig.dart';
 import 'supportedLocales.dart';
@@ -31,15 +33,15 @@ class MyHttpOverrides extends HttpOverrides {
 
 /// Check enviroment variables
 void checkEnvironmentVariables() {
-  print("GOOGLE_API_KEY: ${AppConfig.GOOGLE_API_KEY}");
-  print("GOOGLE_CSE_ID: ${AppConfig.GOOGLE_CSE_ID}");
+  print("GOOGLE_CLIENT_ID: ${AppConfig.GOOGLE_CLIENT_ID}");
+  print("GOOGLE_CLIENT_SECRET: ${AppConfig.GOOGLE_CLIENT_SECRET}");
   print("LOCAL: ${AppConfig.LOCAL}");
   print("DEBUG: ${AppConfig.DEBUG}");
-  if (AppConfig.GOOGLE_API_KEY.isEmpty) {
-    throw Exception('Required environment variables is undefined: GOOGLE_API_KEY');
+  if (AppConfig.GOOGLE_CLIENT_ID.isEmpty) {
+    throw Exception('Required environment variables is undefined: GOOGLE_CLIENT_ID');
   }
-  if (AppConfig.GOOGLE_CSE_ID.isEmpty) {
-    throw Exception('Required environment variables is undefined: GOOGLE_CSE_ID');
+  if (AppConfig.GOOGLE_CLIENT_ID.isEmpty) {
+    throw Exception('Required environment variables is undefined: GOOGLE_CLIENT_SECRET');
   }
 }
 
@@ -52,17 +54,21 @@ void main() async {
   // Setup http request options
   HttpOverrides.global = MyHttpOverrides();
 
-  // if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-  //   await InAppWebViewController.setWebContentsDebuggingEnabled(kDebugMode);
-  // }
-
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'team.march.march-tales-app.channel.audio',
+    androidNotificationChannelName: 'Audio playback',
+    androidNotificationOngoing: true,
+    androidShowNotificationBadge: true,
+    androidNotificationIcon: 'mipmap/ic_launcher',
+    fastForwardInterval: playerSeekGap,
+    rewindInterval: playerSeekGap,
+  );
   // Start app
   runApp(
     RootRestorationScope(
       restorationId: 'root',
       child: I18n(
         initialLocale: await I18n.loadLocale(),
-        // initialLocale: 'ru'.asLocale, // DEBUG
         autoSaveLocale: true,
         supportedLocales: supportedLocales,
         localizationsDelegates: [

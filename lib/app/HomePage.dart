@@ -14,11 +14,16 @@ import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
 
 final logger = Logger();
 
+final playerBoxKey = GlobalKey<PlayerBoxState>();
+
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
     final selectedIndex = appState.getNavigationTabIndex();
+    // final playingTrack = appState.playingTrack;
+
+    appState.playerBoxKey = playerBoxKey;
 
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
@@ -92,8 +97,10 @@ class HomePage extends StatelessWidget {
               children: [
                 // TopMenuBox(),
                 Expanded(child: pageArea),
-                // PlayerSlider(),
-                PlayerBox(),
+                PlayerBox(
+                  key: playerBoxKey,
+                  // track: playingTrack,
+                ),
               ],
             );
           },

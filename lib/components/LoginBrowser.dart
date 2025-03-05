@@ -38,10 +38,9 @@ class LoginBrowser extends InAppBrowser {
       return;
     }
     final found = loginSuccessReg.firstMatch(path);
-    // final matches = found.isNotEmpty ? found.elementAt(0) : null;
     final session = found?.group(1) ?? '';
     final isSuccess = session.isNotEmpty;
-    logger.t('[onLoadStart] Started ${url} session: ${session} path: ${path}');
+    // logger.t('[onLoadStart] Started ${url} session: ${session} path: ${path}');
     if (isSuccess) {
       if (this.onFinished != null) {
         this.onFinished!(session);

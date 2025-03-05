@@ -247,8 +247,7 @@ class AuthInfo extends StatelessWidget {
 
     logout() async {
       final String signoutUrl = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/logout/';
-      final result = await serverSession.get(Uri.parse(signoutUrl));
-      logger.t('[signout] Log out done: result=${result}');
+      await serverSession.get(Uri.parse(signoutUrl));
       serverSession.updateSessionId('');
       appState.setUser();
       if (context.mounted) {

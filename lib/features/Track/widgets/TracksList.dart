@@ -79,7 +79,7 @@ class TracksList extends StatelessWidget {
     final hasMoreTracks = this.count > tracksCount;
     final showItems = hasMoreTracks ? tracksCount + 1 : tracksCount;
 
-    final keyId = this.asFavorite ? 'FavoritesList': 'TracksList';
+    final keyId = this.asFavorite ? 'FavoritesList' : 'TracksList';
     final listKey = PageStorageKey<String>(keyId);
 
     return RefreshIndicator(

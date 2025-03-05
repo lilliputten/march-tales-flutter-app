@@ -50,7 +50,7 @@ class _LoginButtonState extends State<LoginButton> {
 
   onFinished(String session) async {
     serverSession.updateSessionId(session);
-    final List<Cookie> cookies = await cookieManager.getCookies(url: webUrl);
+    // final List<Cookie> cookies = await cookieManager.getCookies(url: webUrl);
     final csrftoken = await cookieManager.getCookie(url: webUrl, name: 'csrftoken');
     final sessionId = await cookieManager.getCookie(url: webUrl, name: 'sessionid');
     if (csrftoken?.value.isNotEmpty) {
@@ -77,8 +77,7 @@ class _LoginButtonState extends State<LoginButton> {
       throw Exception(msg);
     } finally {
       this._appState?.setUser(userId: Init.userId ?? 0, userName: Init.userName ?? '', userEmail: Init.userEmail ?? '');
-      logger.t(
-          '[onFinished] isSuccess cookies=${cookies} userId=${Init.userId} userEmail=${Init.userEmail} userName=${Init.userName}');
+      // logger.t('[onFinished] isSuccess cookies=${cookies} userId=${Init.userId} userEmail=${Init.userEmail} userName=${Init.userName}');
     }
   }
 
@@ -88,10 +87,26 @@ class _LoginButtonState extends State<LoginButton> {
 
     this.browser.setOnFinishedHandler(this.onFinished);
 
-    cookieManager.setCookie(url: webUrl, name: 'mobile_auth', value: 'true');
-    cookieManager.setCookie(url: webUrl, name: 'django_language', value: serverSession.getLocale());
-    cookieManager.setCookie(url: webUrl, name: 'csrftoken', value: serverSession.getCSRFToken());
-    cookieManager.setCookie(url: webUrl, name: 'sessionid', value: serverSession.getSessionId());
+    final locale = serverSession.getLocale();
+    final csrfToken = serverSession.getCSRFToken();
+    final sessionId = serverSession.getSessionId();
+
+    try {
+      cookieManager.setCookie(url: webUrl, name: 'mobile_auth', value: 'true');
+      if (locale.isNotEmpty) {
+        cookieManager.setCookie(url: webUrl, name: 'django_language', value: locale);
+      }
+      if (csrfToken.isNotEmpty) {
+        cookieManager.setCookie(url: webUrl, name: 'csrftoken', value: csrfToken);
+      }
+      if (sessionId.isNotEmpty) {
+        cookieManager.setCookie(url: webUrl, name: 'sessionid', value: sessionId);
+      }
+    } catch (err, stacktrace) {
+      final String msg = 'Can not initialize in-app browser ${err}';
+      logger.e('[LoginButton:initState] error ${msg}', error: err, stackTrace: stacktrace);
+      debugger();
+    }
   }
 
   @override

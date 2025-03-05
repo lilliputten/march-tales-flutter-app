@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:logger/logger.dart';
 
+import 'package:march_tales_app/components/PlayerBox.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
@@ -16,8 +17,9 @@ final logger = Logger();
 
 mixin TrackState {
   void notifyListeners();
-  Future<Track?> ensureLoadedPlayingTrackDetails({bool notify = true});
-  Future<Track?> updatePlayingTrackDetails({bool notify = true});
+  // Future<Track?> ensureLoadedPlayingTrackDetails({bool notify = true});
+  // Future<Track?> updatePlayingTrackDetails({bool notify = true});
+  PlayerBoxState? getPlayerBoxState(); // From `ActivePlayerState`
 
   /// Tracks list
 
@@ -58,11 +60,17 @@ mixin TrackState {
   }
 
   reloadAllTracks({bool notify = true}) async {
+    final playerBoxState = this.getPlayerBoxState();
+
     this.tracks = [];
     // Reset (& reload?) tracks, offset & filters
     final List<Future> futures = [
-      this.updatePlayingTrackDetails(notify: notify),
+      // this.updatePlayingTrackDetails(notify: notify),
+      // playerBoxState?.updatePlayingTrackDetails(notify: notify),
     ];
+    if (playerBoxState != null) {
+      futures.add(playerBoxState.updatePlayingTrackDetails(notify: notify));
+    }
     if (this.tracksHasBeenLoaded) {
       futures.add(this.reloadTracks(notify: notify));
     }
@@ -79,6 +87,7 @@ mixin TrackState {
   }
 
   updateSingleTrack(Track track, {bool notify = true}) {
+    // TODO: Listen for
     final idx = this.tracks.indexWhere((it) => it.id == track.id);
     if (idx != -1) {
       tracks[idx] = track;

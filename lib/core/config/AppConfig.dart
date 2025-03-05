@@ -27,8 +27,4 @@ abstract class AppConfig {
   // Google auth (Is it used?)
   static const String GOOGLE_CLIENT_ID = String.fromEnvironment('GOOGLE_CLIENT_ID', defaultValue: '');
   static const String GOOGLE_CLIENT_SECRET = String.fromEnvironment('GOOGLE_CLIENT_SECRET', defaultValue: '');
-
-  // Google image search (UNUSED)
-  static const String GOOGLE_API_KEY = String.fromEnvironment('GOOGLE_API_KEY', defaultValue: '');
-  static const String GOOGLE_CSE_ID = String.fromEnvironment('GOOGLE_CSE_ID', defaultValue: '');
 }

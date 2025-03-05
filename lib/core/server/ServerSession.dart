@@ -87,7 +87,7 @@ class _ServerSession {
     if (allSetCookie != null) {
       final setCookies = allSetCookie.split(',');
 
-      logger.t('[Init:_updateCookie] setCookies=${setCookies} allSetCookie=${allSetCookie}');
+      // logger.t('[ServerSession:_updateCookie] setCookies=${setCookies} allSetCookie=${allSetCookie}');
 
       for (final setCookie in setCookies) {
         final cookies = setCookie.split(';');
@@ -96,8 +96,6 @@ class _ServerSession {
           this._setCookie(cookie);
         }
       }
-
-      // headers['cookie'] = _generateCookieHeader();
     }
   }
 
@@ -141,7 +139,7 @@ class _ServerSession {
 
   Future<dynamic> get(Uri uri) {
     final requestHeaders = this._createHeaders();
-    logger.t('[ServerSession] GET starting uri=${uri} headers=${requestHeaders}');
+    // logger.t('[ServerSession] GET starting uri=${uri} headers=${requestHeaders}');
     return http
         .get(
       uri,
@@ -151,9 +149,8 @@ class _ServerSession {
       final String res = response.body;
       final int statusCode = response.statusCode;
 
-      final cookies = response.headers["set-cookie"];
-      logger.t(
-          '[ServerSession:get] response uri=${uri} cookies=${cookies} headers=${response.headers} requestHeaders=${requestHeaders}');
+      // final cookies = response.headers["set-cookie"];
+      // logger.t('[ServerSession:get] response uri=${uri} cookies=${cookies} headers=${response.headers} requestHeaders=${requestHeaders}');
       dynamic data = {};
       try {
         data = _decoder.convert(res);
