@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:just_audio/just_audio.dart';
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/components/PlayerBox.dart';
@@ -17,7 +16,7 @@ mixin ActivePlayerState {
 
   // Player & active track
 
-  // TODO: To use PlayerBox as an audio controller (use it via `playerBoxKey?.currentState`)
+  // Using PlayerBox as an audio controller (access it via `playerBoxKey?.currentState`)
   GlobalKey<PlayerBoxState>? playerBoxKey; // NOTE: One-way flow!
 
   Track? playingTrack;
@@ -60,11 +59,5 @@ mixin ActivePlayerState {
 
   PlayerBoxState? getPlayerBoxState() {
     return this.playerBoxKey?.currentState;
-  }
-
-  AudioPlayer? getPlayer() {
-    final playerBoxState = getPlayerBoxState();
-    final AudioPlayer? player = playerBoxState?.getPlayer();
-    return player;
   }
 }

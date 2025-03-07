@@ -115,10 +115,6 @@ class PlayerPlayControl extends StatelessWidget {
           alignment: Alignment.center,
           padding: EdgeInsets.all(0.0),
           onPressed: this.togglePause,
-          // onPressed: () {
-          //   this.togglePause();
-          //   // appState.setPlayingTrack(track, play: true);
-          // },
         ),
       ],
     );

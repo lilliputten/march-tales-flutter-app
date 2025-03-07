@@ -42,6 +42,7 @@ class TrackItemControl extends StatelessWidget {
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
+        // Round frame
         SizedBox(
           width: _trackItemControlCircleSize,
           height: _trackItemControlCircleSize,
@@ -53,6 +54,7 @@ class TrackItemControl extends StatelessWidget {
                   value: 1,
                 ),
         ),
+        // Optional progress indicator (for tracks shich are playing right now)
         SizedBox(
           width: _trackItemControlCircleSize,
           height: _trackItemControlCircleSize,
@@ -64,6 +66,7 @@ class TrackItemControl extends StatelessWidget {
                   value: progress,
                 ),
         ),
+        // Play/pause icon
         IconButton(
           icon: Icon(
             isPlaying ? Icons.pause : Icons.play_arrow,
@@ -77,7 +80,6 @@ class TrackItemControl extends StatelessWidget {
           padding: EdgeInsets.all(0.0),
           onPressed: () {
             playerBoxState?.toggleTrackPlay(track, play: !isPlaying);
-            // appState.setPlayingTrack(track, play: true);
           },
         ),
       ],

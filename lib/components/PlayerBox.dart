@@ -403,14 +403,6 @@ class PlayerBoxState extends State<PlayerBox> {
 
   // Public API
 
-  AudioPlayer? getPlayer() {
-    return this._player;
-  }
-
-  Track? getTrack() {
-    return this._track;
-  }
-
   void playSeekBackward() {
     final currentPosition = this._position ?? this._track?.duration;
     if (currentPosition != null) {

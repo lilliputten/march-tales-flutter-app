@@ -44,7 +44,6 @@ class TrackItemAsRow extends StatelessWidget {
       child: InkWell(
         onTap: () {
           playerBoxState?.setTrack(track, play: false);
-          // appState.setPlayingTrack(track, play: false);
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
