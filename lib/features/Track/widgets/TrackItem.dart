@@ -7,7 +7,10 @@ import 'package:march_tales_app/features/Track/db/TrackInfo.dart';
 import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItemAsCard.dart';
+import 'package:march_tales_app/pages/TrackDetailsScreen.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
+
+// import 'package:march_tales_app/features/Track/widgets/TrackDetails.dart';
 
 final logger = Logger();
 
@@ -76,14 +79,8 @@ class _TrackItemState extends State<TrackItem> {
     final TrackInfo? trackInfo = this._trackInfo;
     int? position = trackInfo?.position.inMilliseconds;
     int? duration = track.duration.inMilliseconds;
-    // NOTEL It's possible ti get a position from the `PlayerBoxState`
-    // if (isActiveTrack) {
-    //   if (appState.playingPosition != null) {
-    //     position = appState.playingPosition!.inMilliseconds;
-    //   }
-    // }
 
-    final isFavorite = appState.isFavoriteTrackId(track.id); // this._trackInfo?.favorite ?? false;
+    final isFavorite = appState.isFavoriteTrackId(track.id);
 
     double progress = 0;
     if (duration != 0 && position != null) {
@@ -93,13 +90,24 @@ class _TrackItemState extends State<TrackItem> {
     final isAlreadyPlayed = !isActiveTrack && progress >= 1;
 
     return TrackItemAsCard(
-      track: track,
-      isActiveTrack: isActiveTrack,
-      isAlreadyPlayed: isAlreadyPlayed,
-      isPlaying: isPlaying,
-      progress: progress,
-      isFavorite: isFavorite,
-      asFavorite: this.widget.asFavorite,
-    );
+        track: track,
+        isActiveTrack: isActiveTrack,
+        isAlreadyPlayed: isAlreadyPlayed,
+        isPlaying: isPlaying,
+        progress: progress,
+        isFavorite: isFavorite,
+        asFavorite: this.widget.asFavorite,
+        onClick: (track) {
+          // playerBoxState?.setTrack(track, play: false);
+          // Show track details page
+          // https://docs.flutter.dev/cookbook/navigation/navigate-with-arguments
+          Navigator.pushNamed(
+            context,
+            TrackDetailsScreen.routeName,
+            arguments: TrackDetailsScreenArguments(
+              track,
+            ),
+          );
+        });
   }
 }

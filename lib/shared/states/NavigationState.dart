@@ -10,7 +10,7 @@ const _defaultTabIndex = AppConfig.LOCAL ? 0 : 0;
 
 mixin NavigationState {
   void notifyListeners(); // From `ChangeNotifier`
-  SharedPreferences? getPrefs(); // From `PrefsState`
+  SharedPreferences? getPrefs(); // From `AppState`
 
   int _selectedTabIndex = _defaultTabIndex;
 

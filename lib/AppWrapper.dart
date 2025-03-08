@@ -30,7 +30,7 @@ class AppWrapper extends StatelessWidget {
     final appState = context.watch<AppState>();
     return MaterialApp(
       restorationScopeId: 'app',
-      // title: 'The March Cat Tales',
+      // title: 'The March Cat Tales'.i18n,
       onGenerateTitle: (context) => appTitle.i18n,
       debugShowCheckedModeBanner: false,
       locale: I18n.locale,
@@ -54,6 +54,9 @@ class AppWrapper extends StatelessWidget {
         extensions: themeExtensions,
       ),
       home: builder,
+      // routes: {
+      //   TrackDetailsScreen.routeName: (context) => const TrackDetailsScreen(),
+      // },
     );
   }
 }

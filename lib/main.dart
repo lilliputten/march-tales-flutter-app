@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:i18n_extension/i18n_extension.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:march_tales_app/features/Track/trackConstants.dart';
 import 'RootApp.dart';
@@ -59,6 +60,9 @@ void main() async {
     fastForwardInterval: playerSeekGap,
     rewindInterval: playerSeekGap,
   );
+
+  final prefs = await SharedPreferences.getInstance();
+
   // Start app
   runApp(
     RootRestorationScope(
@@ -72,7 +76,7 @@ void main() async {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        child: RootApp(),
+        child: RootApp(prefs: prefs),
       ),
     ),
   );

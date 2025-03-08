@@ -3,107 +3,58 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/app/AppColors.dart';
-import 'package:march_tales_app/app/BottomNavigation.dart';
+import 'package:march_tales_app/app/PageWrapper.dart';
 import 'package:march_tales_app/app/homePages.dart';
-import 'package:march_tales_app/components/PlayerBox.dart';
+import 'package:march_tales_app/pages/TrackDetailsScreen.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
-import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
+
+// import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
 
 // import 'package:march_tales_app/app/AppDrawer.dart';
 
 final logger = Logger();
 
-final playerBoxKey = GlobalKey<PlayerBoxState>();
+// final keyOne = GlobalKey<NavigatorState>();
 
 class HomePage extends StatelessWidget {
+  const HomePage({
+    super.key,
+  });
+
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
-    final selectedIndex = appState.getNavigationTabIndex();
-    // final playingTrack = appState.playingTrack;
-
-    appState.playerBoxKey = playerBoxKey;
-
-    final theme = Theme.of(context);
-    final AppColors appColors = theme.extension<AppColors>()!;
-    final style = theme.textTheme.bodyMedium!;
-    final colorScheme = theme.colorScheme;
-
-    final homePages = getHomePages();
-
-    final widget = homePages[selectedIndex].widget;
-    final Widget page = widget();
-
-    // The container for the current page, with its background color
-    // and subtle switching animation.
-    final pageArea = ColoredBox(
-      color: colorScheme.surfaceContainerHighest,
-      child: AnimatedSwitcher(
-        duration: Duration(milliseconds: 200),
-        child: page,
-      ),
-    );
-
     return RestorationScope(
-      restorationId: 'HomePage_Widget',
-      child: Scaffold(
-        appBar: AppBar(
-          titleSpacing: 15,
-          backgroundColor: appColors.brandColor,
-          foregroundColor: appColors.onBrandColor,
-          title: FittedBox(
-            fit: BoxFit.contain,
-            child: Row(
-              spacing: 10,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: Image(
-                    image: AssetImage('assets/images/march-cat/march-cat-sq-48.jpg'),
-                  ),
-                ),
-                Text(
-                  appTitle.i18n,
-                  maxLines: 1,
-                  overflow: TextOverflow.fade,
-                  style: style.copyWith(
-                    fontFamily: 'Lobster',
-                    fontSize: 28,
-                    color: appColors.onBrandColor,
-                  ),
-                ),
-              ],
-            ),
+      // key: Key('HomePage-{selectedIndex}'),
+      restorationId: 'HomePage',
+      child: PageWrapper(
+        child: PopScope(
+          // canPop: () async => !await keyOne.currentState.maybePop(),
+          child: Navigator(
+            // key: keyOne,
+            onGenerateRoute: (routeSettings) {
+              logger.t('[HomePage:onGenerateRoute] routeSettings=${routeSettings}');
+              return MaterialPageRoute(
+                builder: (context) {
+                  final appState = context.watch<AppState>();
+                  final selectedIndex = appState.getNavigationTabIndex();
+                  final name = routeSettings.name;
+                  if (name == TrackDetailsScreen.routeName) {
+                    final args = routeSettings.arguments as TrackDetailsScreenArguments;
+                    return TrackDetailsScreen(track: args.track);
+                  }
+                  // Create specific root page widget
+                  final homePages = getHomePages();
+                  final widget = homePages[selectedIndex].widget;
+                  final Widget page = widget();
+                  final pageArea = AnimatedSwitcher(
+                    duration: Duration(milliseconds: 200),
+                    child: page,
+                  );
+                  return pageArea;
+                },
+              );
+            },
           ),
-          // actions?
-        ),
-        bottomNavigationBar: BottomNavigation(
-          homePages: homePages,
-          selectedIndex: selectedIndex,
-          handleIndex: (int value) {
-            appState.updateNavigationTabIndex(value);
-            // setState(() {
-            //   _selectedIndex.value = value;
-            // });
-          },
-        ),
-        // bottomSheet: Text('bottomSheet'),
-        // endDrawer: AppDrawer(), // TODO: Side navigation panel
-        // onTap: (int i){setState((){index = i;});},
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            return Column(
-              children: [
-                // TopMenuBox(),
-                Expanded(child: pageArea),
-                PlayerBox(
-                  key: playerBoxKey,
-                  // track: playingTrack,
-                ),
-              ],
-            );
-          },
         ),
       ),
     );

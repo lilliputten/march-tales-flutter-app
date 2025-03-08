@@ -8,9 +8,6 @@ import 'package:march_tales_app/components/PlayerTrackDetails.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
 
-// import 'package:march_tales_app/features/Track/db/TrackInfo.dart';
-// import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
-
 final logger = Logger();
 
 class PlayerWrapper extends StatefulWidget {
@@ -41,9 +38,9 @@ class PlayerWrapper extends StatefulWidget {
 }
 
 class _PlayerWrapperState extends State<PlayerWrapper> {
-  // TrackInfo? _trackInfo;
-
   /*
+  TrackInfo? _trackInfo;
+
   void updateTrackInfo(TracksInfoDbUpdate update) {
     final Track track = this.widget.track;
     final trackInfo = update.trackInfo;
@@ -79,10 +76,6 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    // final appState = context.watch<AppState>();
-    // final theme = Theme.of(context);
-    // final colorScheme = theme.colorScheme;
-
     final Track track = widget.track;
     final Duration duration = track.duration;
     final Duration? position = widget.position; // appState.playingPosition;
@@ -98,14 +91,12 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
               flex: 1,
               child: PlayerTrackDetails(
                 title: track.title,
-                // trackInfo: this._trackInfo,
                 position: position,
                 duration: duration,
               ),
             ),
       PlayerControls(
         track: track,
-        // trackInfo: this._trackInfo,
         playSeekBackward: widget.playSeekBackward,
         playSeekForward: widget.playSeekForward,
         togglePause: widget.togglePause,
@@ -124,9 +115,6 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
           position: position,
           duration: duration,
           onSeek: widget.playSeek,
-          // onSeek: (Duration position) {
-          //   widget.playSeek(position);
-          // },
         ),
         Padding(
           // Show top padding only if there no track slider above

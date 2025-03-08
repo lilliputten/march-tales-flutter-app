@@ -113,10 +113,10 @@ class LanguageSelector extends StatelessWidget {
       onChanged: (String? locale) {
         if (locale != null) {
           serverSession.updateLocale(locale);
-          // Update locale in the context store
-          appState.updateLocale(locale);
           // Set system locale
           context.locale = Locale(locale);
+          // Update locale in the context store
+          appState.updateLocale(locale);
         }
       },
       // TODO; Make selected item distinctive using `selectedItemBuilder`?

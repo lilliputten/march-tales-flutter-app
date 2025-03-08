@@ -24,6 +24,7 @@ class TrackItemAsCard extends StatelessWidget {
     required this.progress,
     required this.isFavorite,
     this.asFavorite,
+    required this.onClick,
   });
 
   final Track track;
@@ -33,11 +34,11 @@ class TrackItemAsCard extends StatelessWidget {
   final double progress;
   final bool isFavorite;
   final bool? asFavorite;
+  final ValueSetter<Track> onClick;
 
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
-    final playerBoxState = appState.getPlayerBoxState();
 
     final double opacity = isAlreadyPlayed ? 0.5 : 1;
 
@@ -93,10 +94,12 @@ class TrackItemAsCard extends StatelessWidget {
       borderRadius: BorderRadius.all(Radius.circular(10)),
       child: InkWell(
         onTap: () {
-          // TODO: Call setTrack from `PlayerBoxState`
-          playerBoxState?.setTrack(track, play: false);
-          // appState.setPlayingTrack(track, play: false);
+          onClick(track);
         },
+        // onTap: () {
+        //   // Call setTrack from `PlayerBoxState`
+        //   playerBoxState?.setTrack(track, play: false);
+        // },
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
           child: content,

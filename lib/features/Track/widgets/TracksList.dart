@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItem.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 import 'TracksList.i18n.dart';
 
 final logger = Logger();
@@ -72,6 +74,11 @@ class TracksList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+    final appTheme = appState.isDarkTheme;
+
+    logger.t('[TrackDetailsScreen] appTheme=${appTheme}');
+
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
 

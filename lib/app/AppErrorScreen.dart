@@ -9,6 +9,8 @@ class AppErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final text = error?.cause ?? error.toString();
+    // TODO: Check for `VersionException` and show an extra update block for it
     return Material(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -24,9 +26,9 @@ class AppErrorScreen extends StatelessWidget {
                 size: 80,
               ),
               SelectableText(
+                text,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.red),
-                error.toString(),
               ),
             ],
           ),
