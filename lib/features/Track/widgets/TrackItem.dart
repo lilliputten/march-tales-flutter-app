@@ -98,7 +98,6 @@ class _TrackItemState extends State<TrackItem> {
         isFavorite: isFavorite,
         asFavorite: this.widget.asFavorite,
         onClick: (track) {
-          // playerBoxState?.setTrack(track, play: false);
           // Show track details page
           // https://docs.flutter.dev/cookbook/navigation/navigate-with-arguments
           Navigator.pushNamed(

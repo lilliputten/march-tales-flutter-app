@@ -2,6 +2,7 @@ import 'package:event/event.dart';
 
 enum RouteUpdateType {
   change,
+  rootDisplayed,
 }
 
 class RouteUpdate extends EventArgs {

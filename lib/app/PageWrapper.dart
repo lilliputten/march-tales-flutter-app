@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
@@ -19,15 +17,17 @@ final playerBoxKey = GlobalKey<PlayerBoxState>();
 
 final logger = Logger();
 
+const double _headerIconSize = 36;
+
 class PageWrapper extends StatefulWidget {
   const PageWrapper({
     super.key,
     required this.child,
-    required this.navigationKey,
+    required this.navigatorKey,
   });
 
   final Widget child;
-  final GlobalKey<NavigatorState> navigationKey;
+  final GlobalKey<NavigatorState> navigatorKey;
 
   @override
   State<PageWrapper> createState() => PageWrapperState();
@@ -49,9 +49,9 @@ class PageWrapperState extends State<PageWrapper> {
 
   _processRouteUpdate(RouteUpdate update) {
     if (this._routeName != update.name && context.mounted) {
+      logger.t('[PageWrapper:route] name=${update.name} routeName=${this._routeName}');
       setState(() {
         this._routeName = update.name;
-        // debugger();
       });
     }
   }
@@ -67,16 +67,12 @@ class PageWrapperState extends State<PageWrapper> {
     final AppColors appColors = theme.extension<AppColors>()!;
     final style = theme.textTheme.bodyMedium!;
 
-    final homePages = getHomePages();
+    final navigatorState = this.widget.navigatorKey.currentState;
 
+    // XXX FUTURE: Detect the root status by history depth?
     final routeName = this._routeName;
-    final navigator = Navigator.of(context);
-    // final routeName = ModalRoute.of(context)?.settings.name;
-    // final isRoot = [> routeName == null || <] routeName.isEmpty || routeName == defaultAppRoute;
-    final navigationState = widget.navigationKey.currentState;
     final isRoot = routeName.isEmpty || routeName == defaultAppRoute;
-    logger.t('[PageWrapper] isRoot=${isRoot} navigationState=${navigationState} routeName=${routeName} navigator=${navigator} Navigator=${Navigator}');
-    debugger();
+    logger.t('[PageWrapper:route] isRoot=${isRoot} routeName=${routeName}');
 
     return RestorationScope(
       restorationId: 'PageWrapper',
@@ -90,14 +86,31 @@ class PageWrapperState extends State<PageWrapper> {
             child: Row(
               spacing: 10,
               children: [
-                // TODO: Add back button
-                isRoot ? null : Text('X'),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: Image(
-                    image: AssetImage('assets/images/march-cat/march-cat-sq-48.jpg'),
-                  ),
-                ),
+                // Show back button if not on the root page
+                isRoot
+                    ? null
+                    : IconButton(
+                        icon: Icon(
+                          Icons.arrow_back_outlined,
+                          size: _headerIconSize,
+                          color: appColors.onBrandColor,
+                        ),
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          navigatorState?.pop();
+                        },
+                      ),
+                // Show logo if root page
+                !isRoot
+                    ? null
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: Image(
+                          image: AssetImage('assets/images/march-cat/march-cat-sq-48.jpg'),
+                        ),
+                      ),
+                // Show app title
                 Text(
                   appTitle.i18n,
                   maxLines: 1,
@@ -111,25 +124,18 @@ class PageWrapperState extends State<PageWrapper> {
               ].nonNulls.toList(),
             ),
           ),
-          // actions?
         ),
         bottomNavigationBar: BottomNavigation(
-          homePages: homePages,
+          homePages: getHomePages(),
           selectedIndex: selectedIndex,
           handleIndex: (int value) {
             appState.updateNavigationTabIndex(value);
-            final navigator = Navigator.of(context);
-            final navigationState = widget.navigationKey.currentState;
-            logger.t('[PageWrapper:handleIndex] navigator=${navigator} navigationState=${navigationState}');
-            // TODO: Get and clear current (!) navigator (except root screen)...
-            Navigator.popUntil(context, (Route<dynamic> route) {
+            // Clear all the current (!) navigator routes in order to see the top tabs' content...
+            navigatorState?.popUntil((Route<dynamic> route) {
               final name = route.settings.name;
-              logger.t('[PageWrapper:handleIndex] removing route name=${name} route=${route} navigator=${navigator}');
+              logger.t('[PageWrapper:handleIndex] removing route name=${name} route=${route}');
               return route.isFirst;
             });
-            // if (context.mounted) {
-            // Navigator.pushNamedAndRemoveUntil(context, defaultAppRoute, (Route<dynamic> route) => false);
-            // }
           },
         ),
         // bottomSheet: Text('bottomSheet'),
@@ -140,7 +146,7 @@ class PageWrapperState extends State<PageWrapper> {
             final colorScheme = theme.colorScheme;
             return Column(
               children: [
-                // TopMenuBox(),
+                // TopMenuBox(), // XXX FUTURE: Show top menu bar?
                 Expanded(
                   child: ColoredBox(color: colorScheme.surfaceContainerHighest, child: widget.child),
                 ),

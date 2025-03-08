@@ -15,19 +15,6 @@ class TrackDetailsScreenArguments {
   TrackDetailsScreenArguments(this.track);
 }
 
-class TrackDetailsScreenWithArgs extends StatelessWidget {
-  const TrackDetailsScreenWithArgs({super.key});
-
-  static const routeName = _routeName;
-
-  @override
-  Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as TrackDetailsScreenArguments;
-
-    return TrackDetailsScreen(track: args.track);
-  }
-}
-
 class TrackDetailsScreen extends StatelessWidget {
   const TrackDetailsScreen({
     super.key,
@@ -39,8 +26,6 @@ class TrackDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final args = ModalRoute.of(context)!.settings.arguments as TrackDetailsScreenArguments;
-
     // final appState = context.watch<AppState>();
     // final appTheme = appState.isDarkTheme;
 
