@@ -9,6 +9,9 @@ import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/app/BottomNavigation.dart';
 import 'package:march_tales_app/app/homePages.dart';
 import 'package:march_tales_app/components/PlayerBox.dart';
+import 'package:march_tales_app/core/constants/defaultAppRoute.dart';
+import 'package:march_tales_app/core/singletons/routeEvents.dart';
+import 'package:march_tales_app/core/types/RouteUpdate.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
 
@@ -16,13 +19,42 @@ final playerBoxKey = GlobalKey<PlayerBoxState>();
 
 final logger = Logger();
 
-class PageWrapper extends StatelessWidget {
+class PageWrapper extends StatefulWidget {
   const PageWrapper({
     super.key,
     required this.child,
+    required this.navigationKey,
   });
 
   final Widget child;
+  final GlobalKey<NavigatorState> navigationKey;
+
+  @override
+  State<PageWrapper> createState() => PageWrapperState();
+}
+
+class PageWrapperState extends State<PageWrapper> {
+  String _routeName = defaultAppRoute;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    routeEvents.subscribe(this._processRouteUpdate);
+  }
+
+  _processRouteUpdate(RouteUpdate update) {
+    if (this._routeName != update.name && context.mounted) {
+      setState(() {
+        this._routeName = update.name;
+        // debugger();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +69,14 @@ class PageWrapper extends StatelessWidget {
 
     final homePages = getHomePages();
 
+    final routeName = this._routeName;
     final navigator = Navigator.of(context);
-    final routeName = ModalRoute.of(context)?.settings.name;
-    final isRoot = routeName == null || routeName.isEmpty || routeName == '/';
-    logger.t('[PageWrapper] isRoot=${isRoot} routeName=${routeName} navigator=${navigator} Navigator=${Navigator}');
+    // final routeName = ModalRoute.of(context)?.settings.name;
+    // final isRoot = [> routeName == null || <] routeName.isEmpty || routeName == defaultAppRoute;
+    final navigationState = widget.navigationKey.currentState;
+    final isRoot = routeName.isEmpty || routeName == defaultAppRoute;
+    logger.t('[PageWrapper] isRoot=${isRoot} navigationState=${navigationState} routeName=${routeName} navigator=${navigator} Navigator=${Navigator}');
+    debugger();
 
     return RestorationScope(
       restorationId: 'PageWrapper',
@@ -82,8 +118,18 @@ class PageWrapper extends StatelessWidget {
           selectedIndex: selectedIndex,
           handleIndex: (int value) {
             appState.updateNavigationTabIndex(value);
-            // Navigator.pushNamed(context, '/');
-            Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
+            final navigator = Navigator.of(context);
+            final navigationState = widget.navigationKey.currentState;
+            logger.t('[PageWrapper:handleIndex] navigator=${navigator} navigationState=${navigationState}');
+            // TODO: Get and clear current (!) navigator (except root screen)...
+            Navigator.popUntil(context, (Route<dynamic> route) {
+              final name = route.settings.name;
+              logger.t('[PageWrapper:handleIndex] removing route name=${name} route=${route} navigator=${navigator}');
+              return route.isFirst;
+            });
+            // if (context.mounted) {
+            // Navigator.pushNamedAndRemoveUntil(context, defaultAppRoute, (Route<dynamic> route) => false);
+            // }
           },
         ),
         // bottomSheet: Text('bottomSheet'),
@@ -96,7 +142,7 @@ class PageWrapper extends StatelessWidget {
               children: [
                 // TopMenuBox(),
                 Expanded(
-                  child: ColoredBox(color: colorScheme.surfaceContainerHighest, child: child),
+                  child: ColoredBox(color: colorScheme.surfaceContainerHighest, child: widget.child),
                 ),
                 PlayerBox(
                   key: playerBoxKey,

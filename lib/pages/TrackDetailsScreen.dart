@@ -46,7 +46,12 @@ class TrackDetailsScreen extends StatelessWidget {
 
     return ScreenWrapper(
       title: track?.title ?? 'Title',
-      child: Text(track?.description ?? 'Description'),
+      child: Column(
+        children: [
+          Text(track?.title ?? 'Title'),
+          Text(track?.description ?? 'Description'),
+        ],
+      ),
     );
   }
 }

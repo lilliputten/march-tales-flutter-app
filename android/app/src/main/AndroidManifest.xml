@@ -10,9 +10,9 @@
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
         android:usesCleartextTraffic="true"
+        android:enableOnBackInvokedCallback="true"
     >
-        <!--
-          @see https://pub.dev/packages/flutter_local_notifications#androidmanifestxml-setup
+        <!-- @see https://pub.dev/packages/flutter_local_notifications#androidmanifestxml-setup
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver" />
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">

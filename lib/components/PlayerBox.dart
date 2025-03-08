@@ -177,7 +177,7 @@ class PlayerBoxState extends State<PlayerBox> {
     final PlayerState playerState = this._player.playerState;
     final bool playing = playerState.playing;
     final ProcessingState processingState = playerState.processingState;
-    logger.t('[PlayerBox:_playerStateHandler] playing=${playing} processingState=${processingState}');
+    // logger.t('[PlayerBox:_playerStateHandler] playing=${playing} processingState=${processingState}');
     final duration = this._player.duration;
     // Update only if player is playing or completed
     PlayingTrackUpdateType? updateType;
@@ -185,11 +185,11 @@ class PlayerBoxState extends State<PlayerBox> {
     if (playing) {
       // Really playing and...
       if (!isCurrentlyPlaying) {
-        logger.t('[PlayerBox:_playerStateHandler] set state: playing');
+        // logger.t('[PlayerBox:_playerStateHandler] set state: playing');
         this._setPlayingStatus(notify: false);
         updateType = PlayingTrackUpdateType.playingStatus;
       } else if (processingState == ProcessingState.completed) {
-        logger.t('[PlayerBox:_playerStateHandler] set state: finished');
+        // logger.t('[PlayerBox:_playerStateHandler] set state: finished');
         this._pausePlayback(notify: false);
         this._setPausedStatus(notify: false);
         // Set position to the full dration value: as sign of the finished playback
@@ -200,7 +200,7 @@ class PlayerBoxState extends State<PlayerBox> {
     } else {
       // Not rally playing and...
       if (isCurrentlyPlaying) {
-        logger.t('[PlayerBox:_playerStateHandler] set state: paused');
+        // logger.t('[PlayerBox:_playerStateHandler] set state: paused');
         this._setPausedStatus(notify: false);
         updateType = PlayingTrackUpdateType.pausedStatus;
       }
