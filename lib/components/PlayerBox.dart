@@ -4,9 +4,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:hidable/hidable.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart' hide TrackInfo;
 import 'package:logger/logger.dart';
+import 'package:march_tales_app/core/constants/hidableDeltaFactor.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:march_tales_app/Init.dart';
@@ -20,9 +23,8 @@ import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
 import 'package:march_tales_app/features/Track/trackConstants.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 import 'PlayerBox.i18n.dart';
-
-// import 'package:audio_session/audio_session.dart';
 
 final logger = Logger();
 
@@ -467,6 +469,8 @@ class PlayerBoxState extends State<PlayerBox> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+
     final track = this._track;
     final player = this._player;
 
@@ -476,21 +480,27 @@ class PlayerBoxState extends State<PlayerBox> {
       return Container();
     }
 
-    return StreamBuilder(
-      stream: player.playerStateStream,
-      builder: (context, AsyncSnapshot snapshot) {
-        return PlayerWrapper(
-          key: Key('PlayerWrapper_${track.id}'),
-          track: track,
-          playSeek: this.playSeek,
-          playSeekBackward: this.playSeekBackward,
-          playSeekForward: this.playSeekForward,
-          togglePause: this.togglePause,
-          position: this._position,
-          isPlaying: this._isPlaying,
-          isPaused: this._isPaused,
-        );
-      },
+    return Hidable(
+      controller: appState.getLastScrollController(),
+      preferredWidgetSize: const Size.fromHeight(114),
+      enableOpacityAnimation: true, // optional, defaults to `true`.
+      deltaFactor: hidableDeltaFactor,
+      child: StreamBuilder(
+        stream: player.playerStateStream,
+        builder: (context, AsyncSnapshot snapshot) {
+          return PlayerWrapper(
+            key: Key('PlayerWrapper_${track.id}'),
+            track: track,
+            playSeek: this.playSeek,
+            playSeekBackward: this.playSeekBackward,
+            playSeekForward: this.playSeekForward,
+            togglePause: this.togglePause,
+            position: this._position,
+            isPlaying: this._isPlaying,
+            isPaused: this._isPaused,
+          );
+        },
+      ),
     );
   }
 }

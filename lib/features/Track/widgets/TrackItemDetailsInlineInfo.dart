@@ -111,7 +111,7 @@ class TrackItemDetailsInlineInfo extends StatelessWidget {
                   Text(tag.text, style: textStyle),
                 ]);
               }).toList()),
-      !isFavorite || (asFavorite ?? false)
+      !isFavorite || asFavorite
           ? null
           : Icon(
               Icons.favorite,

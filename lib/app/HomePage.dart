@@ -18,9 +18,7 @@ final logger = Logger();
 final navigatorKey = GlobalKey<NavigatorState>();
 
 // Enable debugging fake internal routes, see `_debugTrackId` in `TrackDetailsScreen.dart`
-const _useDebugRoute = true;
-
-// final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+const _useDebugRoute = false;
 
 class HomePage extends StatefulWidget {
   const HomePage({
