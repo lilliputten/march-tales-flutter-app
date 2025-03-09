@@ -93,6 +93,9 @@ class PageWrapperState extends State<PageWrapper> {
     // XXX FUTURE: Detect the root status by history depth?
     final isRoot = this._isRoot;
 
+    final scrollController = appState.getLastScrollController();
+    logger.t('[PageWrapper:build] scrollController=${scrollController} scrollController=${appState.scrollControllers}');
+
     return RestorationScope(
       restorationId: 'PageWrapper',
       child: Scaffold(
@@ -151,7 +154,7 @@ class PageWrapperState extends State<PageWrapper> {
           ),
         ),
         bottomNavigationBar: Hidable(
-          controller: appState.scrollController,
+          controller: scrollController,
           preferredWidgetSize: const Size.fromHeight(82),
           enableOpacityAnimation: true, // optional, defaults to `true`.
           child: BottomNavigation(
@@ -180,7 +183,7 @@ class PageWrapperState extends State<PageWrapper> {
                   child: ColoredBox(color: colorScheme.surfaceContainerHighest, child: widget.child),
                 ),
                 Hidable(
-                  controller: appState.scrollController,
+                  controller: scrollController,
                   preferredWidgetSize: const Size.fromHeight(111),
                   enableOpacityAnimation: true, // optional, defaults to `true`.
                   child: PlayerBox(

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
@@ -53,7 +55,7 @@ class MoreButton extends StatelessWidget {
   }
 }
 
-class TracksList extends StatelessWidget {
+class TracksList extends StatefulWidget {
   const TracksList({
     super.key,
     required this.tracks,
@@ -72,37 +74,61 @@ class TracksList extends StatelessWidget {
   final void Function()? onLoadNext;
 
   @override
+  State<TracksList> createState() => TracksListState();
+}
+
+class TracksListState extends State<TracksList> {
+  late AppState _appState;
+  ScrollController scrollController = new ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    this._appState = context.read<AppState>();
+    Future.delayed(Duration.zero, () {
+      this._appState.addScrollController(this.scrollController);
+    });
+  }
+
+  @override
+  void dispose() {
+    Future.delayed(Duration.zero, () {
+      this._appState.removeScrollController(this.scrollController);
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
 
-    final tracksCount = this.tracks.length;
-    final hasMoreTracks = this.count > tracksCount;
+    final tracksCount = this.widget.tracks.length;
+    final hasMoreTracks = this.widget.count > tracksCount;
     final showItems = hasMoreTracks ? tracksCount + 1 : tracksCount;
 
-    final keyId = this.asFavorite ? 'FavoritesList' : 'TracksList';
+    final keyId = this.widget.asFavorite ? 'FavoritesList' : 'TracksList';
     final listKey = PageStorageKey<String>(keyId);
 
     return RefreshIndicator(
       color: appColors.brandColor,
       strokeWidth: 2,
       onRefresh: () async {
-        if (onRefresh != null) {
-          await onRefresh!();
+        if (this.widget.onRefresh != null) {
+          await this.widget.onRefresh!();
         }
       },
       child: ListView.separated(
         key: listKey,
-        controller: appState.scrollController,
+        controller: this.scrollController,
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         separatorBuilder: (context, index) => SizedBox(height: 5),
         itemCount: showItems,
         itemBuilder: (context, i) {
           if (i == tracksCount) {
-            return MoreButton(onLoadNext: onLoadNext, isLoading: isLoading);
+            return MoreButton(onLoadNext: this.widget.onLoadNext, isLoading: this.widget.isLoading);
           } else {
-            return TrackItem(track: this.tracks[i], asFavorite: this.asFavorite);
+            return TrackItem(track: this.widget.tracks[i], asFavorite: this.widget.asFavorite);
           }
         },
       ),

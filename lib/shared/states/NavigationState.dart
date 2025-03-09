@@ -10,13 +10,37 @@ final logger = Logger();
 
 const _defaultTabIndex = AppConfig.LOCAL ? 0 : 0;
 
+final ScrollController defaultScrollController = ScrollController();
+
 mixin NavigationState {
   void notifyListeners(); // From `ChangeNotifier`
   SharedPreferences? getPrefs(); // From `AppState`
 
   // Navigation state...
 
-  final ScrollController scrollController = ScrollController();
+  final List<ScrollController> scrollControllers = [defaultScrollController];
+
+  void addScrollController(ScrollController value) {
+    this.scrollControllers.add(value);
+    this.notifyListeners();
+  }
+
+  void removeScrollController(ScrollController value) {
+    this.scrollControllers.remove(value);
+    this.notifyListeners();
+  }
+
+  ScrollController getDefaultScrollController() {
+    return defaultScrollController;
+  }
+
+  ScrollController getLastScrollController() {
+    try {
+      return this.scrollControllers.last; // ?? defaultScrollController;
+    } catch (err) {
+      return defaultScrollController;
+    }
+  }
 
   int _selectedTabIndex = _defaultTabIndex;
 

@@ -16,16 +16,40 @@ import 'SettingsPage.i18n.dart';
 final logger = Logger();
 
 // @see https://docs.flutter.dev/cookbook/networking/fetch-data
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
+  @override
+  State<SettingsPage> createState() => SettingsPageState();
+}
+
+class SettingsPageState extends State<SettingsPage> {
+  late AppState _appState;
+  ScrollController scrollController = new ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    this._appState = context.read<AppState>();
+    Future.delayed(Duration.zero, () {
+      this._appState.addScrollController(this.scrollController);
+    });
+  }
+
+  @override
+  void dispose() {
+    Future.delayed(Duration.zero, () {
+      this._appState.removeScrollController(this.scrollController);
+    });
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
           child: SingleChildScrollView(
-            controller: appState.scrollController,
+            controller: this.scrollController,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
               child: SettingsWidget(),

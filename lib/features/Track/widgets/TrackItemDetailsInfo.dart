@@ -8,12 +8,10 @@ import 'package:march_tales_app/core/helpers/formats.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackAuthorImageThumbnail.dart';
 
-// import 'package:march_tales_app/app/AppColors.dart';
-
 final logger = Logger();
 
-class TrackDetailsInfo extends StatelessWidget {
-  const TrackDetailsInfo({
+class TrackItemDetailsInfo extends StatelessWidget {
+  const TrackItemDetailsInfo({
     super.key,
     required this.track,
     required this.isActiveTrack,
@@ -21,6 +19,7 @@ class TrackDetailsInfo extends StatelessWidget {
     required this.isPlaying,
     required this.isFavorite,
     this.asFavorite,
+    this.fullView,
     this.textColor,
   });
   final Track track;
@@ -29,6 +28,7 @@ class TrackDetailsInfo extends StatelessWidget {
   final bool isPlaying;
   final bool isFavorite;
   final bool? asFavorite;
+  final bool? fullView;
   final Color? textColor;
 
   @override

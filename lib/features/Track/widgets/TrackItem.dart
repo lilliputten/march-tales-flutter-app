@@ -10,8 +10,6 @@ import 'package:march_tales_app/features/Track/widgets/TrackItemAsCard.dart';
 import 'package:march_tales_app/pages/TrackDetailsScreen.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
-// import 'package:march_tales_app/features/Track/widgets/TrackDetails.dart';
-
 final logger = Logger();
 
 // NOTE: See theme info at: https://api.flutter.dev/flutter/material/ThemeData-class.html
@@ -21,10 +19,12 @@ class TrackItem extends StatefulWidget {
     super.key,
     required this.track,
     this.asFavorite,
+    this.fullView,
   });
 
   final Track track;
   final bool? asFavorite;
+  final bool? fullView;
 
   @override
   State<TrackItem> createState() => _TrackItemState();
@@ -65,16 +65,6 @@ class _TrackItemState extends State<TrackItem> {
     super.dispose();
   }
 
-  /*
-   * @pragma('vm:entry-point')
-   * static Route _trackRouteBuilder(BuildContext context, Object? arguments) {
-   *   return MaterialPageRoute(
-   *     settings: RouteSettings(name: '/screen2', arguments: arguments),
-   *     builder: (BuildContext context) => const TrackDetailsScreen(),
-   *   );
-   * }
-   */
-
   @override
   Widget build(BuildContext context) {
     final Track track = this.widget.track;
@@ -107,25 +97,16 @@ class _TrackItemState extends State<TrackItem> {
         progress: progress,
         isFavorite: isFavorite,
         asFavorite: this.widget.asFavorite,
+        fullView: this.widget.fullView,
         onClick: (track) {
           // Show track details page
           // @see https://docs.flutter.dev/cookbook/navigation/navigate-with-arguments
           // @see https://api.flutter.dev/flutter/widgets/Navigator/restorablePush.html
-          final navigator = Navigator.of(context);
-          navigator.restorablePushNamed(
-            // context,
+          Navigator.restorablePushNamed(
+            context,
             TrackDetailsScreen.routeName,
             arguments: track.id,
           );
-          /*
-           * Navigator.restorablePush(
-           *   context,
-           *   // '${TrackDetailsScreen.routeName}/${track.id}',
-           *   // TrackDetailsScreen.routeName,
-           *   _trackRouteBuilder,
-           *   arguments: track.id,
-           * );
-           */
         });
   }
 }

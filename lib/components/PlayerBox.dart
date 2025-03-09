@@ -140,7 +140,7 @@ class PlayerBoxState extends State<PlayerBox> {
   Future<Track?> _loadPlayingTrackDetails({required int id, bool notify = true}) async {
     if (id != 0) {
       // Update `playingTrack` if language has been changed
-      final track = await loadTrackDetails(id: id);
+      final track = await loadTrackDetails(id);
       this._track = track;
       await this._setTrack(track, notify: notify);
     }
@@ -149,7 +149,7 @@ class PlayerBoxState extends State<PlayerBox> {
 
   Future<Track?> updatePlayingTrackDetails({bool notify = true}) async {
     if (this._track != null) {
-      final track = this._track = await loadTrackDetails(id: this._track!.id);
+      final track = this._track = await loadTrackDetails(this._track!.id);
       setState(() {
         this._track = track;
       });

@@ -5,36 +5,29 @@ import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/core/constants/previewDimensionsRatio.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackDetails.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemBase.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItemControl.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemDetails.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
 const double _screenHorizontalPadding = 15;
 
-class TrackItemAsCard extends StatelessWidget {
+class TrackItemAsCard extends TrackItemBase {
   const TrackItemAsCard({
     super.key,
-    required this.track,
-    required this.isActiveTrack,
-    required this.isAlreadyPlayed,
-    required this.isPlaying,
-    required this.progress,
-    required this.isFavorite,
-    this.asFavorite,
-    required this.onClick,
+    required super.track,
+    required super.isActiveTrack,
+    required super.isAlreadyPlayed,
+    required super.isPlaying,
+    required super.progress,
+    required super.isFavorite,
+    super.asFavorite,
+    super.fullView,
+    required super.onClick,
   });
-
-  final Track track;
-  final bool isActiveTrack;
-  final bool isAlreadyPlayed;
-  final bool isPlaying;
-  final double progress;
-  final bool isFavorite;
-  final bool? asFavorite;
-  final ValueSetter<Track> onClick;
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +52,7 @@ class TrackItemAsCard extends StatelessWidget {
             progress: progress,
             isFavorite: isFavorite,
             asFavorite: asFavorite,
+            fullView: fullView,
           )
         : _trackItemAsCardItemsHorizontal(
             width: width,
@@ -71,6 +65,7 @@ class TrackItemAsCard extends StatelessWidget {
             progress: progress,
             isFavorite: isFavorite,
             asFavorite: asFavorite,
+            fullView: fullView,
           );
 
     // Build wrapper...
@@ -96,12 +91,8 @@ class TrackItemAsCard extends StatelessWidget {
         onTap: () {
           onClick(track);
         },
-        // onTap: () {
-        //   // Call setTrack from `PlayerBoxState`
-        //   playerBoxState?.setTrack(track, play: false);
-        // },
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          padding: const EdgeInsets.all(5),
           child: content,
         ),
       ),
@@ -120,6 +111,7 @@ List<Widget> _trackItemAsCardDetailItems({
   required final double progress,
   required final bool isFavorite,
   final bool? asFavorite = false,
+  final bool? fullView = false,
 }) {
   // final double height = width / previewDimensionsRatio;
   return [
@@ -127,13 +119,14 @@ List<Widget> _trackItemAsCardDetailItems({
       flex: 1,
       child: Opacity(
         opacity: detailsOpacity,
-        child: TrackDetails(
+        child: TrackItemDetails(
           track: track,
           isActiveTrack: isActiveTrack,
           isAlreadyPlayed: isAlreadyPlayed,
           isPlaying: isPlaying,
           isFavorite: isFavorite,
           asFavorite: asFavorite,
+          fullView: fullView,
         ),
       ),
     ),
@@ -159,6 +152,7 @@ List<Widget> _trackItemAsCardItemsHorizontal({
   required final double progress,
   required final bool isFavorite,
   final bool? asFavorite = false,
+  final bool? fullView = false,
 }) {
   // final double height = width / previewDimensionsRatio;
   return [
@@ -174,6 +168,7 @@ List<Widget> _trackItemAsCardItemsHorizontal({
       progress: progress,
       isFavorite: isFavorite,
       asFavorite: asFavorite,
+      fullView: fullView,
     ),
   ];
 }
@@ -189,6 +184,7 @@ List<Widget> _trackItemAsCardItemsVertical({
   required final double progress,
   required final bool isFavorite,
   final bool? asFavorite = false,
+  final bool? fullView = false,
 }) {
   final double height = (width - _screenHorizontalPadding * 2) / previewDimensionsRatio;
   return [
@@ -208,6 +204,7 @@ List<Widget> _trackItemAsCardItemsVertical({
         progress: progress,
         isFavorite: isFavorite,
         asFavorite: asFavorite,
+        fullView: fullView,
       ),
     ),
   ];

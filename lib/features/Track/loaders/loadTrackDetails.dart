@@ -11,9 +11,7 @@ import 'package:march_tales_app/features/Track/types/Track.dart';
 final formatter = YamlFormatter();
 final logger = Logger();
 
-Future<Track> loadTrackDetails({
-  int id = 0,
-}) async {
+Future<Track> loadTrackDetails(int id) async {
   final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks/${id}';
   try {
     final uri = Uri.parse(url);
