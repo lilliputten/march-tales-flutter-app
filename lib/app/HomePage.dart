@@ -17,7 +17,8 @@ final logger = Logger();
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
-const useDebugRoute = false;
+// Enable debugging fake internal routes, see `_debugTrackId` in `TrackDetailsScreen.dart`
+const _useDebugRoute = true;
 
 // final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -89,7 +90,7 @@ class HomePageState extends State<HomePage> /* with RestorationMixin */ {
 
   @override
   Widget build(BuildContext context) {
-    final initialRoute = useDebugRoute && AppConfig.LOCAL ? TrackDetailsScreen.routeName : defaultAppRoute;
+    final initialRoute = _useDebugRoute && AppConfig.LOCAL ? TrackDetailsScreen.routeName : defaultAppRoute;
     return RestorationScope(
       restorationId: 'HomePage',
       child: PageWrapper(

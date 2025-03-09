@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/core/constants/previewDimensionsRatio.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackFullViewExtraBlock.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItemBase.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItemControl.dart';
@@ -26,7 +27,7 @@ class TrackItemAsCard extends TrackItemBase {
     required super.isFavorite,
     super.asFavorite,
     super.fullView,
-    required super.onClick,
+    super.onClick,
   });
 
   @override
@@ -88,9 +89,11 @@ class TrackItemAsCard extends TrackItemBase {
       color: Colors.transparent,
       borderRadius: BorderRadius.all(Radius.circular(10)),
       child: InkWell(
-        onTap: () {
-          onClick(track);
-        },
+        onTap: onClick != null
+            ? () {
+                onClick!(track);
+              }
+            : null,
         child: Padding(
           padding: const EdgeInsets.all(5),
           child: content,
@@ -110,24 +113,32 @@ List<Widget> _trackItemAsCardDetailItems({
   required final bool isPlaying,
   required final double progress,
   required final bool isFavorite,
-  final bool? asFavorite = false,
-  final bool? fullView = false,
+  final bool asFavorite = false,
+  final bool fullView = false,
+  final bool vertical = false,
 }) {
   // final double height = width / previewDimensionsRatio;
   return [
     Expanded(
       flex: 1,
-      child: Opacity(
-        opacity: detailsOpacity,
-        child: TrackItemDetails(
-          track: track,
-          isActiveTrack: isActiveTrack,
-          isAlreadyPlayed: isAlreadyPlayed,
-          isPlaying: isPlaying,
-          isFavorite: isFavorite,
-          asFavorite: asFavorite,
-          fullView: fullView,
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 10,
+        children: [
+          Opacity(
+            opacity: detailsOpacity,
+            child: TrackItemDetails(
+              track: track,
+              isActiveTrack: isActiveTrack,
+              isAlreadyPlayed: isAlreadyPlayed,
+              isPlaying: isPlaying,
+              isFavorite: isFavorite,
+              asFavorite: asFavorite,
+              fullView: fullView,
+            ),
+          ),
+          vertical || !fullView ? null : TrackFullViewExtraBlock(track: track)
+        ].nonNulls.toList(),
       ),
     ),
     // TrackFavoriteIcon(track: track),
@@ -137,6 +148,8 @@ List<Widget> _trackItemAsCardDetailItems({
       isAlreadyPlayed: isAlreadyPlayed,
       isPlaying: isPlaying,
       progress: progress,
+      isFavorite: isFavorite,
+      fullView: fullView,
     ),
   ];
 }
@@ -151,8 +164,8 @@ List<Widget> _trackItemAsCardItemsHorizontal({
   required final bool isPlaying,
   required final double progress,
   required final bool isFavorite,
-  final bool? asFavorite = false,
-  final bool? fullView = false,
+  final bool asFavorite = false,
+  final bool fullView = false,
 }) {
   // final double height = width / previewDimensionsRatio;
   return [
@@ -169,7 +182,9 @@ List<Widget> _trackItemAsCardItemsHorizontal({
       isFavorite: isFavorite,
       asFavorite: asFavorite,
       fullView: fullView,
+      vertical: false,
     ),
+    // TrackFullViewExtraBlock(track: track),
   ];
 }
 
@@ -183,8 +198,8 @@ List<Widget> _trackItemAsCardItemsVertical({
   required final bool isPlaying,
   required final double progress,
   required final bool isFavorite,
-  final bool? asFavorite = false,
-  final bool? fullView = false,
+  final bool asFavorite = false,
+  final bool fullView = false,
 }) {
   final double height = (width - _screenHorizontalPadding * 2) / previewDimensionsRatio;
   return [
@@ -205,7 +220,9 @@ List<Widget> _trackItemAsCardItemsVertical({
         isFavorite: isFavorite,
         asFavorite: asFavorite,
         fullView: fullView,
+        vertical: true,
       ),
     ),
-  ];
+    fullView ? TrackFullViewExtraBlock(track: track) : null,
+  ].nonNulls.toList();
 }

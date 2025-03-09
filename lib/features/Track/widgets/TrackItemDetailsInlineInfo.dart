@@ -10,16 +10,16 @@ import 'package:march_tales_app/features/Track/widgets/TrackAuthorImageThumbnail
 
 final logger = Logger();
 
-class TrackItemDetailsInfo extends StatelessWidget {
-  const TrackItemDetailsInfo({
+class TrackItemDetailsInlineInfo extends StatelessWidget {
+  const TrackItemDetailsInlineInfo({
     super.key,
     required this.track,
     required this.isActiveTrack,
     required this.isAlreadyPlayed,
     required this.isPlaying,
     required this.isFavorite,
-    this.asFavorite,
-    this.fullView,
+    this.asFavorite = false,
+    this.fullView = false,
     this.textColor,
   });
   final Track track;
@@ -27,8 +27,8 @@ class TrackItemDetailsInfo extends StatelessWidget {
   final bool isAlreadyPlayed;
   final bool isPlaying;
   final bool isFavorite;
-  final bool? asFavorite;
-  final bool? fullView;
+  final bool asFavorite;
+  final bool fullView;
   final Color? textColor;
 
   @override
@@ -50,10 +50,12 @@ class TrackItemDetailsInfo extends StatelessWidget {
 
     final items = [
       // Author
-      Wrap(spacing: 6, crossAxisAlignment: WrapCrossAlignment.center, children: [
-        TrackAuthorImageThumbnail(track: track),
-        Text(track.author.name, style: textStyle),
-      ]),
+      this.fullView
+          ? null
+          : Wrap(spacing: 6, crossAxisAlignment: WrapCrossAlignment.center, children: [
+              TrackAuthorImageThumbnail(track: track),
+              Text(track.author.name, style: textStyle),
+            ]),
       // Played count
       track.played_count == 0
           ? null
@@ -84,7 +86,7 @@ class TrackItemDetailsInfo extends StatelessWidget {
         Text(formatDate(DateTime.parse(track.published_at), context.locale.languageCode), style: textStyle),
       ]),
       // Rubrics
-      track.rubrics.isEmpty
+      this.fullView || track.rubrics.isEmpty
           ? null
           : Wrap(
               spacing: 3,
@@ -99,7 +101,7 @@ class TrackItemDetailsInfo extends StatelessWidget {
                 );
               }).toList()),
       // Tags
-      track.tags.isEmpty
+      this.fullView || track.tags.isEmpty
           ? null
           : Wrap(
               spacing: 3,

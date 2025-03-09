@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
@@ -20,6 +22,8 @@ class TrackItemControl extends StatelessWidget {
     required this.isAlreadyPlayed,
     required this.isPlaying,
     required this.progress,
+    this.isFavorite = false,
+    this.fullView = false,
   });
 
   final Track track;
@@ -27,6 +31,10 @@ class TrackItemControl extends StatelessWidget {
   final bool isAlreadyPlayed;
   final bool isPlaying;
   final double progress;
+  final bool isFavorite;
+  final bool fullView;
+
+  // TODO: Show favorite button if it's a full view mode
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:hidable/hidable.dart';
@@ -184,7 +182,7 @@ class PageWrapperState extends State<PageWrapper> {
                 ),
                 Hidable(
                   controller: scrollController,
-                  preferredWidgetSize: const Size.fromHeight(111),
+                  preferredWidgetSize: const Size.fromHeight(114),
                   enableOpacityAnimation: true, // optional, defaults to `true`.
                   child: PlayerBox(
                     key: playerBoxKey,

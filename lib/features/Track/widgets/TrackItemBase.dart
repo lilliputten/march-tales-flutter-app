@@ -12,9 +12,9 @@ abstract class TrackItemBase extends StatelessWidget {
     required this.isPlaying,
     required this.progress,
     required this.isFavorite,
-    this.asFavorite,
-    this.fullView,
-    required this.onClick,
+    this.asFavorite = false,
+    this.fullView = false,
+    this.onClick,
   });
 
   final Track track;
@@ -23,7 +23,7 @@ abstract class TrackItemBase extends StatelessWidget {
   final bool isPlaying;
   final double progress;
   final bool isFavorite;
-  final bool? asFavorite;
-  final bool? fullView;
-  final ValueSetter<Track> onClick;
+  final bool asFavorite;
+  final bool fullView;
+  final ValueSetter<Track>? onClick;
 }

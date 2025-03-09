@@ -24,9 +24,9 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "team.march.march_tales_app"
 
-        // version = "0.0.11"
-        // timestamp = "2025.03.09 21:47:39 +0300"
-        // timetag = "250309-2147"
+        // version = "0.0.12"
+        // timestamp = "2025.03.10 01:56:01 +0300"
+        // timetag = "250310-0156"
 
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.

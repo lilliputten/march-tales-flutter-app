@@ -16,21 +16,16 @@ import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItem.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
-// import 'package:provider/provider.dart';
-
-// import 'package:march_tales_app/features/Track/types/Track.dart';
-// import 'package:march_tales_app/shared/states/AppState.dart';
-
 final logger = Logger();
 
 const _routeName = '/TrackDetailsScreen';
 
+const _debugTrackId = 1;
+
 class TrackDetailsScreen extends StatefulWidget {
   const TrackDetailsScreen({
     super.key,
-    // required this.id,
   });
-  // final int id;
 
   static const routeName = _routeName;
 
@@ -68,10 +63,10 @@ class TrackDetailsScreenState extends State<TrackDetailsScreen> {
     final appState = context.read<AppState>();
     this.dataFuture = getTrackFromStateOrLoad(id, appState: appState);
     /* // DEBUG
-    this.dataFuture = Future.delayed(Duration(seconds: 1), () {
-      return 'Track ${id}';
-    });
-    */
+     * this.dataFuture = Future.delayed(Duration(seconds: 1), () {
+     *   return 'Track ${id}';
+     * });
+     */
   }
 
   int _getTrackId() {
@@ -84,7 +79,7 @@ class TrackDetailsScreenState extends State<TrackDetailsScreen> {
     } catch (err) {
       if (AppConfig.LOCAL) {
         // Return demo id for debug purposes
-        return 1;
+        return _debugTrackId;
       }
       rethrow;
     }
@@ -92,14 +87,8 @@ class TrackDetailsScreenState extends State<TrackDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final int id = ModalRoute.of(context)?.settings.arguments as int;
-    // final appState = context.watch<AppState>();
-    // final appTheme = appState.isDarkTheme;
-
-    // final track = this.widget.track;
-
     return ScreenWrapper(
-      title: 'Track title',
+      title: 'Show track',
       child: FutureBuilder(
         future: this.dataFuture,
         builder: (context, snapshot) {

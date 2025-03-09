@@ -18,13 +18,13 @@ class TrackItem extends StatefulWidget {
   const TrackItem({
     super.key,
     required this.track,
-    this.asFavorite,
-    this.fullView,
+    this.asFavorite = false,
+    this.fullView = false,
   });
 
   final Track track;
-  final bool? asFavorite;
-  final bool? fullView;
+  final bool asFavorite;
+  final bool fullView;
 
   @override
   State<TrackItem> createState() => _TrackItemState();
@@ -65,6 +65,17 @@ class _TrackItemState extends State<TrackItem> {
     super.dispose();
   }
 
+  void _handleClick(Track track) {
+    // Show track details page
+    // @see https://docs.flutter.dev/cookbook/navigation/navigate-with-arguments
+    // @see https://api.flutter.dev/flutter/widgets/Navigator/restorablePush.html
+    Navigator.restorablePushNamed(
+      context,
+      TrackDetailsScreen.routeName,
+      arguments: track.id,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final Track track = this.widget.track;
@@ -91,22 +102,13 @@ class _TrackItemState extends State<TrackItem> {
 
     return TrackItemAsCard(
         track: track,
-        isActiveTrack: isActiveTrack,
+        isActiveTrack: !this.widget.fullView && isActiveTrack,
         isAlreadyPlayed: isAlreadyPlayed,
         isPlaying: isPlaying,
         progress: progress,
         isFavorite: isFavorite,
         asFavorite: this.widget.asFavorite,
         fullView: this.widget.fullView,
-        onClick: (track) {
-          // Show track details page
-          // @see https://docs.flutter.dev/cookbook/navigation/navigate-with-arguments
-          // @see https://api.flutter.dev/flutter/widgets/Navigator/restorablePush.html
-          Navigator.restorablePushNamed(
-            context,
-            TrackDetailsScreen.routeName,
-            arguments: track.id,
-          );
-        });
+        onClick: this.widget.fullView ? null : this._handleClick);
   }
 }
