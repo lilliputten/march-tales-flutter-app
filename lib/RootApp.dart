@@ -22,6 +22,8 @@ class VersionException implements Exception {
   VersionException(this.cause);
 }
 
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 class RootApp extends StatelessWidget {
   const RootApp({
     super.key,
@@ -71,6 +73,7 @@ class RootApp extends StatelessWidget {
         return appState;
       },
       child: AppWrapper(
+        routeObserver: routeObserver,
         builder: FutureBuilder(
           future: initFuture,
           builder: (context, snapshot) {
@@ -79,7 +82,9 @@ class RootApp extends StatelessWidget {
               return AppErrorScreen(error: snapshot.error ?? appState.error);
             }
             if (snapshot.connectionState == ConnectionState.done) {
-              return HomePage();
+              return HomePage(
+                routeObserver: routeObserver,
+              );
             } else {
               return SplashScreen();
             }

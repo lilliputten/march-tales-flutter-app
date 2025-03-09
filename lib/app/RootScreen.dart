@@ -3,11 +3,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/homePages.dart';
 import 'package:march_tales_app/core/constants/defaultAppRoute.dart';
 import 'package:march_tales_app/core/singletons/routeEvents.dart';
 import 'package:march_tales_app/core/types/RouteUpdate.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
@@ -18,11 +20,11 @@ final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 class RootScreen extends StatefulWidget {
   const RootScreen({
     super.key,
-    required this.pageIndex,
+    // required this.pageIndex,
     required this.routeObserver,
   });
 
-  final int pageIndex;
+  // final int pageIndex;
   final RouteObserver<PageRoute> routeObserver;
 
   @override
@@ -98,9 +100,11 @@ class RootScreenState extends State<RootScreen> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+    final pageIndex = appState.getNavigationTabIndex();
     // Display current widget according to bottom bavigation status
     final homePages = getHomePages();
-    final pageIndex = this.widget.pageIndex;
+    // final pageIndex = this.widget.pageIndex;
     final widget = homePages[pageIndex].widget;
     final Widget page = widget();
     return AnimatedSwitcher(

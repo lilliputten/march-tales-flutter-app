@@ -111,9 +111,9 @@ class _TrackItemState extends State<TrackItem> {
           // Show track details page
           // @see https://docs.flutter.dev/cookbook/navigation/navigate-with-arguments
           // @see https://api.flutter.dev/flutter/widgets/Navigator/restorablePush.html
-          Navigator.restorablePushNamed(
-            context,
-            // '${TrackDetailsScreen.routeName}/${track.id}',
+          final navigator = Navigator.of(context);
+          navigator.restorablePushNamed(
+            // context,
             TrackDetailsScreen.routeName,
             arguments: track.id,
           );

@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
-import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/PageWrapper.dart';
@@ -12,18 +11,20 @@ import 'package:march_tales_app/core/constants/defaultAppRoute.dart';
 import 'package:march_tales_app/core/singletons/routeEvents.dart';
 import 'package:march_tales_app/core/types/RouteUpdate.dart';
 import 'package:march_tales_app/pages/TrackDetailsScreen.dart';
-import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
-final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+// final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
+    required this.routeObserver,
   });
+
+  final RouteObserver<PageRoute> routeObserver;
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -56,8 +57,6 @@ class HomePageState extends State<HomePage> /* with RestorationMixin */ {
 
   _buildRoute(RouteSettings routeSettings) {
     try {
-      final appState = context.watch<AppState>();
-      final pageIndex = appState.getNavigationTabIndex();
       // logger.t('[HomePage:routeSettings] routeSettings=${routeSettings}');
       final name = routeSettings.name ?? defaultAppRoute;
       this._notifyRouteChanged(name);
@@ -67,8 +66,7 @@ class HomePageState extends State<HomePage> /* with RestorationMixin */ {
       }
       // Create specific root page widget
       return RootScreen(
-        routeObserver: routeObserver,
-        pageIndex: pageIndex,
+        routeObserver: this.widget.routeObserver,
       );
     } catch (err, stacktrace) {
       logger.e('[HomePage] _buildRoute: Error: ${err}', error: err, stackTrace: stacktrace);
@@ -94,9 +92,17 @@ class HomePageState extends State<HomePage> /* with RestorationMixin */ {
       child: PageWrapper(
         navigatorKey: navigatorKey,
         child: PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) async {
+            if (!didPop) {
+              // Navigate with nested navigator...
+              final navigator = this.widget.routeObserver.navigator;
+              navigator?.pop(result);
+            }
+          },
           child: Navigator(
             restorationScopeId: 'HomeNavigator',
-            observers: [routeObserver],
+            observers: [this.widget.routeObserver],
             key: navigatorKey,
             initialRoute: defaultAppRoute,
             onGenerateRoute: (routeSettings) {
