@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
@@ -29,12 +31,6 @@ class RootScreen extends StatefulWidget {
 
 class RootScreenState extends State<RootScreen> with RouteAware {
   @override
-  void dispose() {
-    widget.routeObserver.unsubscribe(this);
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
   }
@@ -44,18 +40,48 @@ class RootScreenState extends State<RootScreen> with RouteAware {
     super.didChangeDependencies();
     final route = ModalRoute.of(this.context) as PageRoute;
     widget.routeObserver.subscribe(this, route);
-    // NOTE: Use `didPush`, `didPopNext` and other route handlers
+    // NOTE: Use `didPush`, `didPopNext`, `didChangeNext` and other route handlers
+  }
+
+  @override
+  void dispose() {
+    widget.routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  _notifyRootHidden() {
+    // Notify about root screen visiblility
+    Future.delayed(Duration.zero, () {
+      final update = RouteUpdate(
+        type: RouteUpdateType.rootHidden,
+        name: defaultAppRoute,
+      );
+      routeEvents.broadcast(update);
+    });
   }
 
   _notifyRootDisplayed() {
     // Notify about root screen visiblility
     Future.delayed(Duration.zero, () {
       final update = RouteUpdate(
-        type: RouteUpdateType.rootDisplayed,
+        type: RouteUpdateType.rootVisible,
         name: defaultAppRoute,
       );
       routeEvents.broadcast(update);
     });
+  }
+
+  @override
+  void didPushNext() {
+    // Route was pushed onto navigator and is now topmost route.
+    this._notifyRootHidden();
+  }
+
+  @override
+  void didPop() {
+    debugger();
+    // Route was pushed onto navigator and is now topmost route.
+    this._notifyRootDisplayed();
   }
 
   @override

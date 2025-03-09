@@ -65,6 +65,16 @@ class _TrackItemState extends State<TrackItem> {
     super.dispose();
   }
 
+  /*
+   * @pragma('vm:entry-point')
+   * static Route _trackRouteBuilder(BuildContext context, Object? arguments) {
+   *   return MaterialPageRoute(
+   *     settings: RouteSettings(name: '/screen2', arguments: arguments),
+   *     builder: (BuildContext context) => const TrackDetailsScreen(),
+   *   );
+   * }
+   */
+
   @override
   Widget build(BuildContext context) {
     final Track track = this.widget.track;
@@ -99,14 +109,23 @@ class _TrackItemState extends State<TrackItem> {
         asFavorite: this.widget.asFavorite,
         onClick: (track) {
           // Show track details page
-          // https://docs.flutter.dev/cookbook/navigation/navigate-with-arguments
-          Navigator.pushNamed(
+          // @see https://docs.flutter.dev/cookbook/navigation/navigate-with-arguments
+          // @see https://api.flutter.dev/flutter/widgets/Navigator/restorablePush.html
+          Navigator.restorablePushNamed(
             context,
+            // '${TrackDetailsScreen.routeName}/${track.id}',
             TrackDetailsScreen.routeName,
-            arguments: TrackDetailsScreenArguments(
-              track,
-            ),
+            arguments: track.id,
           );
+          /*
+           * Navigator.restorablePush(
+           *   context,
+           *   // '${TrackDetailsScreen.routeName}/${track.id}',
+           *   // TrackDetailsScreen.routeName,
+           *   _trackRouteBuilder,
+           *   arguments: track.id,
+           * );
+           */
         });
   }
 }

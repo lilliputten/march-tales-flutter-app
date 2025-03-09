@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:march_tales_app/core/helpers/convertErrorLikeToString.dart';
+
 class AppErrorScreen extends StatelessWidget {
   const AppErrorScreen({
     super.key,
@@ -9,8 +11,8 @@ class AppErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = error?.cause ?? error.toString();
-    // TODO: Check for `VersionException` and show an extra update block for it
+    String text = convertErrorLikeToString(error);
+    // TODO: Check for `VersionException` type and show an extra update block for it
     return Material(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),

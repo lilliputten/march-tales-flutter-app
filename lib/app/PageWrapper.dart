@@ -35,6 +35,7 @@ class PageWrapper extends StatefulWidget {
 
 class PageWrapperState extends State<PageWrapper> {
   String _routeName = defaultAppRoute;
+  bool _isRoot = true;
 
   @override
   void dispose() {
@@ -48,12 +49,29 @@ class PageWrapperState extends State<PageWrapper> {
   }
 
   _processRouteUpdate(RouteUpdate update) {
-    if (this._routeName != update.name && context.mounted) {
-      logger.t('[PageWrapper:route] name=${update.name} routeName=${this._routeName}');
-      setState(() {
-        this._routeName = update.name;
-      });
+    // if (context.mounted) {
+    final name = update.name;
+    final type = update.type;
+    if (this._routeName != name) {
+      // logger.t('[PageWrapper:route] type=${type} name=${name} routeName=${this._routeName}');
+      if (type == RouteUpdateType.rootVisible) {
+        setState(() {
+          this._isRoot = true;
+          this._routeName = name;
+        });
+      } else if (type == RouteUpdateType.rootHidden) {
+        setState(() {
+          this._isRoot = false;
+          this._routeName = name;
+        });
+      } else {
+        setState(() {
+          this._isRoot = name.isEmpty || name == defaultAppRoute;
+          this._routeName = name;
+        });
+      }
     }
+    // }
   }
 
   @override
@@ -70,9 +88,7 @@ class PageWrapperState extends State<PageWrapper> {
     final navigatorState = this.widget.navigatorKey.currentState;
 
     // XXX FUTURE: Detect the root status by history depth?
-    final routeName = this._routeName;
-    final isRoot = routeName.isEmpty || routeName == defaultAppRoute;
-    logger.t('[PageWrapper:route] isRoot=${isRoot} routeName=${routeName}');
+    final isRoot = this._isRoot;
 
     return RestorationScope(
       restorationId: 'PageWrapper',
@@ -132,8 +148,7 @@ class PageWrapperState extends State<PageWrapper> {
             appState.updateNavigationTabIndex(value);
             // Clear all the current (!) navigator routes in order to see the top tabs' content...
             navigatorState?.popUntil((Route<dynamic> route) {
-              final name = route.settings.name;
-              logger.t('[PageWrapper:handleIndex] removing route name=${name} route=${route}');
+              // logger.t('[PageWrapper:handleIndex] removing route name=${route.settings.name} route=${route}');
               return route.isFirst;
             });
           },
