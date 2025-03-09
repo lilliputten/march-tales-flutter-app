@@ -19,11 +19,13 @@ final logger = Logger();
 class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
           child: SingleChildScrollView(
+            controller: appState.scrollController,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
               child: SettingsWidget(),
@@ -188,10 +190,37 @@ class AppInfo extends StatelessWidget {
             InkWell(
               onTap: () => launchUrl(Uri.parse('${AppConfig.WEB_SITE_PROTOCOL}${AppConfig.WEB_SITE_DOMAIN}')),
               child: Text(
-                AppConfig.WEB_SITE_DOMAIN,
+                '${AppConfig.WEB_SITE_PROTOCOL}${AppConfig.WEB_SITE_DOMAIN}',
                 style: linkStyle,
               ),
             ),
+          ],
+        ),
+        Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SelectableText('VK:'.i18n, style: style),
+            InkWell(
+                onTap: () => launchUrl(Uri.parse(AppConfig.VK_URL)), child: Text(AppConfig.VK_URL, style: linkStyle)),
+          ],
+        ),
+        Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SelectableText('Telegram:'.i18n, style: style),
+            InkWell(
+                onTap: () => launchUrl(Uri.parse(AppConfig.TG_URL)), child: Text(AppConfig.TG_URL, style: linkStyle)),
+          ],
+        ),
+        Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SelectableText('YouTube:'.i18n, style: style),
+            InkWell(
+                onTap: () => launchUrl(Uri.parse(AppConfig.YT_URL)), child: Text(AppConfig.YT_URL, style: linkStyle)),
           ],
         ),
         Wrap(
@@ -222,13 +251,12 @@ class AppInfo extends StatelessWidget {
             InkWell(
               onTap: () => launchUrl(Uri.parse('https://${AppConfig.DEVELOPER_URL}')),
               child: Text(
-                AppConfig.DEVELOPER_URL,
+                'https://${AppConfig.DEVELOPER_URL}',
                 style: linkStyle,
               ),
             ),
           ],
         ),
-        // TODO: Show other info (developer, project site etc)
       ],
     );
   }

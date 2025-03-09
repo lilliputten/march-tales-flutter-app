@@ -16,6 +16,11 @@ abstract class AppConfig {
   static const String CONTACT_EMAIL = String.fromEnvironment('CONTACT_EMAIL', defaultValue: 'tales@march.team');
   static const String DEVELOPER_URL = String.fromEnvironment('DEVELOPER_URL', defaultValue: 'lilliputten.com');
 
+  // Social links
+  static const String VK_URL = String.fromEnvironment('VK_URL', defaultValue: 'https://vk.com/club227997256');
+  static const String TG_URL = String.fromEnvironment('TG_URL', defaultValue: 'https://t.me/cat_andersen');
+  static const String YT_URL = String.fromEnvironment('YT_URL', defaultValue: 'https://youtube.com/@bibliocaty');
+
   // March Tales API
   static const String TALES_SERVER_HOST = String.fromEnvironment('TALES_SERVER_HOST',
       defaultValue: LOCAL

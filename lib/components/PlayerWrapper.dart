@@ -38,9 +38,8 @@ class PlayerWrapper extends StatefulWidget {
 }
 
 class _PlayerWrapperState extends State<PlayerWrapper> {
-  /*
+  /* // SAMPLE: Example of interaction with a local database to fetch TrackInfo records
   TrackInfo? _trackInfo;
-
   void updateTrackInfo(TracksInfoDbUpdate update) {
     final Track track = this.widget.track;
     final trackInfo = update.trackInfo;
@@ -50,7 +49,6 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
       });
     }
   }
-
   @override
   void initState() {
     super.initState();
@@ -66,7 +64,6 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
     // Subscribe to the future updates
     tracksInfoDb.updateEvents.subscribe(this.updateTrackInfo);
   }
-
   @override
   void dispose() {
     tracksInfoDb.updateEvents.unsubscribe(this.updateTrackInfo);

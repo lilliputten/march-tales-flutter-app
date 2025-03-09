@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
+import 'package:hidable/hidable.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -104,7 +107,22 @@ class PageWrapperState extends State<PageWrapper> {
               children: [
                 // Show back button if not on the root page
                 isRoot
-                    ? null
+                    ? InkWell(
+                        onTap: () {
+                          // Activate the 1st tab
+                          appState.updateNavigationTabIndex(0);
+                          // Clear all the current (!) navigator routes in order to see the top tabs' content...
+                          navigatorState?.popUntil((Route<dynamic> route) {
+                            return route.isFirst;
+                          });
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: Image(
+                            image: AssetImage('assets/images/march-cat/march-cat-sq-48.jpg'),
+                          ),
+                        ),
+                      )
                     : IconButton(
                         icon: Icon(
                           Icons.arrow_back_outlined,
@@ -116,15 +134,6 @@ class PageWrapperState extends State<PageWrapper> {
                         onPressed: () {
                           navigatorState?.pop();
                         },
-                      ),
-                // Show logo if root page
-                !isRoot
-                    ? null
-                    : ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: Image(
-                          image: AssetImage('assets/images/march-cat/march-cat-sq-48.jpg'),
-                        ),
                       ),
                 // Show app title
                 Text(
@@ -141,17 +150,22 @@ class PageWrapperState extends State<PageWrapper> {
             ),
           ),
         ),
-        bottomNavigationBar: BottomNavigation(
-          homePages: getHomePages(),
-          selectedIndex: selectedIndex,
-          handleIndex: (int value) {
-            appState.updateNavigationTabIndex(value);
-            // Clear all the current (!) navigator routes in order to see the top tabs' content...
-            navigatorState?.popUntil((Route<dynamic> route) {
-              // logger.t('[PageWrapper:handleIndex] removing route name=${route.settings.name} route=${route}');
-              return route.isFirst;
-            });
-          },
+        bottomNavigationBar: Hidable(
+          controller: appState.scrollController,
+          preferredWidgetSize: const Size.fromHeight(82),
+          enableOpacityAnimation: true, // optional, defaults to `true`.
+          child: BottomNavigation(
+            homePages: getHomePages(),
+            selectedIndex: selectedIndex,
+            handleIndex: (int value) {
+              appState.updateNavigationTabIndex(value);
+              // Clear all the current (!) navigator routes in order to see the top tabs' content...
+              navigatorState?.popUntil((Route<dynamic> route) {
+                // logger.t('[PageWrapper:handleIndex] removing route name=${route.settings.name} route=${route}');
+                return route.isFirst;
+              });
+            },
+          ),
         ),
         // bottomSheet: Text('bottomSheet'),
         // endDrawer: AppDrawer(), // XXX FUTURE: Side navigation panel, see `AppDrawer`
@@ -165,8 +179,13 @@ class PageWrapperState extends State<PageWrapper> {
                 Expanded(
                   child: ColoredBox(color: colorScheme.surfaceContainerHighest, child: widget.child),
                 ),
-                PlayerBox(
-                  key: playerBoxKey,
+                Hidable(
+                  controller: appState.scrollController,
+                  preferredWidgetSize: const Size.fromHeight(111),
+                  enableOpacityAnimation: true, // optional, defaults to `true`.
+                  child: PlayerBox(
+                    key: playerBoxKey,
+                  ),
                 ),
               ],
             );

@@ -24,6 +24,8 @@ class VersionException implements Exception {
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
+// final ScrollController scrollController = ScrollController();
+
 class RootApp extends StatelessWidget {
   const RootApp({
     super.key,

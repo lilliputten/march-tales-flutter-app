@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
@@ -12,9 +14,9 @@ mixin NavigationState {
   void notifyListeners(); // From `ChangeNotifier`
   SharedPreferences? getPrefs(); // From `AppState`
 
-  // ...
+  // Navigation state...
 
-  // String _appRoute = defaultAppRoute;
+  final ScrollController scrollController = ScrollController();
 
   int _selectedTabIndex = _defaultTabIndex;
 
@@ -35,18 +37,6 @@ mixin NavigationState {
     }
     return hasChanges;
   }
-
-  // getAppRoute() {
-  //   return this._appRoute;
-  // }
-  //
-  // updateAppRoute(String value) {
-  //   if (this._appRoute != value) {
-  //     this._appRoute = value;
-  //     this.getPrefs()?.setString('appRoute', value);
-  //     // this.notifyListeners();
-  //   }
-  // }
 
   getNavigationTabIndex() {
     return this._selectedTabIndex;

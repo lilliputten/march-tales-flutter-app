@@ -25,9 +25,6 @@ class BottomNavigation extends StatelessWidget {
       selectedItemColor: appColors.brandColor, // colorScheme.primary,
       unselectedItemColor: Colors.grey,
 
-      // showUnselectedLabels: true,
-      // showSelectedLabels: false,
-
       items: this.homePages.map((page) => BottomNavigationBarItem(icon: page.icon, label: page.label)).toList(),
       // currentIndex: _selectedIndex,
       currentIndex: this.selectedIndex,

@@ -72,17 +72,6 @@ class PlayerBoxState extends State<PlayerBox> {
   _initWithContext() {
     Future.delayed(Duration.zero, () {
       this._loadSavedPrefs();
-      /* // DEBUG: Access context during initState stage
-       * if (context.mounted) {
-       *   final appState = context.read<AppState>(); // .watch<AppState>();
-       *   final playerState = appState.playerBoxKey?.currentState;
-       *   final playerWidget = appState.playerBoxKey?.currentWidget;
-       *   logger.t(
-       *       '[PlayerBox:initState] playerWidget=${playerWidget} playerState=${playerState} context=${context} appState=${appState} player=${this._player}');
-       *   debugger();
-       *   appState.setAudioPlayer(this._player);
-       * }
-       */
     });
   }
 
