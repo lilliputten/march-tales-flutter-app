@@ -1,1 +1,1 @@
-const double hidableDeltaFactor = 0.5;
+const double hidableDeltaFactor = 0.2;

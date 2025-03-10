@@ -4,15 +4,14 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:hidable/hidable.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart' hide TrackInfo;
 import 'package:logger/logger.dart';
-import 'package:march_tales_app/core/constants/hidableDeltaFactor.dart';
-import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:march_tales_app/Init.dart';
+import 'package:march_tales_app/components/HidableWrapper.dart';
 import 'package:march_tales_app/components/PlayerWrapper.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/constants/player.dart';
@@ -23,8 +22,8 @@ import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
 import 'package:march_tales_app/features/Track/trackConstants.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-import 'package:march_tales_app/shared/states/AppState.dart';
 import 'PlayerBox.i18n.dart';
+import 'PlayerBox/common.dart';
 
 final logger = Logger();
 
@@ -45,6 +44,7 @@ class PlayerBoxState extends State<PlayerBox> {
   Track? _track;
   late SharedPreferences _prefs;
   Duration? _position;
+  // Duration? _buffered;
   bool _hasIncremented = false;
   bool _isIncrementingNow = false;
   bool _isPlaying = false;
@@ -57,6 +57,12 @@ class PlayerBoxState extends State<PlayerBox> {
     this._player.dispose();
     super.dispose();
   }
+
+  Stream<PositionData> get _positionDataStream => Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+      _player.positionStream,
+      _player.bufferedPositionStream,
+      _player.durationStream,
+      (position, bufferedPosition, duration) => PositionData(position, bufferedPosition, duration ?? Duration.zero));
 
   @override
   void initState() {
@@ -469,8 +475,6 @@ class PlayerBoxState extends State<PlayerBox> {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
-
     final track = this._track;
     final player = this._player;
 
@@ -480,11 +484,11 @@ class PlayerBoxState extends State<PlayerBox> {
       return Container();
     }
 
-    return Hidable(
-      controller: appState.getLastScrollController(),
-      preferredWidgetSize: const Size.fromHeight(114),
-      enableOpacityAnimation: true, // optional, defaults to `true`.
-      deltaFactor: hidableDeltaFactor,
+    final isPlaying = this._isPlaying && !this._isPaused;
+
+    return HidableWrapper(
+      widgetSize: 104,
+      wrap: !isPlaying,
       child: StreamBuilder(
         stream: player.playerStateStream,
         builder: (context, AsyncSnapshot snapshot) {
@@ -498,6 +502,7 @@ class PlayerBoxState extends State<PlayerBox> {
             position: this._position,
             isPlaying: this._isPlaying,
             isPaused: this._isPaused,
+            positionDataStream: this._positionDataStream,
           );
         },
       ),

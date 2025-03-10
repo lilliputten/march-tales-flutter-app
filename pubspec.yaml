@@ -33,6 +33,7 @@ dependencies:
   flutter_inappwebview: ^6.1.5
   hidable: ^1.0.6
   flutter_markdown: ^0.7.6+2
+  rxdart: ^0.28.0
 
 dev_dependencies:
   test: ^1.25.8

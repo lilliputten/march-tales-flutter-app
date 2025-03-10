@@ -7,6 +7,7 @@ import 'package:march_tales_app/components/PlayerSlider.dart';
 import 'package:march_tales_app/components/PlayerTrackDetails.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
+import 'PlayerBox/common.dart';
 
 final logger = Logger();
 
@@ -21,6 +22,7 @@ class PlayerWrapper extends StatefulWidget {
     this.position,
     required this.isPlaying,
     required this.isPaused,
+    required this.positionDataStream,
   });
 
   final Track track;
@@ -32,6 +34,7 @@ class PlayerWrapper extends StatefulWidget {
   final Duration? position;
   final bool isPlaying;
   final bool isPaused;
+  final Stream<PositionData> positionDataStream;
 
   @override
   State<PlayerWrapper> createState() => _PlayerWrapperState();
@@ -109,13 +112,14 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         PlayerSlider(
+          positionDataStream: this.widget.positionDataStream,
           position: position,
           duration: duration,
           onSeek: widget.playSeek,
         ),
         Padding(
           // Show top padding only if there no track slider above
-          padding: EdgeInsets.fromLTRB(padding, 0, padding, padding),
+          padding: EdgeInsets.fromLTRB(padding, 0, padding, 5),
           // padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           child: Row(
             spacing: 10,
