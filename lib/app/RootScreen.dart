@@ -20,18 +20,15 @@ final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 class RootScreen extends StatefulWidget {
   const RootScreen({
     super.key,
-    // required this.pageIndex,
-    required this.routeObserver,
   });
-
-  // final int pageIndex;
-  final RouteObserver<PageRoute> routeObserver;
 
   @override
   State<RootScreen> createState() => RootScreenState();
 }
 
 class RootScreenState extends State<RootScreen> with RouteAware {
+  late RouteObserver<PageRoute> _routeObserver;
+
   @override
   void initState() {
     super.initState();
@@ -40,21 +37,22 @@ class RootScreenState extends State<RootScreen> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final appState = context.read<AppState>();
+    this._routeObserver = appState.getRouteObserver();
     final route = ModalRoute.of(this.context) as PageRoute;
-    widget.routeObserver.subscribe(this, route);
+    this._routeObserver.subscribe(this, route);
     // NOTE: Use `didPush`, `didPopNext`, `didChangeNext` and other route handlers
   }
 
   @override
   void dispose() {
-    widget.routeObserver.unsubscribe(this);
+    this._routeObserver.unsubscribe(this);
     super.dispose();
   }
 
   _notifyRootHidden() {
     // Notify about root screen visiblility
     Future.delayed(Duration.zero, () {
-      // logger.t('[RootScreen:_notifyRootHidden]');
       final update = RouteUpdate(
         type: RouteUpdateType.rootHidden,
         name: defaultAppRoute,
@@ -66,7 +64,6 @@ class RootScreenState extends State<RootScreen> with RouteAware {
   _notifyRootDisplayed() {
     // Notify about root screen visiblility
     Future.delayed(Duration.zero, () {
-      // logger.t('[RootScreen:_notifyRootDisplayed]');
       final update = RouteUpdate(
         type: RouteUpdateType.rootVisible,
         name: defaultAppRoute,
@@ -106,7 +103,6 @@ class RootScreenState extends State<RootScreen> with RouteAware {
     final pageIndex = appState.getNavigationTabIndex();
     // Display current widget according to bottom bavigation status
     final homePages = getHomePages();
-    // final pageIndex = this.widget.pageIndex;
     final widget = homePages[pageIndex].widget;
     final Widget page = widget();
     return AnimatedSwitcher(

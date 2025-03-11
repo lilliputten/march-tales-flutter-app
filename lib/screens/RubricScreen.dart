@@ -7,32 +7,33 @@ import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/ScreenWrapper.dart';
 import 'package:march_tales_app/components/LoadingSplash.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
-import 'package:march_tales_app/features/Track/loaders/loadAuthorDetails.dart';
-import 'package:march_tales_app/features/Track/types/Author.dart';
-import 'package:march_tales_app/features/Track/widgets/AuthorDetails.dart';
+import 'package:march_tales_app/features/Track/loaders/loadRubricDetails.dart';
+import 'package:march_tales_app/features/Track/types/Rubric.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
+
+// import 'package:march_tales_app/features/Track/widgets/RubricDetails.dart';
 
 final logger = Logger();
 
-const _routeName = '/AuthorScreen';
+const _routeName = '/RubricScreen';
 
-const _debugAuthorId = 1;
+const _debugRubricId = 1;
 
 @pragma('vm:entry-point')
-class AuthorScreen extends StatefulWidget {
-  const AuthorScreen({
+class RubricScreen extends StatefulWidget {
+  const RubricScreen({
     super.key,
   });
 
   static const routeName = _routeName;
 
   @override
-  State<AuthorScreen> createState() => AuthorScreenState();
+  State<RubricScreen> createState() => RubricScreenState();
 }
 
-class AuthorScreenState extends State<AuthorScreen> {
+class RubricScreenState extends State<RubricScreen> {
   late AppState _appState;
-  late Future<Author> dataFuture;
+  late Future<Rubric> dataFuture;
   final ScrollController scrollController = new ScrollController();
 
   @override
@@ -54,22 +55,22 @@ class AuthorScreenState extends State<AuthorScreen> {
 
   @override
   void didChangeDependencies() {
-    final int id = this._getAuthorId();
+    final int id = this._getRubricId();
     super.didChangeDependencies();
-    this.dataFuture = loadAuthorDetails(id);
+    this.dataFuture = loadRubricDetails(id);
   }
 
-  int _getAuthorId() {
+  int _getRubricId() {
     try {
       final int? id = ModalRoute.of(context)?.settings.arguments as int?;
       if (id == null) {
-        throw Exception('No author id has been passed for AuthorScreen');
+        throw Exception('No rubric id has been passed for RubricScreen');
       }
       return id;
     } catch (err) {
       if (AppConfig.LOCAL) {
         // Return demo id for debug purposes
-        return _debugAuthorId;
+        return _debugRubricId;
       }
       rethrow;
     }
@@ -78,7 +79,7 @@ class AuthorScreenState extends State<AuthorScreen> {
   @override
   Widget build(BuildContext context) {
     return ScreenWrapper(
-      title: 'Show author',
+      title: 'Show rubric',
       child: FutureBuilder(
         future: this.dataFuture,
         builder: (context, snapshot) {
@@ -86,8 +87,8 @@ class AuthorScreenState extends State<AuthorScreen> {
             return AppErrorScreen(error: snapshot.error);
           }
           if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
-            final author = snapshot.data!;
-            return AuthorItemFull(author: author, scrollController: scrollController);
+            final rubric = snapshot.data!;
+            return RubricItemFull(rubric: rubric, scrollController: scrollController);
           } else {
             return LoadingSplash();
           }
@@ -97,14 +98,14 @@ class AuthorScreenState extends State<AuthorScreen> {
   }
 }
 
-class AuthorItemFull extends StatelessWidget {
-  const AuthorItemFull({
+class RubricItemFull extends StatelessWidget {
+  const RubricItemFull({
     super.key,
-    required this.author,
+    required this.rubric,
     required this.scrollController,
   });
 
-  final Author author;
+  final Rubric rubric;
   final ScrollController scrollController;
 
   @override
@@ -114,11 +115,12 @@ class AuthorItemFull extends StatelessWidget {
       children: [
         Expanded(
           child: SingleChildScrollView(
-            restorationId: 'AuthorItemFull-${this.author.id}',
+            restorationId: 'RubricItemFull-${this.rubric.id}',
             controller: this.scrollController,
             child: Padding(
               padding: const EdgeInsets.all(10),
-              child: AuthorDetails(author: this.author, fullView: true),
+              child: Text(this.rubric.text),
+              // child: RubricDetails(rubric: this.rubric, fullView: true),
             ),
           ),
         ),

@@ -7,8 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
-import 'package:march_tales_app/screens/AuthorScreen.dart';
-import 'package:march_tales_app/screens/TrackDetailsScreen.dart';
+import 'package:march_tales_app/routes/appRoutes.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
 
@@ -23,11 +22,11 @@ class AppWrapper extends StatelessWidget {
   const AppWrapper({
     super.key,
     required this.builder,
-    required this.routeObserver,
+    // required this.routeObserver,
   });
 
   final FutureBuilder builder;
-  final RouteObserver<PageRoute> routeObserver;
+  // final RouteObserver<PageRoute> routeObserver;
 
   @override
   Widget build(BuildContext context) {
@@ -58,10 +57,7 @@ class AppWrapper extends StatelessWidget {
         extensions: themeExtensions,
       ),
       home: builder,
-      routes: {
-        TrackDetailsScreen.routeName: (context) => const TrackDetailsScreen(),
-        AuthorScreen.routeName: (context) => const AuthorScreen(),
-      },
+      routes: appRoutes,
     );
   }
 }

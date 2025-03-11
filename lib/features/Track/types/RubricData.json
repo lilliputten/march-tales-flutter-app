@@ -1,0 +1,49 @@
+{
+    "id": 1,
+    "text": "Сказки",
+    "promote": true,
+    "track_ids": [
+        1,
+        2
+    ],
+    "authors": [
+        {
+            "id": 1,
+            "name": "Вильгельм Гауф",
+            "portrait_picture": "/media/samples/author-wilhelm-hauff-sq-200.jpg",
+            "promote": true,
+            "track_ids": [
+                1,
+                4,
+                5,
+                6
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Ханс Кристиан Андерсен",
+            "portrait_picture": "/media/samples/author-andersen-sq-200.jpg",
+            "promote": true,
+            "track_ids": [
+                2
+            ]
+        }
+    ],
+    "tags": [
+        {
+            "id": 1,
+            "promote": true,
+            "text": "Тест"
+        },
+        {
+            "id": 2,
+            "promote": false,
+            "text": "Пример"
+        },
+        {
+            "id": 2,
+            "promote": false,
+            "text": "Пример"
+        }
+    ]
+}

@@ -3,16 +3,15 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/PageWrapper.dart';
-import 'package:march_tales_app/app/RootScreen.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/constants/defaultAppRoute.dart';
-import 'package:march_tales_app/core/singletons/routeEvents.dart';
-import 'package:march_tales_app/core/types/RouteUpdate.dart';
-import 'package:march_tales_app/screens/AuthorScreen.dart';
+import 'package:march_tales_app/routes/buildRouteWidget.dart';
 import 'package:march_tales_app/screens/TrackDetailsScreen.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
@@ -27,10 +26,7 @@ const _initialRoute = _useDebugRoute && AppConfig.LOCAL ? _debugRoute : defaultA
 class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
-    required this.routeObserver,
   });
-
-  final RouteObserver<PageRoute> routeObserver;
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -47,52 +43,20 @@ class HomePageState extends State<HomePage> /* with RestorationMixin */ {
    * }
    */
 
-  _notifyRouteChanged(String routeName) {
-    // Safely update (in the future wrapper) the current route name
-    Future.delayed(Duration.zero, () {
-      final update = RouteUpdate(
-        type: RouteUpdateType.change,
-        name: routeName,
-      );
-      routeEvents.broadcast(update);
-    });
-  }
-
   _buildRoute(RouteSettings routeSettings) {
     try {
-      // logger.t('[HomePage:routeSettings] routeSettings=${routeSettings}');
-      final name = routeSettings.name ?? defaultAppRoute;
-      this._notifyRouteChanged(name);
-      // Construct proper screen...
-      switch (name) {
-        case TrackDetailsScreen.routeName:
-          return TrackDetailsScreen();
-        case AuthorScreen.routeName:
-          return AuthorScreen();
-        default:
-          return RootScreen(
-            routeObserver: this.widget.routeObserver,
-          );
-      }
+      return buildRouteWidget(this.context, routeSettings); // , this.widget.routeObserver);
     } catch (err, stacktrace) {
       logger.e('[HomePage] _buildRoute: Error: ${err}', error: err, stackTrace: stacktrace);
       debugger();
-      /* Future.delayed(Duration.zero, () {
-       *   if (context.mounted) {
-       *     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-       *       showCloseIcon: true,
-       *       backgroundColor: Colors.red,
-       *       content: Text(convertErrorLikeToString(err)),
-       *     ));
-       *   }
-       * });
-       */
       return AppErrorScreen(error: err);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+    final routeObserver = appState.getRouteObserver();
     return RestorationScope(
       restorationId: 'HomePage',
       child: PageWrapper(
@@ -101,14 +65,14 @@ class HomePageState extends State<HomePage> /* with RestorationMixin */ {
           canPop: false,
           onPopInvokedWithResult: (didPop, result) async {
             if (!didPop) {
+              final navigator = routeObserver.navigator;
               // Navigate with nested navigator...
-              final navigator = this.widget.routeObserver.navigator;
               navigator?.pop(result);
             }
           },
           child: Navigator(
             restorationScopeId: 'HomeNavigator',
-            observers: [this.widget.routeObserver],
+            observers: [routeObserver],
             key: navigatorKey,
             initialRoute: _initialRoute,
             onGenerateRoute: (routeSettings) {

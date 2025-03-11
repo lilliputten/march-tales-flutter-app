@@ -18,6 +18,12 @@ mixin NavigationState {
 
   // Navigation state...
 
+  RouteObserver<PageRoute> _routeObserver = RouteObserver<PageRoute>();
+
+  RouteObserver<PageRoute> getRouteObserver() {
+    return this._routeObserver;
+  }
+
   final List<ScrollController> scrollControllers = [defaultScrollController];
 
   void addScrollController(ScrollController value) {

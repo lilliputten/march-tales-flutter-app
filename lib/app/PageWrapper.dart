@@ -33,7 +33,6 @@ class PageWrapper extends StatefulWidget {
 }
 
 class PageWrapperState extends State<PageWrapper> {
-  // String _routeName = defaultAppRoute;
   bool _isRoot = true;
 
   @override
@@ -49,18 +48,14 @@ class PageWrapperState extends State<PageWrapper> {
   }
 
   _processRouteUpdate(RouteUpdate update) {
-    // final name = update.name;
     final type = update.type;
-    // logger.t('[PageWrapper:route] type=${type}'); // name=${name} routeName=${this._routeName}');
     if (type == RouteUpdateType.rootVisible) {
       setState(() {
         this._isRoot = true;
-        // this._routeName = name;
       });
     } else if (type == RouteUpdateType.rootHidden) {
       setState(() {
         this._isRoot = false;
-        // this._routeName = name;
       });
     }
   }
@@ -80,9 +75,6 @@ class PageWrapperState extends State<PageWrapper> {
 
     // XXX FUTURE: Detect the root status by history depth?
     final isRoot = this._isRoot;
-
-    // final scrollController = appState.getLastScrollController();
-    // logger.t('[PageWrapper:build] scrollController=${scrollController} scrollController=${appState.scrollControllers}');
 
     return RestorationScope(
       restorationId: 'PageWrapper',
