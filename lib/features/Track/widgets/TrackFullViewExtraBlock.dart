@@ -6,8 +6,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-import 'package:march_tales_app/features/Track/widgets/RubricsLinileList.dart';
-import 'package:march_tales_app/features/Track/widgets/TagsLinileList.dart';
+import 'package:march_tales_app/features/Track/widgets/RubricsInlineList.dart';
+import 'package:march_tales_app/features/Track/widgets/TagsInlineList.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackAuthorImageThumbnail.dart';
 import 'package:march_tales_app/screens/AuthorScreen.dart';
 import 'TrackFullViewExtraBlock.i18n.dart';
@@ -96,7 +96,7 @@ class TrackFullViewExtraBlock extends StatelessWidget {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text('Rubrics:'.i18n, style: style.copyWith(color: labelColor)),
-                RubricsLinileList(rubrics: track.rubrics, active: true),
+                RubricsInlineList(rubrics: track.rubrics, active: true),
               ],
             ),
       // Tags
@@ -107,7 +107,7 @@ class TrackFullViewExtraBlock extends StatelessWidget {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text('Tags:'.i18n, style: style.copyWith(color: labelColor)),
-                TagsLinileList(tags: track.tags, active: true),
+                TagsInlineList(tags: track.tags, active: true),
               ],
             ),
     ].nonNulls;

@@ -1,22 +1,21 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'package:march_tales_app/screens/RubricScreen.dart';
 
 final logger = Logger();
 
-class TagsLinileList extends StatelessWidget {
-  const TagsLinileList({
+class RubricsInlineList extends StatelessWidget {
+  const RubricsInlineList({
     super.key,
-    required this.tags,
+    required this.rubrics,
     this.small = false,
     this.active = false,
     this.color,
   });
-  final List<TrackTag> tags;
+  final List<TrackRubric> rubrics;
   final bool small;
   final bool active;
   final Color? color;
@@ -27,33 +26,30 @@ class TagsLinileList extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final basicColor = color ?? colorScheme.onSurface;
     final style = small ? theme.textTheme.bodySmall! : theme.textTheme.bodyMedium!;
-    final dimmedColor = basicColor.withValues(alpha: 0.25);
+    final borderColor = basicColor.withValues(alpha: 0.1);
     final textStyle = style.copyWith(color: basicColor);
-    final dimmedStyle = style.copyWith(color: dimmedColor);
     return Wrap(
         spacing: small ? 5 : 10,
         crossAxisAlignment: WrapCrossAlignment.center,
-        children: this.tags.map((tag) {
+        children: this.rubrics.map((rubric) {
           return InkWell(
             onTap: active
                 ? () {
-                    logger.d('[TagsLinileList] tagId=${tag.id}');
-                    debugger();
-                    /*
+                    // logger.d('[RubricsInlineList] rubricId=${rubric.id}');
                     Navigator.restorablePushNamed(
                       context,
-                      TagScreen.routeName,
-                      arguments: tag.id,
+                      RubricScreen.routeName,
+                      arguments: rubric.id,
                     );
-                    */
                   }
                 : null,
-            child: Wrap(
-              spacing: small ? 2 : 5,
-              children: [
-                Text('#', style: dimmedStyle),
-                Text(tag.text, style: textStyle),
-              ],
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: small ? 0 : 1, horizontal: small ? 3 : 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(4)),
+                border: Border.all(color: borderColor, width: 1),
+              ),
+              child: Text(rubric.text, style: textStyle),
             ),
           );
         }).toList());

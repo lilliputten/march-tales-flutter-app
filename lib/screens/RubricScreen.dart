@@ -9,6 +9,7 @@ import 'package:march_tales_app/components/LoadingSplash.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/features/Track/loaders/loadRubricDetails.dart';
 import 'package:march_tales_app/features/Track/types/Rubric.dart';
+import 'package:march_tales_app/features/Track/widgets/RubricDetails.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
 // import 'package:march_tales_app/features/Track/widgets/RubricDetails.dart';
@@ -119,8 +120,8 @@ class RubricItemFull extends StatelessWidget {
             controller: this.scrollController,
             child: Padding(
               padding: const EdgeInsets.all(10),
-              child: Text(this.rubric.text),
-              // child: RubricDetails(rubric: this.rubric, fullView: true),
+              // child: Text(this.rubric.text),
+              child: RubricDetails(rubric: this.rubric, fullView: true),
             ),
           ),
         ),

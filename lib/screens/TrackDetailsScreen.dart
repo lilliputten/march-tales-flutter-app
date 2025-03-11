@@ -7,10 +7,10 @@ import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/ScreenWrapper.dart';
 import 'package:march_tales_app/components/CustomBackButton.dart';
 import 'package:march_tales_app/components/LoadingSplash.dart';
+import 'package:march_tales_app/components/SectionTitle.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/features/Track/loaders/getTrackFromStateOrLoad.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-import 'package:march_tales_app/features/Track/widgets/AuthorDetails.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItem.dart';
 import 'package:march_tales_app/features/Track/widgets/TracksListByIds.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
@@ -137,7 +137,8 @@ class TrackItemFull extends StatelessWidget {
                       ? null
                       : Padding(
                           padding: const EdgeInsets.all(sidePadding),
-                          child: SectionTitle(text: "Other author's tracks".i18n),
+                          child:
+                              SectionTitle(text: '${"Other author's tracks".i18n} (${track.author.track_ids.length})'),
                         ),
                   track.author.track_ids.isEmpty
                       ? null

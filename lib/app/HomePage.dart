@@ -7,21 +7,13 @@ import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/PageWrapper.dart';
-import 'package:march_tales_app/core/config/AppConfig.dart';
-import 'package:march_tales_app/core/constants/defaultAppRoute.dart';
 import 'package:march_tales_app/routes/buildRouteWidget.dart';
-import 'package:march_tales_app/screens/TrackDetailsScreen.dart';
+import 'package:march_tales_app/routes/constants.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
 final navigatorKey = GlobalKey<NavigatorState>();
-
-// Enable debugging fake internal routes, see `_debugTrackId` in `TrackDetailsScreen.dart`
-const _useDebugRoute = false;
-const _debugRoute = TrackDetailsScreen.routeName;
-// const _debugRoute = AuthorScreen.routeName;
-const _initialRoute = _useDebugRoute && AppConfig.LOCAL ? _debugRoute : defaultAppRoute;
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -74,7 +66,7 @@ class HomePageState extends State<HomePage> /* with RestorationMixin */ {
             restorationScopeId: 'HomeNavigator',
             observers: [routeObserver],
             key: navigatorKey,
-            initialRoute: _initialRoute,
+            initialRoute: initialRoute,
             onGenerateRoute: (routeSettings) {
               // Pages generator...
               return MaterialPageRoute(

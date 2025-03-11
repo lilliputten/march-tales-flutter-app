@@ -6,8 +6,8 @@ import 'package:logger/logger.dart';
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/core/helpers/formats.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-import 'package:march_tales_app/features/Track/widgets/RubricsLinileList.dart';
-import 'package:march_tales_app/features/Track/widgets/TagsLinileList.dart';
+import 'package:march_tales_app/features/Track/widgets/RubricsInlineList.dart';
+import 'package:march_tales_app/features/Track/widgets/TagsInlineList.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackAuthorImageThumbnail.dart';
 
 final logger = Logger();
@@ -79,9 +79,9 @@ class TrackItemDetailsInlineInfo extends StatelessWidget {
       // Rubrics
       this.fullView || track.rubrics.isEmpty
           ? null
-          : RubricsLinileList(rubrics: track.rubrics, small: true, color: basicColor),
+          : RubricsInlineList(rubrics: track.rubrics, small: true, color: basicColor),
       // Tags
-      this.fullView || track.tags.isEmpty ? null : TagsLinileList(tags: track.tags, small: true, color: basicColor),
+      this.fullView || track.tags.isEmpty ? null : TagsInlineList(tags: track.tags, small: true, color: basicColor),
       !isFavorite || asFavorite || fullView ? null : Icon(Icons.favorite, size: style.fontSize, color: iconColor),
     ].nonNulls;
 
