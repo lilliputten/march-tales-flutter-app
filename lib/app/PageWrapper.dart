@@ -39,6 +39,7 @@ class PageWrapperState extends State<PageWrapper> {
 
   @override
   void dispose() {
+    routeEvents.unsubscribe(this._processRouteUpdate);
     super.dispose();
   }
 

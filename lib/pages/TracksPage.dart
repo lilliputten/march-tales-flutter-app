@@ -83,6 +83,7 @@ class TracksPage extends StatelessWidget {
             tracks: tracks,
             count: appState.availableTracksCount,
             isLoading: tracksIsLoading,
+            useScrollController: true,
             onRefresh: () async {
               await appState.reloadTracks();
             },

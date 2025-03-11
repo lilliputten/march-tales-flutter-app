@@ -7,32 +7,32 @@ import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/ScreenWrapper.dart';
 import 'package:march_tales_app/components/LoadingSplash.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
-import 'package:march_tales_app/features/Track/loaders/getTrackFromStateOrLoad.dart';
-import 'package:march_tales_app/features/Track/types/Track.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackItem.dart';
+import 'package:march_tales_app/features/Track/loaders/loadAuthorDetails.dart';
+import 'package:march_tales_app/features/Track/types/Author.dart';
+import 'package:march_tales_app/features/Track/widgets/AuthorDetails.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
-const _routeName = '/TrackDetailsScreen';
+const _routeName = '/AuthorScreen';
 
-const _debugTrackId = 1;
+const _debugAuthorId = 1;
 
-class TrackDetailsScreen extends StatefulWidget {
-  const TrackDetailsScreen({
+class AuthorScreen extends StatefulWidget {
+  const AuthorScreen({
     super.key,
   });
 
   static const routeName = _routeName;
 
   @override
-  State<TrackDetailsScreen> createState() => TrackDetailsScreenState();
+  State<AuthorScreen> createState() => AuthorScreenState();
 }
 
 @pragma('vm:entry-point')
-class TrackDetailsScreenState extends State<TrackDetailsScreen> {
+class AuthorScreenState extends State<AuthorScreen> {
   late AppState _appState;
-  late Future<Track> dataFuture;
+  late Future<Author> dataFuture;
   final ScrollController scrollController = new ScrollController();
 
   @override
@@ -54,28 +54,22 @@ class TrackDetailsScreenState extends State<TrackDetailsScreen> {
 
   @override
   void didChangeDependencies() {
-    final int id = this._getTrackId();
+    final int id = this._getAuthorId();
     super.didChangeDependencies();
-    final appState = context.read<AppState>();
-    this.dataFuture = getTrackFromStateOrLoad(id, appState: appState);
-    /* // DEBUG
-     * this.dataFuture = Future.delayed(Duration(seconds: 1), () {
-     *   return 'Track ${id}';
-     * });
-     */
+    this.dataFuture = loadAuthorDetails(id);
   }
 
-  int _getTrackId() {
+  int _getAuthorId() {
     try {
       final int? id = ModalRoute.of(context)?.settings.arguments as int?;
       if (id == null) {
-        throw Exception('No track id has been passed for TrackDetailsScreen');
+        throw Exception('No author id has been passed for AuthorScreen');
       }
       return id;
     } catch (err) {
       if (AppConfig.LOCAL) {
         // Return demo id for debug purposes
-        return _debugTrackId;
+        return _debugAuthorId;
       }
       rethrow;
     }
@@ -92,8 +86,8 @@ class TrackDetailsScreenState extends State<TrackDetailsScreen> {
             return AppErrorScreen(error: snapshot.error);
           }
           if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
-            final track = snapshot.data!;
-            return TrackItemFull(track: track, scrollController: scrollController);
+            final author = snapshot.data!;
+            return AuthorItemFull(author: author, scrollController: scrollController);
           } else {
             return LoadingSplash();
           }
@@ -103,27 +97,28 @@ class TrackDetailsScreenState extends State<TrackDetailsScreen> {
   }
 }
 
-class TrackItemFull extends StatelessWidget {
-  const TrackItemFull({
+class AuthorItemFull extends StatelessWidget {
+  const AuthorItemFull({
     super.key,
-    required this.track,
+    required this.author,
     required this.scrollController,
   });
 
-  final Track track;
+  final Author author;
   final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      // mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: SingleChildScrollView(
+            restorationId: 'AuthorItemFull-${this.author.id}',
             controller: this.scrollController,
             child: Padding(
               padding: const EdgeInsets.all(10),
-              child: TrackItem(track: this.track, fullView: true),
+              child: AuthorDetails(author: this.author, fullView: true),
             ),
           ),
         ),

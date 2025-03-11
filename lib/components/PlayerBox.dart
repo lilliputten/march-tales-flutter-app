@@ -493,7 +493,7 @@ class PlayerBoxState extends State<PlayerBox> {
         stream: player.playerStateStream,
         builder: (context, AsyncSnapshot snapshot) {
           return PlayerWrapper(
-            key: Key('PlayerWrapper_${track.id}'),
+            key: Key('PlayerWrapper-${track.id}'),
             track: track,
             playSeek: this.playSeek,
             playSeekBackward: this.playSeekBackward,

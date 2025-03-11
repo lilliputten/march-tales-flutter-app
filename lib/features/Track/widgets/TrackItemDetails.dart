@@ -25,37 +25,13 @@ class TrackTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // final double basicAlpha = isAlreadyPlayed ? 0.3 : 1;
-    final basicColor = textColor; // .withValues(alpha: basicAlpha);
+    final basicColor = textColor;
     final style = theme.textTheme.bodyLarge!.copyWith(color: basicColor);
     String text = track.title;
     if (AppConfig.LOCAL) {
       text += ' (${track.id})';
     }
     return Text(text, style: style);
-  }
-}
-
-class TrackDescription extends StatelessWidget {
-  const TrackDescription({
-    super.key,
-    required this.track,
-    required this.isActiveTrack,
-    required this.isAlreadyPlayed,
-    required this.textColor,
-  });
-  final Track track;
-  final bool isActiveTrack;
-  final bool isAlreadyPlayed;
-  final Color textColor;
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    // final style = theme.textTheme.bodySmall!;
-    // final double basicAlpha = isAlreadyPlayed ? 0.3 : 1;
-    final basicColor = textColor; // .withValues(alpha: basicAlpha);
-    final style = theme.textTheme.bodyMedium!.copyWith(color: basicColor);
-    return Text(track.description, style: style);
   }
 }
 

@@ -12,10 +12,12 @@ final formatter = YamlFormatter();
 
 class TrackAuthor {
   final int id;
+  final bool promote;
   final String name;
   final String portrait_picture;
   const TrackAuthor({
     required this.id,
+    required this.promote,
     required this.name,
     required this.portrait_picture,
   });
@@ -23,6 +25,7 @@ class TrackAuthor {
     try {
       return TrackAuthor(
         id: json['id'],
+        promote: json['promote'] as bool,
         name: json['name'].toString(),
         portrait_picture: json['portrait_picture'].toString(),
       );
@@ -41,15 +44,18 @@ class TrackAuthor {
 
 class TrackTag {
   final int id;
+  final bool promote;
   final String text;
   const TrackTag({
     required this.id,
+    required this.promote,
     required this.text,
   });
   factory TrackTag.fromJson(Map<String, dynamic> json) {
     try {
       return TrackTag(
         id: json['id'],
+        promote: json['promote'],
         text: json['text'].toString(),
       );
     } catch (err, stacktrace) {
@@ -67,15 +73,18 @@ class TrackTag {
 
 class TrackRubric {
   final int id;
+  final bool promote;
   final String text;
   const TrackRubric({
     required this.id,
+    required this.promote,
     required this.text,
   });
   factory TrackRubric.fromJson(Map<String, dynamic> json) {
     try {
       return TrackRubric(
         id: json['id'],
+        promote: json['promote'],
         text: json['text'].toString(),
       );
     } catch (err, stacktrace) {
@@ -136,7 +145,7 @@ class Track {
 
   @override
   String toString() {
-    return 'Track ${id} (${title})';
+    return 'Track(id=${id}, title=${title})';
   }
 
   factory Track.fromJson(Map<String, dynamic> json) {

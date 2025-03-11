@@ -62,6 +62,7 @@ class FavoriteTracksPage extends StatelessWidget {
             count: tracks.length,
             isLoading: isFavoritesLoading,
             asFavorite: true,
+            useScrollController: true,
             onRefresh: () async {
               await appState.loadFavorites();
             },

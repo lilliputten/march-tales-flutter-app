@@ -6,6 +6,8 @@ import 'package:logger/logger.dart';
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/core/helpers/formats.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'package:march_tales_app/features/Track/widgets/RubricsLinileList.dart';
+import 'package:march_tales_app/features/Track/widgets/TagsLinileList.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackAuthorImageThumbnail.dart';
 
 final logger = Logger();
@@ -37,13 +39,12 @@ class TrackItemDetailsInlineInfo extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final AppColors appColors = theme.extension<AppColors>()!;
     final iconColor = appColors.brandColor;
-    // final dimmedColor = appColors.brandColor.withValues(alpha: 0.5);
     final style = theme.textTheme.bodySmall!;
-    final double basicAlpha = 1; // isAlreadyPlayed ? 0.3 : 1;
+    final double basicAlpha = 1;
     final double secondAlpha = basicAlpha / 4;
     final double thirdAlpha = basicAlpha / 10;
     final basicColorBase = textColor ?? (isActiveTrack ? colorScheme.primary : colorScheme.onSurface);
-    final basicColor = basicColorBase; // .withValues(alpha: basicAlpha);
+    final basicColor = basicColorBase;
     final dimmedColor = basicColor.withValues(alpha: secondAlpha);
     final delimiterColor = basicColor.withValues(alpha: thirdAlpha);
     final textStyle = style.copyWith(color: basicColor);
@@ -60,64 +61,26 @@ class TrackItemDetailsInlineInfo extends StatelessWidget {
       track.played_count == 0
           ? null
           : Wrap(spacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
-              Icon(
-                Icons.headphones_outlined,
-                size: style.fontSize,
-                color: dimmedColor,
-              ),
+              Icon(Icons.headphones_outlined, size: style.fontSize, color: dimmedColor),
               Text(track.played_count.toString(), style: textStyle),
             ]),
       // Duration
       Wrap(spacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
-        Icon(
-          Icons.watch_later_outlined,
-          size: style.fontSize,
-          color: dimmedColor,
-        ),
+        Icon(Icons.watch_later_outlined, size: style.fontSize, color: dimmedColor),
         Text(formatDuration(track.duration), style: textStyle),
       ]),
       // Date
       Wrap(spacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
-        Icon(
-          Icons.calendar_month,
-          size: style.fontSize,
-          color: dimmedColor,
-        ),
+        Icon(Icons.calendar_month, size: style.fontSize, color: dimmedColor),
         Text(formatDate(DateTime.parse(track.published_at), context.locale.languageCode), style: textStyle),
       ]),
       // Rubrics
       this.fullView || track.rubrics.isEmpty
           ? null
-          : Wrap(
-              spacing: 3,
-              children: track.rubrics.map((tag) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 3),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
-                    border: Border.all(color: delimiterColor, width: 1),
-                  ),
-                  child: Text(tag.text, style: textStyle),
-                );
-              }).toList()),
+          : RubricsLinileList(rubrics: track.rubrics, small: true, color: basicColor),
       // Tags
-      this.fullView || track.tags.isEmpty
-          ? null
-          : Wrap(
-              spacing: 3,
-              children: track.tags.map((tag) {
-                return Wrap(spacing: 2, children: [
-                  Text('#', style: style.copyWith(color: dimmedColor)),
-                  Text(tag.text, style: textStyle),
-                ]);
-              }).toList()),
-      !isFavorite || asFavorite
-          ? null
-          : Icon(
-              Icons.favorite,
-              size: style.fontSize,
-              color: iconColor,
-            ),
+      this.fullView || track.tags.isEmpty ? null : TagsLinileList(tags: track.tags, small: true, color: basicColor),
+      !isFavorite || asFavorite ? null : Icon(Icons.favorite, size: style.fontSize, color: iconColor),
     ].nonNulls;
 
     // Add delimiters between each other item

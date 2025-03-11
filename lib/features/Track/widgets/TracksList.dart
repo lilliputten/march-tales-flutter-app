@@ -16,21 +16,16 @@ class MoreButton extends StatelessWidget {
   const MoreButton({
     super.key,
     required this.isLoading,
-    // this.onRefresh,
     this.onLoadNext,
   });
 
   final bool isLoading;
-  // final RefreshCallback? onRefresh;
   final void Function()? onLoadNext;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // final AppColors appColors = theme.extension<AppColors>()!;
     final buttonColorTheme = theme.buttonTheme.colorScheme!;
-    // final tracksIsLoading = appState.tracksIsLoading;
-    // final baseColor = appColors.brandColor;
     final baseColor = buttonColorTheme.primary;
     final color = isLoading ? baseColor.withValues(alpha: 0.5) : baseColor;
     const double iconSize = 20;
@@ -59,6 +54,7 @@ class TracksList extends StatefulWidget {
     required this.tracks,
     required this.count,
     required this.isLoading,
+    this.useScrollController = false,
     this.asFavorite = false,
     this.onRefresh,
     this.onLoadNext,
@@ -68,6 +64,7 @@ class TracksList extends StatefulWidget {
   final int count;
   final bool isLoading;
   final bool asFavorite;
+  final bool useScrollController;
   final RefreshCallback? onRefresh;
   final void Function()? onLoadNext;
 
@@ -83,16 +80,20 @@ class TracksListState extends State<TracksList> {
   void initState() {
     super.initState();
     this._appState = context.read<AppState>();
-    Future.delayed(Duration.zero, () {
-      this._appState.addScrollController(this.scrollController);
-    });
+    if (this.widget.useScrollController) {
+      Future.delayed(Duration.zero, () {
+        this._appState.addScrollController(this.scrollController);
+      });
+    }
   }
 
   @override
   void dispose() {
-    Future.delayed(Duration.zero, () {
-      this._appState.removeScrollController(this.scrollController);
-    });
+    if (this.widget.useScrollController) {
+      Future.delayed(Duration.zero, () {
+        this._appState.removeScrollController(this.scrollController);
+      });
+    }
     super.dispose();
   }
 
@@ -101,12 +102,7 @@ class TracksListState extends State<TracksList> {
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
 
-    final tracksCount = this.widget.tracks.length;
-    final hasMoreTracks = this.widget.count > tracksCount;
-    final showItems = hasMoreTracks ? tracksCount + 1 : tracksCount;
-
     final keyId = this.widget.asFavorite ? 'FavoritesList' : 'TracksList';
-    final listKey = PageStorageKey<String>(keyId);
 
     return RefreshIndicator(
       color: appColors.brandColor,
@@ -116,20 +112,71 @@ class TracksListState extends State<TracksList> {
           await this.widget.onRefresh!();
         }
       },
-      child: ListView.separated(
-        key: listKey,
-        controller: this.scrollController,
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        separatorBuilder: (context, index) => SizedBox(height: 5),
-        itemCount: showItems,
-        itemBuilder: (context, i) {
-          if (i == tracksCount) {
-            return MoreButton(onLoadNext: this.widget.onLoadNext, isLoading: this.widget.isLoading);
-          } else {
-            return TrackItem(track: this.widget.tracks[i], asFavorite: this.widget.asFavorite);
-          }
-        },
+      child: TracksListView(
+        keyId: keyId,
+        tracks: this.widget.tracks,
+        count: this.widget.count,
+        isLoading: this.widget.isLoading,
+        useScrollController: this.widget.useScrollController,
+        scrollController: this.widget.useScrollController ? this.scrollController : null,
+        asFavorite: this.widget.asFavorite,
+        onRefresh: this.widget.onRefresh,
+        onLoadNext: this.widget.onLoadNext,
       ),
+    );
+  }
+}
+
+class TracksListView extends StatelessWidget {
+  final List<Track> tracks;
+  final String? keyId;
+
+  /// Total available track count
+  final int count;
+  final bool isLoading;
+  final bool asFavorite;
+  final bool useScrollController;
+  final ScrollController? scrollController;
+  final RefreshCallback? onRefresh;
+  final void Function()? onLoadNext;
+
+  const TracksListView({
+    super.key,
+    this.keyId,
+    required this.tracks,
+    required this.count,
+    required this.isLoading,
+    this.useScrollController = false,
+    this.scrollController,
+    this.asFavorite = false,
+    this.onRefresh,
+    this.onLoadNext,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tracksCount = this.tracks.length;
+    final hasMoreTracks = this.count > tracksCount;
+    final showItems = hasMoreTracks ? tracksCount + 1 : tracksCount;
+
+    final resolvedKeyId = this.keyId ?? (this.asFavorite ? 'FavoritesList' : 'TracksList');
+    final listKey = PageStorageKey<String>(resolvedKeyId);
+
+    return ListView.separated(
+      key: listKey,
+      // scrollDirection: Axis.vertical,
+      // shrinkWrap: true,
+      controller: this.scrollController,
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      separatorBuilder: (context, index) => SizedBox(height: 5),
+      itemCount: showItems,
+      itemBuilder: (context, i) {
+        if (i == tracksCount) {
+          return MoreButton(onLoadNext: this.onLoadNext, isLoading: this.isLoading);
+        } else {
+          return TrackItem(track: this.tracks[i], asFavorite: this.asFavorite);
+        }
+      },
     );
   }
 }

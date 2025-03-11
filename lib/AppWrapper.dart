@@ -7,7 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
-import 'package:march_tales_app/pages/TrackDetailsScreen.dart';
+import 'package:march_tales_app/screens/AuthorScreen.dart';
+import 'package:march_tales_app/screens/TrackDetailsScreen.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
 
@@ -59,6 +60,7 @@ class AppWrapper extends StatelessWidget {
       home: builder,
       routes: {
         TrackDetailsScreen.routeName: (context) => const TrackDetailsScreen(),
+        AuthorScreen.routeName: (context) => const AuthorScreen(),
       },
     );
   }

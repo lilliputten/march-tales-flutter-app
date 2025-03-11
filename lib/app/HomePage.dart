@@ -11,7 +11,8 @@ import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/constants/defaultAppRoute.dart';
 import 'package:march_tales_app/core/singletons/routeEvents.dart';
 import 'package:march_tales_app/core/types/RouteUpdate.dart';
-import 'package:march_tales_app/pages/TrackDetailsScreen.dart';
+import 'package:march_tales_app/screens/AuthorScreen.dart';
+import 'package:march_tales_app/screens/TrackDetailsScreen.dart';
 
 final logger = Logger();
 
@@ -19,6 +20,9 @@ final navigatorKey = GlobalKey<NavigatorState>();
 
 // Enable debugging fake internal routes, see `_debugTrackId` in `TrackDetailsScreen.dart`
 const _useDebugRoute = false;
+// const _debugRoute = TrackDetailsScreen.routeName;
+const _debugRoute = AuthorScreen.routeName;
+const _initialRoute = _useDebugRoute && AppConfig.LOCAL ? _debugRoute : defaultAppRoute;
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -39,8 +43,7 @@ class HomePageState extends State<HomePage> /* with RestorationMixin */ {
    * @override
    * void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
    *   // Register the `RestorableRouteFuture` with the state restoration framework.
-   *   registerForRestoration(_counterRoute, 'route');
-   *   registerForRestoration(_lastCount, 'count');
+   *   registerForRestoration(navigatorStateValue, 'navigatorStateValue'); // Retrieve and store navigatorStateValue
    * }
    */
 
@@ -64,6 +67,8 @@ class HomePageState extends State<HomePage> /* with RestorationMixin */ {
       switch (name) {
         case TrackDetailsScreen.routeName:
           return TrackDetailsScreen();
+        case AuthorScreen.routeName:
+          return AuthorScreen();
         default:
           return RootScreen(
             routeObserver: this.widget.routeObserver,
@@ -88,7 +93,6 @@ class HomePageState extends State<HomePage> /* with RestorationMixin */ {
 
   @override
   Widget build(BuildContext context) {
-    final initialRoute = _useDebugRoute && AppConfig.LOCAL ? TrackDetailsScreen.routeName : defaultAppRoute;
     return RestorationScope(
       restorationId: 'HomePage',
       child: PageWrapper(
@@ -106,7 +110,7 @@ class HomePageState extends State<HomePage> /* with RestorationMixin */ {
             restorationScopeId: 'HomeNavigator',
             observers: [this.widget.routeObserver],
             key: navigatorKey,
-            initialRoute: initialRoute,
+            initialRoute: _initialRoute,
             onGenerateRoute: (routeSettings) {
               // Pages generator...
               return MaterialPageRoute(
