@@ -5,6 +5,7 @@ import 'package:logger/logger.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
+import 'package:march_tales_app/components/CustomBackButton.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/features/Track/types/Author.dart';
 import 'package:march_tales_app/features/Track/widgets/RubricsLinileList.dart';
@@ -27,7 +28,10 @@ class AuthorTitle extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textColor = colorScheme.onSurface;
-    final style = theme.textTheme.bodyLarge!.copyWith(color: textColor);
+    final style = theme.textTheme.bodyLarge!.copyWith(
+      fontWeight: FontWeight.bold,
+      color: textColor,
+    );
     String text = author.name;
     if (AppConfig.LOCAL) {
       text += ' (${author.id})';
@@ -91,8 +95,10 @@ class AuthorImageThumbnail extends StatelessWidget {
   }
 }
 
-class AuthorDetails extends StatelessWidget {
-  const AuthorDetails({
+const double sidePadding = 5;
+
+class AuthorDetailsInfo extends StatelessWidget {
+  const AuthorDetailsInfo({
     super.key,
     required this.author,
     this.fullView = false,
@@ -104,20 +110,19 @@ class AuthorDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final AppColors appColors = theme.extension<AppColors>()!;
     final colorScheme = theme.colorScheme;
     final style = theme.textTheme.bodyMedium!;
-    final double basicAlpha = 1; // isAlreadyPlayed ? 0.3 : 1;
+    final double basicAlpha = 1;
     final double labelAlpha = basicAlpha / 2;
     final textColor = colorScheme.onSurface;
     final labelColor = textColor.withValues(alpha: labelAlpha);
-    final headerStyle = theme.textTheme.bodyLarge!.copyWith(color: appColors.brandColor);
 
     return Column(
       spacing: 10,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AuthorImageThumbnail(author: author),
+        SizedBox(height: 1),
         AuthorTitle(author: author),
         AuthorDescription(author: author),
         // Rubrics
@@ -142,15 +147,81 @@ class AuthorDetails extends StatelessWidget {
                   TagsLinileList(tags: author.tags, active: true),
                 ],
               ),
-        // TODO: Show tracks list from `author.track_ids`
-        Padding(
-          // padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-          padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-          child: Text("All author's tracks".i18n, style: headerStyle),
+      ].nonNulls.toList(),
+    );
+  }
+}
+
+class SectionTitle extends StatelessWidget {
+  final String text;
+
+  const SectionTitle({
+    super.key,
+    required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final AppColors appColors = theme.extension<AppColors>()!;
+    final colorScheme = theme.colorScheme;
+    final textColor = colorScheme.onSurface;
+    final headerStyle = theme.textTheme.bodyLarge!.copyWith(
+      fontWeight: FontWeight.bold,
+      color: textColor,
+    );
+
+    return Column(
+      spacing: 5,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(this.text.toUpperCase(), style: headerStyle),
+        ColoredBox(
+          color: appColors.brandColor,
+          child: SizedBox(height: 3, width: 100),
         ),
-        TracksListByIds(
-          ids: author.track_ids,
-          useScrollController: false,
+      ],
+    );
+  }
+}
+
+class AuthorDetails extends StatelessWidget {
+  const AuthorDetails({
+    super.key,
+    required this.author,
+    this.fullView = false,
+  });
+
+  final Author author;
+  final bool fullView;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      spacing: 10,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: EdgeInsets.all(5),
+          child: AuthorDetailsInfo(author: author, fullView: fullView),
+        ),
+        // Show tracks list from `author.track_ids`
+        author.track_ids.isEmpty
+            ? null
+            : Padding(
+                padding: const EdgeInsets.all(sidePadding),
+                child: SectionTitle(text: "All author's tracks".i18n),
+              ),
+        author.track_ids.isEmpty
+            ? null
+            : TracksListByIds(
+                ids: author.track_ids,
+                useScrollController: false,
+                compact: true,
+              ),
+        Padding(
+          padding: const EdgeInsets.all(sidePadding),
+          child: CustomBackButton(),
         ),
       ].nonNulls.toList(),
     );

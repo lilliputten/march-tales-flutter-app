@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:march_tales_app/Init.dart';
+import 'package:march_tales_app/app/AppColors.dart';
+import 'package:march_tales_app/components/CustomBackButton.dart';
 import 'package:march_tales_app/components/LoginButton.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
@@ -156,10 +158,12 @@ class AppInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final style = theme.textTheme.bodySmall!;
+    final AppColors appColors = theme.extension<AppColors>()!;
     final linkStyle = style.copyWith(
       decoration: TextDecoration.underline,
-      color: Colors.blue,
-      decorationColor: Colors.blue,
+      color: appColors.brandColor, // Colors.blue,
+      decorationColor: appColors.brandColor,
+      fontWeight: FontWeight.bold,
     );
 
     final appVersion = Init.appVersion;
@@ -294,8 +298,11 @@ class AuthInfo extends StatelessWidget {
     final userName = appState.getUserName();
 
     final theme = Theme.of(context);
-    final style = theme.textTheme.bodySmall!;
-    final ButtonStyle buttonStyle = ElevatedButton.styleFrom(textStyle: style);
+    final style = theme.textTheme.bodyMedium!.copyWith(color: appColors.onBrandColor);
+    final ButtonStyle buttonStyle = TextButton.styleFrom(
+      textStyle: style,
+      backgroundColor: appColors.brandColor,
+    );
 
     logout() async {
       final String signoutUrl = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/logout/';
@@ -331,10 +338,11 @@ class AuthInfo extends StatelessWidget {
         ),
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton(
+          child: FilledButton.icon(
             style: buttonStyle,
             onPressed: logout,
-            child: Text('Log out'.i18n),
+            icon: Icon(Icons.logout, color: appColors.onBrandColor),
+            label: Text('Log out'.i18n, style: style),
           ),
         ),
       ],
@@ -357,8 +365,8 @@ class AuthBlock extends StatelessWidget {
   }
 }
 
-class SectionTitle extends StatelessWidget {
-  const SectionTitle({
+class SettingsSectionTitle extends StatelessWidget {
+  const SettingsSectionTitle({
     super.key,
     required this.title,
   });
@@ -368,14 +376,16 @@ class SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final AppColors appColors = theme.extension<AppColors>()!;
     final textStyle = theme.textTheme.bodyLarge!.copyWith(
-      color: colorScheme.primary,
+      color: appColors.brandColor, // colorScheme.primary,
+      fontWeight: FontWeight.bold,
     );
-    final delimiterColor = colorScheme.onSurface.withValues(alpha: 0.2);
+    final delimiterColor = colorScheme.onSurface.withValues(alpha: 0.1);
     return Container(
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(width: 1.5, color: delimiterColor),
+          bottom: BorderSide(width: 1, color: delimiterColor),
         ),
       ),
       child: Padding(
@@ -395,13 +405,15 @@ class SettingsWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SectionTitle(title: 'Basic settings'.i18n),
+          SettingsSectionTitle(title: 'Basic settings'.i18n),
           LanguageSelector(),
           ThemeSelector(),
-          SectionTitle(title: 'Authorization'.i18n),
+          SettingsSectionTitle(title: 'Authorization'.i18n),
           AuthBlock(),
-          SectionTitle(title: 'Application info'.i18n),
+          SettingsSectionTitle(title: 'Application info'.i18n),
           AppInfo(),
+          // SizedBox(height: 5),
+          CustomBackButton(isRoot: true),
         ],
       ),
     );

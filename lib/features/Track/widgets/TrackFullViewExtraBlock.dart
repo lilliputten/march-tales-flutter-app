@@ -5,7 +5,6 @@ import 'package:logger/logger.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
-import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/RubricsLinileList.dart';
 import 'package:march_tales_app/features/Track/widgets/TagsLinileList.dart';
@@ -65,7 +64,8 @@ class TrackFullViewExtraBlock extends StatelessWidget {
 
     final items = [
       // Description
-      AppConfig.LOCAL ? null : TrackDescription(track: track),
+      // AppConfig.LOCAL ? null :
+      TrackDescription(track: track),
       // Author
       InkWell(
         onTap: () {
@@ -77,7 +77,7 @@ class TrackFullViewExtraBlock extends StatelessWidget {
           );
         },
         child: Wrap(
-          spacing: 6,
+          spacing: 8,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             TrackAuthorImageThumbnail(

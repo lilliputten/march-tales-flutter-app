@@ -22,6 +22,7 @@ class TrackItemAsRow extends TrackItemBase {
     required super.isFavorite,
     super.asFavorite,
     super.fullView,
+    super.compact,
     required super.onClick,
   });
 

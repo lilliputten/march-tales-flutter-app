@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
@@ -27,6 +29,7 @@ class TrackItemAsCard extends TrackItemBase {
     required super.isFavorite,
     super.asFavorite,
     super.fullView,
+    super.compact,
     super.onClick,
   });
 
@@ -36,14 +39,14 @@ class TrackItemAsCard extends TrackItemBase {
 
     final double opacity = isAlreadyPlayed ? 0.5 : 1;
 
-    final double width = MediaQuery.sizeOf(context).width;
+    final double screenWidth = MediaQuery.sizeOf(context).width;
     final double height = MediaQuery.sizeOf(context).height;
-    final showVertical = height >= width;
+    final showVertical = height >= screenWidth && !this.compact;
 
     // Build track info widget items list...
     final itemsList = showVertical
         ? _trackItemAsCardItemsVertical(
-            width: showVertical ? width : width / 3,
+            width: screenWidth,
             detailsOpacity: opacity,
             appState: appState,
             track: track,
@@ -54,9 +57,10 @@ class TrackItemAsCard extends TrackItemBase {
             isFavorite: isFavorite,
             asFavorite: asFavorite,
             fullView: fullView,
+            compact: compact,
           )
         : _trackItemAsCardItemsHorizontal(
-            width: width,
+            width: screenWidth,
             detailsOpacity: opacity,
             appState: appState,
             track: track,
@@ -67,6 +71,7 @@ class TrackItemAsCard extends TrackItemBase {
             isFavorite: isFavorite,
             asFavorite: asFavorite,
             fullView: fullView,
+            compact: compact,
           );
 
     // Build wrapper...
@@ -115,6 +120,7 @@ List<Widget> _trackItemAsCardDetailItems({
   required final bool isFavorite,
   final bool asFavorite = false,
   final bool fullView = false,
+  final bool compact = false,
   final bool vertical = false,
 }) {
   // final double height = width / previewDimensionsRatio;
@@ -135,6 +141,7 @@ List<Widget> _trackItemAsCardDetailItems({
               isFavorite: isFavorite,
               asFavorite: asFavorite,
               fullView: fullView,
+              compact: compact,
             ),
           ),
           vertical || !fullView ? null : TrackFullViewExtraBlock(track: track)
@@ -166,10 +173,12 @@ List<Widget> _trackItemAsCardItemsHorizontal({
   required final bool isFavorite,
   final bool asFavorite = false,
   final bool fullView = false,
+  final bool compact = false,
 }) {
   // final double height = width / previewDimensionsRatio;
+  final double thumbWidth = min(200, width / 5);
   return [
-    TrackImageThumbnail(track: track, height: 100),
+    TrackImageThumbnail(track: track, width: thumbWidth),
     ..._trackItemAsCardDetailItems(
       width: width,
       detailsOpacity: detailsOpacity,
@@ -182,6 +191,7 @@ List<Widget> _trackItemAsCardItemsHorizontal({
       isFavorite: isFavorite,
       asFavorite: asFavorite,
       fullView: fullView,
+      compact: compact,
       vertical: false,
     ),
     // TrackFullViewExtraBlock(track: track),
@@ -200,6 +210,7 @@ List<Widget> _trackItemAsCardItemsVertical({
   required final bool isFavorite,
   final bool asFavorite = false,
   final bool fullView = false,
+  final bool compact = false,
 }) {
   final double height = (width - _screenHorizontalPadding * 2) / previewDimensionsRatio;
   return [
@@ -220,6 +231,7 @@ List<Widget> _trackItemAsCardItemsVertical({
         isFavorite: isFavorite,
         asFavorite: asFavorite,
         fullView: fullView,
+        compact: compact,
         vertical: true,
       ),
     ),

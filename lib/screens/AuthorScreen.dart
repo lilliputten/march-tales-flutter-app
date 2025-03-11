@@ -18,6 +18,7 @@ const _routeName = '/AuthorScreen';
 
 const _debugAuthorId = 1;
 
+@pragma('vm:entry-point')
 class AuthorScreen extends StatefulWidget {
   const AuthorScreen({
     super.key,
@@ -29,7 +30,6 @@ class AuthorScreen extends StatefulWidget {
   State<AuthorScreen> createState() => AuthorScreenState();
 }
 
-@pragma('vm:entry-point')
 class AuthorScreenState extends State<AuthorScreen> {
   late AppState _appState;
   late Future<Author> dataFuture;

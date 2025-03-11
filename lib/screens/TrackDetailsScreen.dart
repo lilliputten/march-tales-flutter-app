@@ -5,12 +5,16 @@ import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/ScreenWrapper.dart';
+import 'package:march_tales_app/components/CustomBackButton.dart';
 import 'package:march_tales_app/components/LoadingSplash.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/features/Track/loaders/getTrackFromStateOrLoad.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'package:march_tales_app/features/Track/widgets/AuthorDetails.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItem.dart';
+import 'package:march_tales_app/features/Track/widgets/TracksListByIds.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
+import 'TrackDetailsScreen.i18n.dart';
 
 final logger = Logger();
 
@@ -18,6 +22,9 @@ const _routeName = '/TrackDetailsScreen';
 
 const _debugTrackId = 1;
 
+const double sidePadding = 5;
+
+@pragma('vm:entry-point')
 class TrackDetailsScreen extends StatefulWidget {
   const TrackDetailsScreen({
     super.key,
@@ -29,7 +36,6 @@ class TrackDetailsScreen extends StatefulWidget {
   State<TrackDetailsScreen> createState() => TrackDetailsScreenState();
 }
 
-@pragma('vm:entry-point')
 class TrackDetailsScreenState extends State<TrackDetailsScreen> {
   late AppState _appState;
   late Future<Track> dataFuture;
@@ -122,7 +128,30 @@ class TrackItemFull extends StatelessWidget {
             controller: this.scrollController,
             child: Padding(
               padding: const EdgeInsets.all(10),
-              child: TrackItem(track: this.track, fullView: true),
+              child: Column(
+                spacing: 10,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TrackItem(track: this.track, fullView: true),
+                  track.author.track_ids.isEmpty
+                      ? null
+                      : Padding(
+                          padding: const EdgeInsets.all(sidePadding),
+                          child: SectionTitle(text: "Other author's tracks".i18n),
+                        ),
+                  track.author.track_ids.isEmpty
+                      ? null
+                      : TracksListByIds(
+                          ids: track.author.track_ids,
+                          useScrollController: false,
+                          compact: true,
+                        ),
+                  Padding(
+                    padding: const EdgeInsets.all(sidePadding),
+                    child: CustomBackButton(),
+                  ),
+                ].nonNulls.toList(),
+              ),
             ),
           ),
         ),

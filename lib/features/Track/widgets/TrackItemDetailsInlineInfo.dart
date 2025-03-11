@@ -22,6 +22,7 @@ class TrackItemDetailsInlineInfo extends StatelessWidget {
     required this.isFavorite,
     this.asFavorite = false,
     this.fullView = false,
+    this.compact = false,
     this.textColor,
   });
   final Track track;
@@ -31,6 +32,7 @@ class TrackItemDetailsInlineInfo extends StatelessWidget {
   final bool isFavorite;
   final bool asFavorite;
   final bool fullView;
+  final bool compact;
   final Color? textColor;
 
   @override
@@ -53,9 +55,9 @@ class TrackItemDetailsInlineInfo extends StatelessWidget {
       // Author
       this.fullView
           ? null
-          : Wrap(spacing: 6, crossAxisAlignment: WrapCrossAlignment.center, children: [
+          : Wrap(spacing: 6, runSpacing: 5, crossAxisAlignment: WrapCrossAlignment.center, children: [
               TrackAuthorImageThumbnail(track: track),
-              Text(track.author.name, style: textStyle),
+              Text(track.author.name, softWrap: true, style: textStyle),
             ]),
       // Played count
       track.played_count == 0
@@ -72,7 +74,7 @@ class TrackItemDetailsInlineInfo extends StatelessWidget {
       // Date
       Wrap(spacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
         Icon(Icons.calendar_month, size: style.fontSize, color: dimmedColor),
-        Text(formatDate(DateTime.parse(track.published_at), context.locale.languageCode), style: textStyle),
+        Text(formatDate(track.published_at, context.locale.languageCode), style: textStyle),
       ]),
       // Rubrics
       this.fullView || track.rubrics.isEmpty

@@ -8,6 +8,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/Init.dart';
+import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/components/LoginBrowser.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
@@ -28,7 +29,6 @@ class _LoginButtonState extends State<LoginButton> {
   // @see https://inappwebview.dev/docs/in-app-browsers/in-app-browser
   final LoginBrowser browser = new LoginBrowser();
 
-  BuildContext? _context;
   AppState? _appState;
 
   CookieManager cookieManager = CookieManager.instance();
@@ -62,13 +62,16 @@ class _LoginButtonState extends State<LoginButton> {
     // Get account data...
     try {
       await Init.loadServerStatus();
-      if (this._context != null && this._context!.mounted) {
-        ScaffoldMessenger.of(this._context!).showSnackBar(SnackBar(
-          showCloseIcon: true,
-          backgroundColor: Colors.green,
-          content: Text("You've been succcessfully logged in".i18n),
-        ));
-      }
+      Future.delayed(Duration.zero, () {
+        if (context.mounted) {
+          // ignore: use_build_context_synchronously
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            showCloseIcon: true,
+            backgroundColor: Colors.green,
+            content: Text("You've been succcessfully logged in".i18n),
+          ));
+        }
+      });
     } catch (err, stacktrace) {
       final String msg = 'Can not parse user data: ${err}';
       logger.e('[LoginButton:onFinished] error ${msg}', error: err, stackTrace: stacktrace);
@@ -86,6 +89,8 @@ class _LoginButtonState extends State<LoginButton> {
     super.initState();
 
     this.browser.setOnFinishedHandler(this.onFinished);
+
+    this._appState = context.read<AppState>();
 
     final locale = serverSession.getLocale();
     final csrfToken = serverSession.getCSRFToken();
@@ -111,17 +116,18 @@ class _LoginButtonState extends State<LoginButton> {
 
   @override
   Widget build(BuildContext context) {
-    this._context = context;
-    final AppState appState = context.watch<AppState>();
-    this._appState = appState;
     final theme = Theme.of(context);
-    final style = theme.textTheme.bodySmall!;
-    final ButtonStyle buttonStyle = ElevatedButton.styleFrom(textStyle: style);
+    final AppColors appColors = theme.extension<AppColors>()!;
+    final style = theme.textTheme.bodyMedium!.copyWith(color: appColors.onBrandColor);
+    final ButtonStyle buttonStyle = TextButton.styleFrom(
+      textStyle: style,
+      backgroundColor: appColors.brandColor,
+    );
 
     return SizedBox(
       width: double.infinity,
       // height: double.infinity,
-      child: ElevatedButton(
+      child: FilledButton.icon(
         style: buttonStyle,
         onPressed: () {
           browser.openUrlRequest(
@@ -129,7 +135,8 @@ class _LoginButtonState extends State<LoginButton> {
             settings: this.browserSettings,
           );
         },
-        child: Text('Log in'.i18n),
+        icon: Icon(Icons.login, color: appColors.onBrandColor),
+        label: Text('Log in'.i18n, style: style),
       ),
     );
   }

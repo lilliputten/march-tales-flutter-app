@@ -15,11 +15,13 @@ class TrackAuthor {
   final bool promote;
   final String name;
   final String portrait_picture;
+  final List<int> track_ids;
   const TrackAuthor({
     required this.id,
     required this.promote,
     required this.name,
     required this.portrait_picture,
+    required this.track_ids,
   });
   factory TrackAuthor.fromJson(Map<String, dynamic> json) {
     try {
@@ -28,6 +30,7 @@ class TrackAuthor {
         promote: json['promote'] as bool,
         name: json['name'].toString(),
         portrait_picture: json['portrait_picture'].toString(),
+        track_ids: List<dynamic>.from(json['track_ids']).map((val) => val as int).toList(),
       );
     } catch (err, stacktrace) {
       final String msg = 'Can not parse TrackAuthor data: $err';
@@ -38,7 +41,7 @@ class TrackAuthor {
   }
   @override
   String toString() {
-    return 'Author: [${id}] ${name}';
+    return 'Author(id=${id}, name=${name})';
   }
 }
 
@@ -116,10 +119,10 @@ class Track {
   final bool for_members;
   final int played_count;
   final String youtube_url;
-  final String published_at;
+  final DateTime published_at;
   final int published_by_id;
   final int updated_by_id;
-  final String updated_at;
+  final DateTime updated_at;
 
   const Track({
     required this.id,
@@ -167,9 +170,9 @@ class Track {
         for_members: json['for_members'],
         played_count: json['played_count'],
         youtube_url: json['youtube_url'].toString(),
-        published_at: json['published_at'].toString(),
+        published_at: DateTime.parse(json['published_at'].toString()),
         published_by_id: json['published_by_id'],
-        updated_at: json['updated_at'].toString(),
+        updated_at: DateTime.parse(json['updated_at'].toString()),
         updated_by_id: json['updated_by_id'],
       );
     } catch (err, stacktrace) {

@@ -168,7 +168,7 @@ class TracksListView extends StatelessWidget {
       // shrinkWrap: true,
       controller: this.scrollController,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      separatorBuilder: (context, index) => SizedBox(height: 5),
+      separatorBuilder: (context, index) => SizedBox(height: 10),
       itemCount: showItems,
       itemBuilder: (context, i) {
         if (i == tracksCount) {

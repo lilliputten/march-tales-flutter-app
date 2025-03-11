@@ -16,17 +16,22 @@ class TrackTitle extends StatelessWidget {
     required this.isActiveTrack,
     required this.isAlreadyPlayed,
     required this.textColor,
+    this.fullView = false,
+    this.compact = false,
   });
   final Track track;
   final bool isActiveTrack;
   final bool isAlreadyPlayed;
   final Color textColor;
+  final bool fullView;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final basicColor = textColor;
-    final style = theme.textTheme.bodyLarge!.copyWith(color: basicColor);
+    final baseStyle = compact ? theme.textTheme.bodyMedium : theme.textTheme.bodyLarge;
+    final style = baseStyle!.copyWith(color: basicColor, fontWeight: FontWeight.bold);
     String text = track.title;
     if (AppConfig.LOCAL) {
       text += ' (${track.id})';
@@ -45,6 +50,7 @@ class TrackItemDetails extends StatelessWidget {
     required this.isFavorite,
     this.asFavorite = false,
     this.fullView = false,
+    this.compact = false,
   });
 
   final Track track;
@@ -54,6 +60,7 @@ class TrackItemDetails extends StatelessWidget {
   final bool isFavorite;
   final bool asFavorite;
   final bool fullView;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +70,7 @@ class TrackItemDetails extends StatelessWidget {
     final textColor = isActiveTrack ? appColors.brandColor : colorScheme.onSurface;
 
     return Column(
-      spacing: 8,
+      spacing: compact ? 5 : 8,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TrackTitle(
@@ -71,6 +78,8 @@ class TrackItemDetails extends StatelessWidget {
           isActiveTrack: isActiveTrack,
           isAlreadyPlayed: isAlreadyPlayed,
           textColor: textColor,
+          fullView: fullView,
+          compact: compact,
         ),
         TrackItemDetailsInlineInfo(
           track: track,
@@ -80,6 +89,7 @@ class TrackItemDetails extends StatelessWidget {
           isFavorite: isFavorite,
           asFavorite: asFavorite,
           fullView: fullView,
+          compact: compact,
           textColor: textColor,
         ),
       ].nonNulls.toList(),

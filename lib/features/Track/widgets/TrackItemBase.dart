@@ -14,6 +14,7 @@ abstract class TrackItemBase extends StatelessWidget {
     required this.isFavorite,
     this.asFavorite = false,
     this.fullView = false,
+    this.compact = false,
     this.onClick,
   });
 
@@ -25,5 +26,6 @@ abstract class TrackItemBase extends StatelessWidget {
   final bool isFavorite;
   final bool asFavorite;
   final bool fullView;
+  final bool compact;
   final ValueSetter<Track>? onClick;
 }

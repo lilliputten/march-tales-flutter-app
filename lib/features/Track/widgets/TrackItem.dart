@@ -15,16 +15,18 @@ final logger = Logger();
 // NOTE: See theme info at: https://api.flutter.dev/flutter/material/ThemeData-class.html
 
 class TrackItem extends StatefulWidget {
+  final Track track;
+  final bool asFavorite;
+  final bool fullView;
+  final bool compact;
+
   const TrackItem({
     super.key,
     required this.track,
     this.asFavorite = false,
     this.fullView = false,
+    this.compact = false,
   });
-
-  final Track track;
-  final bool asFavorite;
-  final bool fullView;
 
   @override
   State<TrackItem> createState() => _TrackItemState();
@@ -109,6 +111,7 @@ class _TrackItemState extends State<TrackItem> {
         isFavorite: isFavorite,
         asFavorite: this.widget.asFavorite,
         fullView: this.widget.fullView,
+        compact: this.widget.compact,
         onClick: this.widget.fullView ? null : this._handleClick);
   }
 }
