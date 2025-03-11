@@ -12,8 +12,8 @@ final logger = Logger();
 const double _trackItemControlIconSize = 24;
 const double _trackItemControlCircleSize = _trackItemControlIconSize + 16;
 
-class TrackItemControl extends StatelessWidget {
-  const TrackItemControl({
+class TrackItemPlayControl extends StatelessWidget {
+  const TrackItemPlayControl({
     super.key,
     required this.track,
     required this.isActiveTrack,
@@ -32,8 +32,6 @@ class TrackItemControl extends StatelessWidget {
   final bool isFavorite;
   final bool fullView;
 
-  // TODO: Show favorite button if it's a full view mode
-
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
@@ -43,7 +41,7 @@ class TrackItemControl extends StatelessWidget {
     // final colorScheme = theme.colorScheme;
     final AppColors appColors = theme.extension<AppColors>()!;
 
-    final mainColor = !isAlreadyPlayed ? appColors.brandColor : appColors.brandColor.withValues(alpha: 0.3);
+    final mainColor = !isAlreadyPlayed || fullView ? appColors.brandColor : appColors.brandColor.withValues(alpha: 0.3);
 
     return Stack(
       alignment: AlignmentDirectional.center,

@@ -82,7 +82,7 @@ class TrackItemDetailsInlineInfo extends StatelessWidget {
           : RubricsLinileList(rubrics: track.rubrics, small: true, color: basicColor),
       // Tags
       this.fullView || track.tags.isEmpty ? null : TagsLinileList(tags: track.tags, small: true, color: basicColor),
-      !isFavorite || asFavorite ? null : Icon(Icons.favorite, size: style.fontSize, color: iconColor),
+      !isFavorite || asFavorite || fullView ? null : Icon(Icons.favorite, size: style.fontSize, color: iconColor),
     ].nonNulls;
 
     // Add delimiters between each other item

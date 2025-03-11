@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItemBase.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackItemControl.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItemDetails.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemPlayControl.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
@@ -63,8 +63,7 @@ class TrackItemAsRow extends TrackItemBase {
                   ),
                 ),
               ),
-              // TrackFavoriteIcon(track: track),
-              TrackItemControl(
+              TrackItemPlayControl(
                 track: track,
                 isActiveTrack: isActiveTrack,
                 isAlreadyPlayed: isAlreadyPlayed,

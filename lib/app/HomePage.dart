@@ -19,7 +19,7 @@ final logger = Logger();
 final navigatorKey = GlobalKey<NavigatorState>();
 
 // Enable debugging fake internal routes, see `_debugTrackId` in `TrackDetailsScreen.dart`
-const _useDebugRoute = true;
+const _useDebugRoute = false;
 const _debugRoute = TrackDetailsScreen.routeName;
 // const _debugRoute = AuthorScreen.routeName;
 const _initialRoute = _useDebugRoute && AppConfig.LOCAL ? _debugRoute : defaultAppRoute;

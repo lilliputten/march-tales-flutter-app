@@ -10,7 +10,7 @@ import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackFullViewExtraBlock.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItemBase.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackItemControl.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemControls.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItemDetails.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
@@ -149,7 +149,7 @@ List<Widget> _trackItemAsCardDetailItems({
       ),
     ),
     // TrackFavoriteIcon(track: track),
-    TrackItemControl(
+    TrackItemControls(
       track: track,
       isActiveTrack: isActiveTrack,
       isAlreadyPlayed: isAlreadyPlayed,
@@ -178,7 +178,7 @@ List<Widget> _trackItemAsCardItemsHorizontal({
   // final double height = width / previewDimensionsRatio;
   final double thumbWidth = min(200, width / 5);
   return [
-    TrackImageThumbnail(track: track, width: thumbWidth),
+    TrackImageThumbnail(track: track, width: thumbWidth, borderRadius: compact ? 5 : 10),
     ..._trackItemAsCardDetailItems(
       width: width,
       detailsOpacity: detailsOpacity,

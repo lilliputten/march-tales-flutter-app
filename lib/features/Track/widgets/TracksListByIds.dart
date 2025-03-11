@@ -11,7 +11,7 @@ import 'package:march_tales_app/features/Track/widgets/TrackItem.dart';
 
 final logger = Logger();
 
-// TODO: Fetch the available tracks from the state and only load remain from the server
+// XXX FUTURE: Fetch the available tracks from the state and only load remain from the server
 
 class TracksListByIds extends StatefulWidget {
   final List<int> ids;
@@ -47,10 +47,11 @@ class TracksListByIdsState extends State<TracksListByIds> {
 
   _loadData() async {
     this.dataFuture = loadTracksByIds(this.widget.ids);
+    // logger.t('[TracksListByIds:_loadData]');
     return await this.dataFuture;
   }
 
-  /// Sort by published date by default
+  /// Sort by published date (in a descending order) by default
   List<Track> _sortedTracks(List<Track> tracks) {
     final sorted = [...tracks];
     sorted.sort((a, b) => -a.published_at.compareTo(b.published_at));
