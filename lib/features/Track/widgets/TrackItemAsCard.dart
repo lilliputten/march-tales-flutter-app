@@ -37,7 +37,7 @@ class TrackItemAsCard extends TrackItemBase {
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
 
-    final double opacity = isAlreadyPlayed ? 0.5 : 1;
+    final double opacity = isAlreadyPlayed && !fullView ? 0.5 : 1;
 
     final double screenWidth = MediaQuery.sizeOf(context).width;
     final double height = MediaQuery.sizeOf(context).height;

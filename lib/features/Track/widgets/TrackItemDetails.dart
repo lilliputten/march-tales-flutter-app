@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
@@ -67,7 +69,7 @@ class TrackItemDetails extends StatelessWidget {
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
     final colorScheme = theme.colorScheme;
-    final textColor = isActiveTrack ? appColors.brandColor : colorScheme.onSurface;
+    final textColor = isActiveTrack && !fullView ? appColors.brandColor : colorScheme.onSurface;
 
     return Column(
       spacing: compact ? 5 : 8,
