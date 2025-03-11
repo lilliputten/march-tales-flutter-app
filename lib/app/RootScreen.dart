@@ -54,6 +54,7 @@ class RootScreenState extends State<RootScreen> with RouteAware {
   _notifyRootHidden() {
     // Notify about root screen visiblility
     Future.delayed(Duration.zero, () {
+      // logger.t('[RootScreen:_notifyRootHidden]');
       final update = RouteUpdate(
         type: RouteUpdateType.rootHidden,
         name: defaultAppRoute,
@@ -65,6 +66,7 @@ class RootScreenState extends State<RootScreen> with RouteAware {
   _notifyRootDisplayed() {
     // Notify about root screen visiblility
     Future.delayed(Duration.zero, () {
+      // logger.t('[RootScreen:_notifyRootDisplayed]');
       final update = RouteUpdate(
         type: RouteUpdateType.rootVisible,
         name: defaultAppRoute,

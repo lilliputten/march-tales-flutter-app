@@ -7,7 +7,6 @@ import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/app/BottomNavigation.dart';
 import 'package:march_tales_app/app/homePages.dart';
 import 'package:march_tales_app/components/PlayerBox.dart';
-import 'package:march_tales_app/core/constants/defaultAppRoute.dart';
 import 'package:march_tales_app/core/singletons/routeEvents.dart';
 import 'package:march_tales_app/core/types/RouteUpdate.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
@@ -34,7 +33,7 @@ class PageWrapper extends StatefulWidget {
 }
 
 class PageWrapperState extends State<PageWrapper> {
-  String _routeName = defaultAppRoute;
+  // String _routeName = defaultAppRoute;
   bool _isRoot = true;
 
   @override
@@ -50,29 +49,20 @@ class PageWrapperState extends State<PageWrapper> {
   }
 
   _processRouteUpdate(RouteUpdate update) {
-    // if (context.mounted) {
-    final name = update.name;
+    // final name = update.name;
     final type = update.type;
-    if (this._routeName != name) {
-      // logger.t('[PageWrapper:route] type=${type} name=${name} routeName=${this._routeName}');
-      if (type == RouteUpdateType.rootVisible) {
-        setState(() {
-          this._isRoot = true;
-          this._routeName = name;
-        });
-      } else if (type == RouteUpdateType.rootHidden) {
-        setState(() {
-          this._isRoot = false;
-          this._routeName = name;
-        });
-      } else {
-        setState(() {
-          this._isRoot = name.isEmpty || name == defaultAppRoute;
-          this._routeName = name;
-        });
-      }
+    // logger.t('[PageWrapper:route] type=${type}'); // name=${name} routeName=${this._routeName}');
+    if (type == RouteUpdateType.rootVisible) {
+      setState(() {
+        this._isRoot = true;
+        // this._routeName = name;
+      });
+    } else if (type == RouteUpdateType.rootHidden) {
+      setState(() {
+        this._isRoot = false;
+        // this._routeName = name;
+      });
     }
-    // }
   }
 
   @override
@@ -91,8 +81,8 @@ class PageWrapperState extends State<PageWrapper> {
     // XXX FUTURE: Detect the root status by history depth?
     final isRoot = this._isRoot;
 
-    final scrollController = appState.getLastScrollController();
-    logger.t('[PageWrapper:build] scrollController=${scrollController} scrollController=${appState.scrollControllers}');
+    // final scrollController = appState.getLastScrollController();
+    // logger.t('[PageWrapper:build] scrollController=${scrollController} scrollController=${appState.scrollControllers}');
 
     return RestorationScope(
       restorationId: 'PageWrapper',
