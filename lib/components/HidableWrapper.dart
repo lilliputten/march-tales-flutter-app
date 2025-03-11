@@ -22,7 +22,11 @@ class HidableWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
     if (!this.wrap) {
-      return this.child;
+      // return this.child;
+      return SizedBox(
+        height: this.widgetSize,
+        child: this.child,
+      );
     }
     return Hidable(
       controller: appState.getLastScrollController(),

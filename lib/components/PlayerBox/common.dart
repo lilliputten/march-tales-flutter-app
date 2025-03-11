@@ -73,7 +73,7 @@ class SeekBarState extends State<SeekBar> {
 
     _sliderThemeData = SliderTheme.of(context).copyWith(
       trackShape: CustomTrackShape(),
-      trackHeight: 1,
+      trackHeight: 2,
     );
   }
 
@@ -91,7 +91,6 @@ class SeekBarState extends State<SeekBar> {
             // activeTrackColor: Colors.blue.shade500.withValues(alpha: 0.2),
             activeTrackColor: Colors.grey.shade500.withValues(alpha: 0.4),
             inactiveTrackColor: Colors.grey.shade500.withValues(alpha: 0.1),
-            // trackHeight: 1,
           ),
           child: ExcludeSemantics(
             child: Slider(
@@ -120,7 +119,6 @@ class SeekBarState extends State<SeekBar> {
             inactiveTrackColor: Colors.transparent,
             activeTrackColor: appColors.brandColor,
             thumbColor: appColors.brandColor,
-            trackHeight: 2,
           ),
           child: Slider(
             min: 0.0,

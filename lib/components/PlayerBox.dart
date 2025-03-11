@@ -58,11 +58,33 @@ class PlayerBoxState extends State<PlayerBox> {
     super.dispose();
   }
 
-  Stream<PositionData> get _positionDataStream => Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
-      _player.positionStream,
-      _player.bufferedPositionStream,
-      _player.durationStream,
-      (position, bufferedPosition, duration) => PositionData(position, bufferedPosition, duration ?? Duration.zero));
+  Stream<PositionData> get _positionDataStream {
+    return Rx.combineLatest2<
+            Duration,
+            // Duration,
+            Duration?,
+            PositionData>(
+        this._player.positionStream,
+        // this._player.bufferedPositionStream,
+        this._player.durationStream, (position,
+            // bufferedPosition,
+            duration) {
+      return PositionData(
+        position,
+        Duration.zero,
+        duration ?? Duration.zero,
+      );
+    });
+    /*
+    return Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+      this._player.positionStream,
+      this._player.bufferedPositionStream,
+      this._player.durationStream,
+      (position, bufferedPosition, duration) {
+        return PositionData(position, bufferedPosition, duration ?? Duration.zero);
+      });
+    */
+  }
 
   @override
   void initState() {
@@ -175,9 +197,10 @@ class PlayerBoxState extends State<PlayerBox> {
     final bool playing = playerState.playing;
     final ProcessingState processingState = playerState.processingState;
     // logger.t('[PlayerBox:_playerStateHandler] playing=${playing} processingState=${processingState}');
-    final duration = this._player.duration;
+    // final position = this._player.position;
+    // this._savePlayingPosition(position, notify: false);
     // Update only if player is playing or completed
-    PlayingTrackUpdateType? updateType;
+    PlayingTrackUpdateType? updateType; // = PlayingTrackUpdateType.position;
     final isCurrentlyPlaying = this._isPlaying && !this._isPaused;
     if (playing) {
       // Really playing and...
@@ -190,7 +213,7 @@ class PlayerBoxState extends State<PlayerBox> {
         this._pausePlayback(notify: false);
         this._setPausedStatus(notify: false);
         // Set position to the full dration value: as sign of the finished playback
-        this._savePlayingPosition(duration, notify: false);
+        this._savePlayingPosition(this._player.duration, notify: false);
         updateType = PlayingTrackUpdateType.pausedStatus;
         this._incrementCurrentTrackPlayedCount();
       }
@@ -487,7 +510,7 @@ class PlayerBoxState extends State<PlayerBox> {
     final isPlaying = this._isPlaying && !this._isPaused;
 
     return HidableWrapper(
-      widgetSize: 104,
+      widgetSize: 101,
       wrap: !isPlaying,
       child: StreamBuilder(
         stream: player.playerStateStream,

@@ -113,6 +113,7 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
       children: [
         PlayerSlider(
           positionDataStream: this.widget.positionDataStream,
+          // positionStream: this.widget.positionStream,
           position: position,
           duration: duration,
           onSeek: widget.playSeek,

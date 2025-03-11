@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
 
+import 'package:march_tales_app/app/AppColors.dart';
 import 'PlayerBox/common.dart';
 
 final logger = Logger();
@@ -22,6 +23,28 @@ class PlayerSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /* // New player slider (in progress; it's glitchy at the moment)
+    return StreamBuilder<PositionData>(
+      stream: this.positionDataStream,
+      builder: (context, snapshot) {
+        final positionData = snapshot.data;
+        // logger.t('XXX positionData=${positionData} this.positionDataStream=${this.positionDataStream}');
+        return SeekBar(
+          duration: positionData?.duration ?? this.duration,
+          position: positionData?.position ?? this.position ?? Duration.zero,
+          bufferedPosition: positionData?.bufferedPosition ?? Duration.zero,
+          onChangeEnd: (newPosition) {
+            onSeek(newPosition);
+          },
+        );
+      },
+    );
+    */
+
+    /* // Old naive seek bar implementation
+    */
+    final theme = Theme.of(context);
+    final AppColors appColors = theme.extension<AppColors>()!;
     double progress = 0;
     final durationMs = duration.inMilliseconds;
     final positionMs = position?.inMilliseconds ?? 0;
@@ -31,23 +54,6 @@ class PlayerSlider extends StatelessWidget {
         progress = 1;
       }
     }
-
-    return StreamBuilder<PositionData>(
-      stream: this.positionDataStream,
-      builder: (context, snapshot) {
-        final positionData = snapshot.data;
-        return SeekBar(
-          duration: positionData?.duration ?? Duration.zero,
-          position: positionData?.position ?? Duration.zero,
-          bufferedPosition: positionData?.bufferedPosition ?? Duration.zero,
-          onChangeEnd: (newPosition) {
-            onSeek(newPosition);
-          },
-        );
-      },
-    );
-
-    /* // Old naive seek bar implementation
     return SliderTheme(
       data: SliderThemeData(
         trackShape: CustomTrackShape(),
@@ -64,6 +70,5 @@ class PlayerSlider extends StatelessWidget {
         },
       ),
     );
-    */
   }
 }
