@@ -31,13 +31,10 @@ class RubricsList extends StatelessWidget {
     return Wrap(
         spacing: compact ? 5 : 10,
         runSpacing: compact ? 5 : 10,
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        // crossAxisAlignment: WrapCrossAlignment.center,
         children: this.rubrics.map((rubric) {
           return InkWell(
             onTap: active
                 ? () {
-                    // logger.d('[RubricsList] rubricId=${rubric.id}');
                     Navigator.restorablePushNamed(
                       context,
                       RubricScreen.routeName,

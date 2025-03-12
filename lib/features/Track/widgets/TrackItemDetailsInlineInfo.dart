@@ -81,7 +81,7 @@ class TrackItemDetailsInlineInfo extends StatelessWidget {
           ? null
           : RubricsInlineList(rubrics: track.rubrics, compact: true, color: basicColor),
       // Tags
-      this.fullView || track.tags.isEmpty ? null : TagsInlineList(tags: track.tags, small: true, color: basicColor),
+      this.fullView || track.tags.isEmpty ? null : TagsInlineList(tags: track.tags, compact: true, color: basicColor),
       !isFavorite || asFavorite || fullView ? null : Icon(Icons.favorite, size: style.fontSize, color: iconColor),
     ].nonNulls;
 

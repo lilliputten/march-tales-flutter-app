@@ -69,7 +69,6 @@ class TrackFullViewExtraBlock extends StatelessWidget {
       // Author
       InkWell(
         onTap: () {
-          logger.d('[TrackFullViewExtraBlock:Author] authorId=${track.author.id}');
           Navigator.restorablePushNamed(
             context,
             AuthorScreen.routeName,

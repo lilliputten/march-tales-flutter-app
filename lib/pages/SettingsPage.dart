@@ -102,7 +102,7 @@ class ThemeSelector extends StatelessWidget {
           appState.toggleDarkTheme(isDarkTheme);
         }
       },
-      // TODO; Make selected item distinctive using `selectedItemBuilder`?
+      // XXX FUTURE: Make selected item distinctive using `selectedItemBuilder`?
       items: items,
     );
   }
@@ -147,7 +147,7 @@ class LanguageSelector extends StatelessWidget {
           appState.updateLocale(locale);
         }
       },
-      // TODO; Make selected item distinctive using `selectedItemBuilder`?
+      // XXX FUTURE: Make selected item distinctive using `selectedItemBuilder`?
       items: items,
     );
   }
@@ -298,9 +298,10 @@ class AuthInfo extends StatelessWidget {
     final userName = appState.getUserName();
 
     final theme = Theme.of(context);
-    final style = theme.textTheme.bodyMedium!.copyWith(color: appColors.onBrandColor);
+    final buttonTextStyle = theme.textTheme.bodyMedium!.copyWith(color: appColors.onBrandColor);
+    final textStyle = theme.textTheme.bodyMedium!;
     final ButtonStyle buttonStyle = TextButton.styleFrom(
-      textStyle: style,
+      textStyle: buttonTextStyle,
       backgroundColor: appColors.brandColor,
     );
 
@@ -328,11 +329,11 @@ class AuthInfo extends StatelessWidget {
           children: [
             SelectableText(
               'User:'.i18n,
-              style: style,
+              style: textStyle,
             ),
             SelectableText(
               userName,
-              style: style.copyWith(fontWeight: FontWeight.bold),
+              style: textStyle.copyWith(fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -342,7 +343,7 @@ class AuthInfo extends StatelessWidget {
             style: buttonStyle,
             onPressed: logout,
             icon: Icon(Icons.logout, color: appColors.onBrandColor),
-            label: Text('Log out'.i18n, style: style),
+            label: Text('Log out'.i18n, style: buttonTextStyle),
           ),
         ),
       ],

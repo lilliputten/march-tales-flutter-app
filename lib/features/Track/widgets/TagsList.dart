@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
 
-import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'package:march_tales_app/features/Track/types/Tag.dart';
 import 'package:march_tales_app/screens/TagScreen.dart';
 
 final logger = Logger();
 
-class TagsInlineList extends StatelessWidget {
-  const TagsInlineList({
+class TagsList extends StatelessWidget {
+  const TagsList({
     super.key,
     required this.tags,
     this.compact = false,
-    this.active = false,
+    this.active = true,
     this.color,
   });
-  final List<TrackTag> tags;
+  final List<Tag> tags;
   final bool compact;
   final bool active;
   final Color? color;
@@ -26,12 +26,12 @@ class TagsInlineList extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final basicColor = color ?? colorScheme.onSurface;
     final style = compact ? theme.textTheme.bodySmall! : theme.textTheme.bodyMedium!;
-    final dimmedColor = basicColor.withValues(alpha: 0.25);
     final textStyle = style.copyWith(color: basicColor);
+    final dimmedColor = basicColor.withValues(alpha: 0.25);
     final dimmedStyle = style.copyWith(color: dimmedColor);
     return Wrap(
         spacing: compact ? 5 : 10,
-        crossAxisAlignment: WrapCrossAlignment.center,
+        runSpacing: compact ? 5 : 10,
         children: this.tags.map((tag) {
           return InkWell(
             onTap: active
@@ -44,12 +44,22 @@ class TagsInlineList extends StatelessWidget {
                   }
                 : null,
             child: Wrap(
-              spacing: 2, // compact ? 2 : 5,
+              spacing: compact ? 2 : 5,
               children: [
                 Text('#', style: dimmedStyle),
                 Text(tag.text, style: textStyle),
               ],
             ),
+            /*
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: compact ? 0 : 1, horizontal: compact ? 3 : 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(4)),
+                border: Border.all(color: borderColor, width: 1),
+              ),
+              child: Text(tag.text, style: textStyle),
+            ),
+            */
           );
         }).toList());
   }

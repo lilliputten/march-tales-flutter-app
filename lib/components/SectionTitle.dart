@@ -4,12 +4,14 @@ import 'package:march_tales_app/app/AppColors.dart';
 
 class SectionTitle extends StatelessWidget {
   final String text;
+  final String prefixText;
   final String extraText;
   final bool upperCase;
 
   const SectionTitle({
     super.key,
     required this.text,
+    this.prefixText = '',
     this.extraText = '',
     this.upperCase = true,
   });
@@ -37,6 +39,7 @@ class SectionTitle extends StatelessWidget {
         Wrap(
           spacing: 5,
           children: [
+            this.prefixText.isNotEmpty ? Text(this.prefixText, style: extraStyle) : null,
             Text(headerText, style: headerStyle),
             this.extraText.isNotEmpty ? Text(this.extraText, style: extraStyle) : null,
           ].nonNulls.toList(),
