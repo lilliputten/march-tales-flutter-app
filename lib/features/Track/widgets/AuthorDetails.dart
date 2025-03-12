@@ -19,6 +19,8 @@ import 'AuthorDetails.i18n.dart';
 
 final logger = Logger();
 
+const double _sidePadding = 5;
+
 class AuthorTitle extends StatelessWidget {
   const AuthorTitle({
     super.key,
@@ -98,8 +100,6 @@ class AuthorImageThumbnail extends StatelessWidget {
   }
 }
 
-const double sidePadding = 5;
-
 class AuthorDetailsInfo extends StatelessWidget {
   const AuthorDetailsInfo({
     super.key,
@@ -176,7 +176,7 @@ class AuthorDetails extends StatelessWidget {
           child: AuthorDetailsInfo(author: author, fullView: fullView),
         ),
         Padding(
-          padding: const EdgeInsets.all(sidePadding),
+          padding: const EdgeInsets.all(_sidePadding),
           child: CustomRouteButton(
             text: 'All authors list'.i18n,
             routeName: AuthorsListScreen.routeName,
@@ -187,8 +187,11 @@ class AuthorDetails extends StatelessWidget {
         author.track_ids.isEmpty
             ? null
             : Padding(
-                padding: const EdgeInsets.all(sidePadding),
-                child: SectionTitle(text: '${"All author's tracks".i18n} (${author.track_ids.length})'),
+                padding: const EdgeInsets.all(_sidePadding),
+                child: SectionTitle(
+                  text: "All author's tracks".i18n,
+                  extraText: '(${author.track_ids.length})',
+                ),
               ),
         author.track_ids.isEmpty
             ? null
@@ -198,7 +201,7 @@ class AuthorDetails extends StatelessWidget {
                 compact: true,
               ),
         Padding(
-          padding: const EdgeInsets.all(sidePadding),
+          padding: const EdgeInsets.all(_sidePadding),
           child: CustomBackButton(),
         ),
       ].nonNulls.toList(),

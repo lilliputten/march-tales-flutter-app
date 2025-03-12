@@ -5,10 +5,11 @@ import 'package:logger/logger.dart';
 import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/ScreenWrapper.dart';
 import 'package:march_tales_app/components/LoadingSplash.dart';
+import 'package:march_tales_app/components/mixins/ScrollControllerProviderMixin.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/features/Track/loaders/loadAuthorDetails.dart';
 import 'package:march_tales_app/features/Track/types/Author.dart';
-import 'package:march_tales_app/features/Track/widgets/AuthorView.dart';
+import 'package:march_tales_app/screens/views/AuthorPayloadScreenView.dart';
 
 final logger = Logger();
 
@@ -28,7 +29,7 @@ class AuthorScreen extends StatefulWidget {
   State<AuthorScreen> createState() => AuthorScreenState();
 }
 
-class AuthorScreenState extends State<AuthorScreen> {
+class AuthorScreenState extends State<AuthorScreen> with ScrollControllerProviderMixin {
   late Future<Author> dataFuture;
 
   @override
@@ -66,7 +67,10 @@ class AuthorScreenState extends State<AuthorScreen> {
           }
           if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
             final author = snapshot.data!;
-            return AuthorView(author: author);
+            return AuthorPayloadScreenView(
+              author: author,
+              scrollController: this.getScrollController(),
+            );
           } else {
             return LoadingSplash();
           }

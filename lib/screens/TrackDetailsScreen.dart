@@ -5,24 +5,19 @@ import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/ScreenWrapper.dart';
-import 'package:march_tales_app/components/CustomBackButton.dart';
 import 'package:march_tales_app/components/LoadingSplash.dart';
-import 'package:march_tales_app/components/SectionTitle.dart';
+import 'package:march_tales_app/components/mixins/ScrollControllerProviderMixin.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/features/Track/loaders/getTrackFromStateOrLoad.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackItem.dart';
-import 'package:march_tales_app/features/Track/widgets/TracksListByIds.dart';
+import 'package:march_tales_app/screens/views/TrackDetailsScreenView.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
-import 'TrackDetailsScreen.i18n.dart';
 
 final logger = Logger();
 
 const _routeName = '/TrackDetailsScreen';
 
 const _debugTrackId = 1;
-
-const double sidePadding = 5;
 
 @pragma('vm:entry-point')
 class TrackDetailsScreen extends StatefulWidget {
@@ -36,27 +31,8 @@ class TrackDetailsScreen extends StatefulWidget {
   State<TrackDetailsScreen> createState() => TrackDetailsScreenState();
 }
 
-class TrackDetailsScreenState extends State<TrackDetailsScreen> {
-  late AppState _appState;
+class TrackDetailsScreenState extends State<TrackDetailsScreen> with ScrollControllerProviderMixin {
   late Future<Track> dataFuture;
-  final ScrollController scrollController = new ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    this._appState = context.read<AppState>();
-    Future.delayed(Duration.zero, () {
-      this._appState.addScrollController(this.scrollController);
-    });
-  }
-
-  @override
-  void dispose() {
-    Future.delayed(Duration.zero, () {
-      this._appState.removeScrollController(this.scrollController);
-    });
-    super.dispose();
-  }
 
   @override
   void didChangeDependencies() {
@@ -99,64 +75,15 @@ class TrackDetailsScreenState extends State<TrackDetailsScreen> {
           }
           if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
             final track = snapshot.data!;
-            return TrackItemFull(track: track, scrollController: scrollController);
+            return TrackDetailsScreenView(
+              track: track,
+              scrollController: this.getScrollController(),
+            );
           } else {
             return LoadingSplash();
           }
         },
       ),
-    );
-  }
-}
-
-class TrackItemFull extends StatelessWidget {
-  const TrackItemFull({
-    super.key,
-    required this.track,
-    required this.scrollController,
-  });
-
-  final Track track;
-  final ScrollController scrollController;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-            controller: this.scrollController,
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                spacing: 10,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TrackItem(track: this.track, fullView: true),
-                  track.author.track_ids.isEmpty
-                      ? null
-                      : Padding(
-                          padding: const EdgeInsets.all(sidePadding),
-                          child:
-                              SectionTitle(text: '${"Other author's tracks".i18n} (${track.author.track_ids.length})'),
-                        ),
-                  track.author.track_ids.isEmpty
-                      ? null
-                      : TracksListByIds(
-                          ids: track.author.track_ids,
-                          useScrollController: false,
-                          compact: true,
-                        ),
-                  Padding(
-                    padding: const EdgeInsets.all(sidePadding),
-                    child: CustomBackButton(),
-                  ),
-                ].nonNulls.toList(),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

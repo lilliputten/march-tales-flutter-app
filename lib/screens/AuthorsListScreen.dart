@@ -5,9 +5,10 @@ import 'package:logger/logger.dart';
 import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/ScreenWrapper.dart';
 import 'package:march_tales_app/components/LoadingSplash.dart';
+import 'package:march_tales_app/components/mixins/ScrollControllerProviderMixin.dart';
 import 'package:march_tales_app/features/Track/loaders/LoadAuthorsListResults.dart';
 import 'package:march_tales_app/features/Track/loaders/loadAuthorsList.dart';
-import 'package:march_tales_app/features/Track/widgets/AuthorsListScreenView.dart';
+import 'package:march_tales_app/screens/views/AuthorsListScreenView.dart';
 
 final logger = Logger();
 
@@ -25,7 +26,7 @@ class AuthorsListScreen extends StatefulWidget {
   State<AuthorsListScreen> createState() => AuthorsListScreenState();
 }
 
-class AuthorsListScreenState extends State<AuthorsListScreen> {
+class AuthorsListScreenState extends State<AuthorsListScreen> with ScrollControllerProviderMixin {
   late Future<LoadAuthorsListResults> dataFuture;
 
   @override
@@ -48,7 +49,7 @@ class AuthorsListScreenState extends State<AuthorsListScreen> {
             final data = snapshot.data!;
             return AuthorsListScreenView(
               authors: data.results,
-              count: data.count,
+              scrollController: this.getScrollController(),
             );
           } else {
             return LoadingSplash();
