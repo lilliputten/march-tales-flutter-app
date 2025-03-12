@@ -16,6 +16,7 @@ class TrackAuthor {
   final String name;
   final String portrait_picture;
   final List<int> track_ids;
+
   const TrackAuthor({
     required this.id,
     required this.promote,
@@ -23,6 +24,7 @@ class TrackAuthor {
     required this.portrait_picture,
     required this.track_ids,
   });
+
   factory TrackAuthor.fromJson(Map<String, dynamic> json) {
     try {
       return TrackAuthor(
@@ -39,6 +41,7 @@ class TrackAuthor {
       throw FormatException(msg);
     }
   }
+
   @override
   String toString() {
     return 'Author(id=${id}, name=${name})';

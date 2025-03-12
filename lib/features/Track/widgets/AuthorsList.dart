@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/components/MoreButton.dart';
 import 'package:march_tales_app/features/Track/types/Author.dart';
-import 'package:march_tales_app/features/Track/widgets/AuthorListInlineItem.dart';
 import 'package:march_tales_app/features/Track/widgets/AuthorListItem.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
@@ -16,11 +15,14 @@ class AuthorsList extends StatefulWidget {
   const AuthorsList({
     super.key,
     required this.authors,
-    required this.count,
+    this.count = 0,
     this.isLoading = false,
     this.useScrollController = false,
     this.onRefresh,
     this.onLoadNext,
+    this.fullView = false,
+    this.compact = false,
+    this.active = false,
   });
 
   final List<Author> authors;
@@ -29,6 +31,9 @@ class AuthorsList extends StatefulWidget {
   final bool useScrollController;
   final RefreshCallback? onRefresh;
   final void Function()? onLoadNext;
+  final bool fullView;
+  final bool compact;
+  final bool active;
 
   @override
   State<AuthorsList> createState() => AuthorsListState();
@@ -77,12 +82,15 @@ class AuthorsListState extends State<AuthorsList> {
       child: AuthorsListView(
         keyId: keyId,
         authors: this.widget.authors,
-        count: this.widget.count,
+        count: this.widget.count != 0 ? this.widget.count : this.widget.authors.length,
         isLoading: this.widget.isLoading,
         useScrollController: this.widget.useScrollController,
         scrollController: this.widget.useScrollController ? this.scrollController : null,
         onRefresh: this.widget.onRefresh,
         onLoadNext: this.widget.onLoadNext,
+        fullView: this.widget.fullView,
+        compact: this.widget.compact,
+        active: this.widget.active,
       ),
     );
   }
@@ -99,6 +107,9 @@ class AuthorsListView extends StatelessWidget {
   final ScrollController? scrollController;
   final RefreshCallback? onRefresh;
   final void Function()? onLoadNext;
+  final bool fullView;
+  final bool compact;
+  final bool active;
 
   const AuthorsListView({
     super.key,
@@ -110,6 +121,9 @@ class AuthorsListView extends StatelessWidget {
     this.scrollController,
     this.onRefresh,
     this.onLoadNext,
+    this.fullView = false,
+    this.compact = false,
+    this.active = false,
   });
 
   @override
@@ -133,7 +147,7 @@ class AuthorsListView extends StatelessWidget {
         if (i == authorsCount) {
           return MoreButton(onLoadNext: this.onLoadNext, isLoading: this.isLoading);
         } else {
-          return AuthorListItem(author: this.authors[i], active: true);
+          return AuthorListItem(author: this.authors[i], fullView: fullView, compact: compact, active: active);
         }
       },
     );

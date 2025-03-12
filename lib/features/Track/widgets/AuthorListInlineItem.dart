@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
-import 'package:march_tales_app/features/Track/types/Author.dart';
+import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/AuthorImageThumbnail.dart';
 import 'package:march_tales_app/screens/AuthorScreen.dart';
 
@@ -17,7 +17,7 @@ class _AuthorTitle extends StatelessWidget {
     this.compact = false,
     this.active = false,
   });
-  final Author author;
+  final TrackAuthor author;
   final bool fullView;
   final bool compact;
   final bool active;
@@ -49,7 +49,7 @@ class AuthorListInlineItem extends StatelessWidget {
     this.active = false,
   });
 
-  final Author author;
+  final TrackAuthor author;
   final bool fullView;
   final bool compact;
   final bool active;

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:logger/logger.dart';
-import 'package:march_tales_app/screens/AuthorsListScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
@@ -15,6 +14,7 @@ import 'package:march_tales_app/features/Track/widgets/RubricsInlineList.dart';
 import 'package:march_tales_app/features/Track/widgets/SquareThumbnailImage.dart';
 import 'package:march_tales_app/features/Track/widgets/TagsInlineList.dart';
 import 'package:march_tales_app/features/Track/widgets/TracksListByIds.dart';
+import 'package:march_tales_app/screens/AuthorsListScreen.dart';
 import 'AuthorDetails.i18n.dart';
 
 final logger = Logger();

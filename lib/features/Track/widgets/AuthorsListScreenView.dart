@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
-import 'package:march_tales_app/components/CustomBackButton.dart';
 import 'package:provider/provider.dart';
 
+import 'package:march_tales_app/components/CustomBackButton.dart';
 import 'package:march_tales_app/components/SectionTitle.dart';
 import 'package:march_tales_app/features/Track/types/Author.dart';
 import 'package:march_tales_app/features/Track/widgets/AuthorsList.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
-
 import 'AuthorDetails.i18n.dart';
 
 final logger = Logger();
@@ -64,12 +63,13 @@ class AuthorsListScreenViewState extends State<AuthorsListScreenView> {
             child: AuthorsList(
               authors: this.widget.authors,
               count: this.widget.authors.length,
+              active: true,
             ),
           ),
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: CustomBackButton(),
-        ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: CustomBackButton(),
+          ),
         ],
       ),
     );

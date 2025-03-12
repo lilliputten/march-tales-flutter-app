@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
-import 'package:march_tales_app/features/Track/types/Author.dart';
+import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/SquareThumbnailImage.dart';
 
 class AuthorImageThumbnail extends StatelessWidget {
@@ -12,7 +12,7 @@ class AuthorImageThumbnail extends StatelessWidget {
     this.borderRadius,
   });
 
-  final Author author;
+  final TrackAuthor author;
   final double size;
   final double? borderRadius;
 

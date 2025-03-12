@@ -11,30 +11,33 @@ final logger = Logger();
 
 final formatter = YamlFormatter();
 
-class Author {
-  final int id;
-  final String name;
+class Author extends TrackAuthor {
+  // final int id;
+  // final String name;
   final String short_description;
   final String description;
-  final String portrait_picture;
-  final bool promote;
-  final List<int> track_ids;
+  // final String portrait_picture;
+  // final bool promote;
+  // final List<int> track_ids;
   final List<TrackRubric> rubrics;
   final List<TrackTag> tags;
+
   const Author({
-    required this.id,
-    required this.name,
+    required super.id,
+    required super.name,
     required this.short_description,
     required this.description,
-    required this.portrait_picture,
-    required this.promote,
-    required this.track_ids,
+    required super.portrait_picture,
+    required super.promote,
+    required super.track_ids,
     required this.rubrics,
     required this.tags,
   });
+
   factory Author.fromJson(Map<String, dynamic> json) {
     try {
       return Author(
+        // ...TrackAuthor.fromJson(json),
         id: json['id'],
         name: json['name'].toString(),
         portrait_picture: json['portrait_picture'].toString(),

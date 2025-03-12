@@ -63,16 +63,19 @@ class RubricDetailsInfo extends StatelessWidget {
       spacing: 10,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RubricTitle(rubric: rubric),
+        SectionTitle(text: rubric.text),
+        SizedBox(height: 1),
+        // RubricTitle(rubric: rubric),
         /* // Authors
         rubric.authors.isEmpty
             ? null
             : Wrap(
                 spacing: 10,
-                crossAxisAlignment: WrapCrossAlignment.center,
+                runSpacing: 5,
+                crossAxisAlignment: WrapCrossAlignment.start,
                 children: [
                   Text('Authors:'.i18n, style: style.copyWith(color: labelColor)),
-                  AuthorsInlineList(authors: rubric.authors, active: true),
+                  AuthorsInlineList(authors: rubric.authors, active: true, compact: true),
                 ],
               ),
         */
@@ -120,6 +123,22 @@ class RubricDetails extends StatelessWidget {
             arguments: null,
           ),
         ),
+        /*
+        // Show authors list from `author.author_ids`
+        rubric.authors.isEmpty
+            ? null
+            : Padding(
+                padding: const EdgeInsets.all(sidePadding),
+                child: SectionTitle(text: '${"All rubric's authors".i18n} (${rubric.authors.length})'),
+              ),
+        rubric.authors.isEmpty
+            ? null
+            : AuthorsList(
+                authors: rubric.authors,
+                // useScrollController: false,
+                // compact: true,
+              ),
+        */
         // Show tracks list from `author.track_ids`
         rubric.track_ids.isEmpty
             ? null

@@ -7,7 +7,7 @@ extension Localization on String {
           'Authors:': 'Авторы:',
           'Tags:': 'Теги:',
           'All rubrics list': 'Список всех рубрик',
-          "All rubric's tracks": 'Все треки автора',
+          "All rubric's tracks": 'Все треки в рубрике',
         },
       };
   String get i18n => localize(this, _t);
