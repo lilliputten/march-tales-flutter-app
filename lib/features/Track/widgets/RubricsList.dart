@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
 
-import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'package:march_tales_app/features/Track/types/Rubric.dart';
 import 'package:march_tales_app/screens/RubricScreen.dart';
 
 final logger = Logger();
 
-class RubricsInlineList extends StatelessWidget {
-  const RubricsInlineList({
+class RubricsList extends StatelessWidget {
+  const RubricsList({
     super.key,
     required this.rubrics,
     this.compact = false,
-    this.active = false,
+    this.active = true,
     this.color,
   });
-  final List<TrackRubric> rubrics;
+  final List<Rubric> rubrics;
   final bool compact;
   final bool active;
   final Color? color;
@@ -30,12 +30,14 @@ class RubricsInlineList extends StatelessWidget {
     final textStyle = style.copyWith(color: basicColor);
     return Wrap(
         spacing: compact ? 5 : 10,
-        crossAxisAlignment: WrapCrossAlignment.center,
+        runSpacing: compact ? 5 : 10,
+        // crossAxisAlignment: CrossAxisAlignment.start,
+        // crossAxisAlignment: WrapCrossAlignment.center,
         children: this.rubrics.map((rubric) {
           return InkWell(
             onTap: active
                 ? () {
-                    // logger.d('[RubricsInlineList] rubricId=${rubric.id}');
+                    // logger.d('[RubricsList] rubricId=${rubric.id}');
                     Navigator.restorablePushNamed(
                       context,
                       RubricScreen.routeName,

@@ -9,6 +9,7 @@ import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/features/Track/types/Rubric.dart';
 import 'package:march_tales_app/features/Track/widgets/TagsInlineList.dart';
 import 'package:march_tales_app/features/Track/widgets/TracksListByIds.dart';
+import 'package:march_tales_app/screens/RubricsListScreen.dart';
 import 'RubricDetails.i18n.dart';
 
 final logger = Logger();
@@ -119,7 +120,7 @@ class RubricDetails extends StatelessWidget {
           padding: const EdgeInsets.all(sidePadding),
           child: CustomRouteButton(
             text: 'All rubrics list'.i18n,
-            routeName: '', // RubricsListScreen.routeName,
+            routeName: RubricsListScreen.routeName,
             arguments: null,
           ),
         ),

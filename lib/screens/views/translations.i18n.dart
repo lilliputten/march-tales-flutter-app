@@ -4,6 +4,8 @@ extension Localization on String {
   static var _t = Translations.byLocale('en') +
       {
         'ru': {
+          'All rubrics': 'Все рубрики',
+          'All authors': 'Все авторы',
           "Other author's tracks": 'Другие треки автора',
         },
       };

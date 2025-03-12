@@ -4,20 +4,20 @@ import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/components/CustomBackButton.dart';
 import 'package:march_tales_app/components/SectionTitle.dart';
-import 'package:march_tales_app/features/Track/types/Author.dart';
-import 'package:march_tales_app/features/Track/widgets/AuthorsList.dart';
+import 'package:march_tales_app/features/Track/types/Rubric.dart';
+import 'package:march_tales_app/features/Track/widgets/RubricsList.dart';
 import 'translations.i18n.dart';
 
 final logger = Logger();
 
-class AuthorsListScreenView extends StatelessWidget {
-  const AuthorsListScreenView({
+class RubricsListScreenView extends StatelessWidget {
+  const RubricsListScreenView({
     super.key,
-    required this.authors,
+    required this.rubrics,
     this.scrollController,
   });
 
-  final List<Author> authors;
+  final List<Rubric> rubrics;
   final ScrollController? scrollController;
 
   @override
@@ -33,12 +33,12 @@ class AuthorsListScreenView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(0),
               child: SectionTitle(
-                text: 'All authors'.i18n,
-                extraText: '(${this.authors.length})',
+                text: 'All rubrics'.i18n,
+                extraText: '(${this.rubrics.length})',
               ),
             ),
-            AuthorsList(
-              authors: this.authors,
+            RubricsList(
+              rubrics: this.rubrics,
               active: true,
             ),
             Padding(

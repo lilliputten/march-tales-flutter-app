@@ -37,7 +37,7 @@ class Rubric {
         tags: List<dynamic>.from(json['tags']).map((data) => TrackTag.fromJson(data)).toList(),
       );
     } catch (err, stacktrace) {
-      final String msg = 'Can not parse Author data: $err';
+      final String msg = 'Can not parse Rubric data: $err';
       logger.e(msg, error: err, stackTrace: stacktrace);
       debugger();
       throw FormatException(msg);

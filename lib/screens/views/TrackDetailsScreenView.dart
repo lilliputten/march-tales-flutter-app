@@ -5,7 +5,7 @@ import 'package:march_tales_app/components/SectionTitle.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItem.dart';
 import 'package:march_tales_app/features/Track/widgets/TracksListByIds.dart';
-import 'TrackDetailsScreenView.i18n.dart';
+import 'translations.i18n.dart';
 
 const double _sidePadding = 5;
 
