@@ -7,6 +7,7 @@ import 'package:march_tales_app/features/Track/db/TrackInfo.dart';
 import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItemAsCard.dart';
+import 'package:march_tales_app/screens/TrackDetailsScreen.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
@@ -14,14 +15,18 @@ final logger = Logger();
 // NOTE: See theme info at: https://api.flutter.dev/flutter/material/ThemeData-class.html
 
 class TrackItem extends StatefulWidget {
+  final Track track;
+  final bool asFavorite;
+  final bool fullView;
+  final bool compact;
+
   const TrackItem({
     super.key,
     required this.track,
-    this.asFavorite,
+    this.asFavorite = false,
+    this.fullView = false,
+    this.compact = false,
   });
-
-  final Track track;
-  final bool? asFavorite;
 
   @override
   State<TrackItem> createState() => _TrackItemState();
@@ -62,6 +67,17 @@ class _TrackItemState extends State<TrackItem> {
     super.dispose();
   }
 
+  void _handleClick(Track track) {
+    // Show track details page
+    // @see https://docs.flutter.dev/cookbook/navigation/navigate-with-arguments
+    // @see https://api.flutter.dev/flutter/widgets/Navigator/restorablePush.html
+    Navigator.restorablePushNamed(
+      context,
+      TrackDetailsScreen.routeName,
+      arguments: track.id,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final Track track = this.widget.track;
@@ -76,14 +92,8 @@ class _TrackItemState extends State<TrackItem> {
     final TrackInfo? trackInfo = this._trackInfo;
     int? position = trackInfo?.position.inMilliseconds;
     int? duration = track.duration.inMilliseconds;
-    // NOTEL It's possible ti get a position from the `PlayerBoxState`
-    // if (isActiveTrack) {
-    //   if (appState.playingPosition != null) {
-    //     position = appState.playingPosition!.inMilliseconds;
-    //   }
-    // }
 
-    final isFavorite = appState.isFavoriteTrackId(track.id); // this._trackInfo?.favorite ?? false;
+    final isFavorite = appState.isFavoriteTrackId(track.id);
 
     double progress = 0;
     if (duration != 0 && position != null) {
@@ -93,13 +103,15 @@ class _TrackItemState extends State<TrackItem> {
     final isAlreadyPlayed = !isActiveTrack && progress >= 1;
 
     return TrackItemAsCard(
-      track: track,
-      isActiveTrack: isActiveTrack,
-      isAlreadyPlayed: isAlreadyPlayed,
-      isPlaying: isPlaying,
-      progress: progress,
-      isFavorite: isFavorite,
-      asFavorite: this.widget.asFavorite,
-    );
+        track: track,
+        isActiveTrack: !this.widget.fullView && isActiveTrack,
+        isAlreadyPlayed: isAlreadyPlayed,
+        isPlaying: isPlaying,
+        progress: progress,
+        isFavorite: isFavorite,
+        asFavorite: this.widget.asFavorite,
+        fullView: this.widget.fullView,
+        compact: this.widget.compact,
+        onClick: this.widget.fullView ? null : this._handleClick);
   }
 }

@@ -1,0 +1,29 @@
+{
+    "id": 1,
+    "text": "Тест",
+    "promote": true,
+    "track_ids": [
+        1
+    ],
+    "authors": [
+        {
+            "id": 1,
+            "name": "Вильгельм Гауф",
+            "portrait_picture": "/media/samples/author-wilhelm-hauff-sq-200.jpg",
+            "promote": true,
+            "track_ids": [
+                1,
+                4,
+                5,
+                6
+            ]
+        }
+    ],
+    "rubrics": [
+        {
+            "id": 1,
+            "promote": true,
+            "text": "Сказки"
+        }
+    ]
+}

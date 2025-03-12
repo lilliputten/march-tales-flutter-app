@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:march_tales_app/Init.dart';
+import 'package:march_tales_app/app/AppColors.dart';
+import 'package:march_tales_app/components/CustomBackButton.dart';
 import 'package:march_tales_app/components/LoginButton.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
@@ -16,7 +18,32 @@ import 'SettingsPage.i18n.dart';
 final logger = Logger();
 
 // @see https://docs.flutter.dev/cookbook/networking/fetch-data
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
+  @override
+  State<SettingsPage> createState() => SettingsPageState();
+}
+
+class SettingsPageState extends State<SettingsPage> {
+  late AppState _appState;
+  ScrollController scrollController = new ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    this._appState = context.read<AppState>();
+    Future.delayed(Duration.zero, () {
+      this._appState.addScrollController(this.scrollController);
+    });
+  }
+
+  @override
+  void dispose() {
+    Future.delayed(Duration.zero, () {
+      this._appState.removeScrollController(this.scrollController);
+    });
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -24,6 +51,7 @@ class SettingsPage extends StatelessWidget {
       children: [
         Expanded(
           child: SingleChildScrollView(
+            controller: this.scrollController,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
               child: SettingsWidget(),
@@ -74,7 +102,7 @@ class ThemeSelector extends StatelessWidget {
           appState.toggleDarkTheme(isDarkTheme);
         }
       },
-      // TODO; Make selected item distinctive using `selectedItemBuilder`?
+      // XXX FUTURE: Make selected item distinctive using `selectedItemBuilder`?
       items: items,
     );
   }
@@ -113,13 +141,13 @@ class LanguageSelector extends StatelessWidget {
       onChanged: (String? locale) {
         if (locale != null) {
           serverSession.updateLocale(locale);
-          // Update locale in the context store
-          appState.updateLocale(locale);
           // Set system locale
           context.locale = Locale(locale);
+          // Update locale in the context store
+          appState.updateLocale(locale);
         }
       },
-      // TODO; Make selected item distinctive using `selectedItemBuilder`?
+      // XXX FUTURE: Make selected item distinctive using `selectedItemBuilder`?
       items: items,
     );
   }
@@ -130,10 +158,12 @@ class AppInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final style = theme.textTheme.bodySmall!;
+    final AppColors appColors = theme.extension<AppColors>()!;
     final linkStyle = style.copyWith(
       decoration: TextDecoration.underline,
-      color: Colors.blue,
-      decorationColor: Colors.blue,
+      color: appColors.brandColor, // Colors.blue,
+      decorationColor: appColors.brandColor,
+      fontWeight: FontWeight.bold,
     );
 
     final appVersion = Init.appVersion;
@@ -188,10 +218,37 @@ class AppInfo extends StatelessWidget {
             InkWell(
               onTap: () => launchUrl(Uri.parse('${AppConfig.WEB_SITE_PROTOCOL}${AppConfig.WEB_SITE_DOMAIN}')),
               child: Text(
-                AppConfig.WEB_SITE_DOMAIN,
+                '${AppConfig.WEB_SITE_PROTOCOL}${AppConfig.WEB_SITE_DOMAIN}',
                 style: linkStyle,
               ),
             ),
+          ],
+        ),
+        Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SelectableText('VK:'.i18n, style: style),
+            InkWell(
+                onTap: () => launchUrl(Uri.parse(AppConfig.VK_URL)), child: Text(AppConfig.VK_URL, style: linkStyle)),
+          ],
+        ),
+        Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SelectableText('Telegram:'.i18n, style: style),
+            InkWell(
+                onTap: () => launchUrl(Uri.parse(AppConfig.TG_URL)), child: Text(AppConfig.TG_URL, style: linkStyle)),
+          ],
+        ),
+        Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SelectableText('YouTube:'.i18n, style: style),
+            InkWell(
+                onTap: () => launchUrl(Uri.parse(AppConfig.YT_URL)), child: Text(AppConfig.YT_URL, style: linkStyle)),
           ],
         ),
         Wrap(
@@ -222,13 +279,12 @@ class AppInfo extends StatelessWidget {
             InkWell(
               onTap: () => launchUrl(Uri.parse('https://${AppConfig.DEVELOPER_URL}')),
               child: Text(
-                AppConfig.DEVELOPER_URL,
+                'https://${AppConfig.DEVELOPER_URL}',
                 style: linkStyle,
               ),
             ),
           ],
         ),
-        // TODO: Show other info (developer, project site etc)
       ],
     );
   }
@@ -242,8 +298,12 @@ class AuthInfo extends StatelessWidget {
     final userName = appState.getUserName();
 
     final theme = Theme.of(context);
-    final style = theme.textTheme.bodySmall!;
-    final ButtonStyle buttonStyle = ElevatedButton.styleFrom(textStyle: style);
+    final buttonTextStyle = theme.textTheme.bodyMedium!.copyWith(color: appColors.onBrandColor);
+    final textStyle = theme.textTheme.bodyMedium!;
+    final ButtonStyle buttonStyle = TextButton.styleFrom(
+      textStyle: buttonTextStyle,
+      backgroundColor: appColors.brandColor,
+    );
 
     logout() async {
       final String signoutUrl = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/logout/';
@@ -269,20 +329,21 @@ class AuthInfo extends StatelessWidget {
           children: [
             SelectableText(
               'User:'.i18n,
-              style: style,
+              style: textStyle,
             ),
             SelectableText(
               userName,
-              style: style.copyWith(fontWeight: FontWeight.bold),
+              style: textStyle.copyWith(fontWeight: FontWeight.bold),
             ),
           ],
         ),
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton(
+          child: FilledButton.icon(
             style: buttonStyle,
             onPressed: logout,
-            child: Text('Log out'.i18n),
+            icon: Icon(Icons.logout, color: appColors.onBrandColor),
+            label: Text('Log out'.i18n, style: buttonTextStyle),
           ),
         ),
       ],
@@ -305,8 +366,8 @@ class AuthBlock extends StatelessWidget {
   }
 }
 
-class SectionTitle extends StatelessWidget {
-  const SectionTitle({
+class SettingsSectionTitle extends StatelessWidget {
+  const SettingsSectionTitle({
     super.key,
     required this.title,
   });
@@ -316,14 +377,16 @@ class SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final AppColors appColors = theme.extension<AppColors>()!;
     final textStyle = theme.textTheme.bodyLarge!.copyWith(
-      color: colorScheme.primary,
+      color: appColors.brandColor, // colorScheme.primary,
+      fontWeight: FontWeight.bold,
     );
-    final delimiterColor = colorScheme.onSurface.withValues(alpha: 0.2);
+    final delimiterColor = colorScheme.onSurface.withValues(alpha: 0.1);
     return Container(
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(width: 1.5, color: delimiterColor),
+          bottom: BorderSide(width: 1, color: delimiterColor),
         ),
       ),
       child: Padding(
@@ -343,13 +406,15 @@ class SettingsWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SectionTitle(title: 'Basic settings'.i18n),
+          SettingsSectionTitle(title: 'Basic settings'.i18n),
           LanguageSelector(),
           ThemeSelector(),
-          SectionTitle(title: 'Authorization'.i18n),
+          SettingsSectionTitle(title: 'Authorization'.i18n),
           AuthBlock(),
-          SectionTitle(title: 'Application info'.i18n),
+          SettingsSectionTitle(title: 'Application info'.i18n),
           AppInfo(),
+          // SizedBox(height: 5),
+          CustomBackButton(isRoot: true),
         ],
       ),
     );

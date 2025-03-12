@@ -32,7 +32,7 @@ class ThumbnailImage extends StatelessWidget {
       throw Exception('At least one dimension should be defined');
     }
     final imageWidth = width != 0 ? width : height * previewDimensionsRatio;
-    final imageHeight = height != 0 ? height : width * previewDimensionsRatio;
+    final imageHeight = height != 0 ? height : width / previewDimensionsRatio;
 
     // final previewHalfSize = min(imageWidth, imageHeight) / 2;
     // final previewProgressPadding = previewHalfSize / 2; // - 16;

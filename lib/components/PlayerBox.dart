@@ -7,9 +7,11 @@ import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart' hide TrackInfo;
 import 'package:logger/logger.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:march_tales_app/Init.dart';
+import 'package:march_tales_app/components/HidableWrapper.dart';
 import 'package:march_tales_app/components/PlayerWrapper.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/constants/player.dart';
@@ -21,8 +23,7 @@ import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
 import 'package:march_tales_app/features/Track/trackConstants.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'PlayerBox.i18n.dart';
-
-// import 'package:audio_session/audio_session.dart';
+import 'PlayerBox/common.dart';
 
 final logger = Logger();
 
@@ -43,6 +44,7 @@ class PlayerBoxState extends State<PlayerBox> {
   Track? _track;
   late SharedPreferences _prefs;
   Duration? _position;
+  // Duration? _buffered;
   bool _hasIncremented = false;
   bool _isIncrementingNow = false;
   bool _isPlaying = false;
@@ -54,6 +56,34 @@ class PlayerBoxState extends State<PlayerBox> {
   void dispose() {
     this._player.dispose();
     super.dispose();
+  }
+
+  Stream<PositionData> get _positionDataStream {
+    return Rx.combineLatest2<
+            Duration,
+            // Duration,
+            Duration?,
+            PositionData>(
+        this._player.positionStream,
+        // this._player.bufferedPositionStream,
+        this._player.durationStream, (position,
+            // bufferedPosition,
+            duration) {
+      return PositionData(
+        position,
+        Duration.zero,
+        duration ?? Duration.zero,
+      );
+    });
+    /*
+    return Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+      this._player.positionStream,
+      this._player.bufferedPositionStream,
+      this._player.durationStream,
+      (position, bufferedPosition, duration) {
+        return PositionData(position, bufferedPosition, duration ?? Duration.zero);
+      });
+    */
   }
 
   @override
@@ -72,17 +102,6 @@ class PlayerBoxState extends State<PlayerBox> {
   _initWithContext() {
     Future.delayed(Duration.zero, () {
       this._loadSavedPrefs();
-      /* // DEBUG: Access context during initState stage
-       * if (context.mounted) {
-       *   final appState = context.read<AppState>(); // .watch<AppState>();
-       *   final playerState = appState.playerBoxKey?.currentState;
-       *   final playerWidget = appState.playerBoxKey?.currentWidget;
-       *   logger.t(
-       *       '[PlayerBox:initState] playerWidget=${playerWidget} playerState=${playerState} context=${context} appState=${appState} player=${this._player}');
-       *   debugger();
-       *   appState.setAudioPlayer(this._player);
-       * }
-       */
     });
   }
 
@@ -151,7 +170,7 @@ class PlayerBoxState extends State<PlayerBox> {
   Future<Track?> _loadPlayingTrackDetails({required int id, bool notify = true}) async {
     if (id != 0) {
       // Update `playingTrack` if language has been changed
-      final track = await loadTrackDetails(id: id);
+      final track = await loadTrackDetails(id);
       this._track = track;
       await this._setTrack(track, notify: notify);
     }
@@ -160,7 +179,7 @@ class PlayerBoxState extends State<PlayerBox> {
 
   Future<Track?> updatePlayingTrackDetails({bool notify = true}) async {
     if (this._track != null) {
-      final track = this._track = await loadTrackDetails(id: this._track!.id);
+      final track = this._track = await loadTrackDetails(this._track!.id);
       setState(() {
         this._track = track;
       });
@@ -177,30 +196,31 @@ class PlayerBoxState extends State<PlayerBox> {
     final PlayerState playerState = this._player.playerState;
     final bool playing = playerState.playing;
     final ProcessingState processingState = playerState.processingState;
-    logger.t('[PlayerBox:_playerStateHandler] playing=${playing} processingState=${processingState}');
-    final duration = this._player.duration;
+    // logger.t('[PlayerBox:_playerStateHandler] playing=${playing} processingState=${processingState}');
+    // final position = this._player.position;
+    // this._savePlayingPosition(position, notify: false);
     // Update only if player is playing or completed
-    PlayingTrackUpdateType? updateType;
+    PlayingTrackUpdateType? updateType; // = PlayingTrackUpdateType.position;
     final isCurrentlyPlaying = this._isPlaying && !this._isPaused;
     if (playing) {
       // Really playing and...
       if (!isCurrentlyPlaying) {
-        logger.t('[PlayerBox:_playerStateHandler] set state: playing');
+        // logger.t('[PlayerBox:_playerStateHandler] set state: playing');
         this._setPlayingStatus(notify: false);
         updateType = PlayingTrackUpdateType.playingStatus;
       } else if (processingState == ProcessingState.completed) {
-        logger.t('[PlayerBox:_playerStateHandler] set state: finished');
+        // logger.t('[PlayerBox:_playerStateHandler] set state: finished');
         this._pausePlayback(notify: false);
         this._setPausedStatus(notify: false);
         // Set position to the full dration value: as sign of the finished playback
-        this._savePlayingPosition(duration, notify: false);
+        this._savePlayingPosition(this._player.duration, notify: false);
         updateType = PlayingTrackUpdateType.pausedStatus;
         this._incrementCurrentTrackPlayedCount();
       }
     } else {
       // Not rally playing and...
       if (isCurrentlyPlaying) {
-        logger.t('[PlayerBox:_playerStateHandler] set state: paused');
+        // logger.t('[PlayerBox:_playerStateHandler] set state: paused');
         this._setPausedStatus(notify: false);
         updateType = PlayingTrackUpdateType.pausedStatus;
       }
@@ -403,14 +423,6 @@ class PlayerBoxState extends State<PlayerBox> {
 
   // Public API
 
-  AudioPlayer? getPlayer() {
-    return this._player;
-  }
-
-  Track? getTrack() {
-    return this._track;
-  }
-
   void playSeekBackward() {
     final currentPosition = this._position ?? this._track?.duration;
     if (currentPosition != null) {
@@ -495,21 +507,28 @@ class PlayerBoxState extends State<PlayerBox> {
       return Container();
     }
 
-    return StreamBuilder(
-      stream: player.playerStateStream,
-      builder: (context, AsyncSnapshot snapshot) {
-        return PlayerWrapper(
-          key: Key('PlayerWrapper_${track.id}'),
-          track: track,
-          playSeek: this.playSeek,
-          playSeekBackward: this.playSeekBackward,
-          playSeekForward: this.playSeekForward,
-          togglePause: this.togglePause,
-          position: this._position,
-          isPlaying: this._isPlaying,
-          isPaused: this._isPaused,
-        );
-      },
+    final isPlaying = this._isPlaying && !this._isPaused;
+
+    return HidableWrapper(
+      widgetSize: 101,
+      wrap: !isPlaying,
+      child: StreamBuilder(
+        stream: player.playerStateStream,
+        builder: (context, AsyncSnapshot snapshot) {
+          return PlayerWrapper(
+            key: Key('PlayerWrapper-${track.id}'),
+            track: track,
+            playSeek: this.playSeek,
+            playSeekBackward: this.playSeekBackward,
+            playSeekForward: this.playSeekForward,
+            togglePause: this.togglePause,
+            position: this._position,
+            isPlaying: this._isPlaying,
+            isPaused: this._isPaused,
+            positionDataStream: this._positionDataStream,
+          );
+        },
+      ),
     );
   }
 }

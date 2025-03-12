@@ -63,6 +63,7 @@ config-local.sh
 
 # Unused & temp files
 \!UNUSED
+*.UNUSED
 ~*
 *_
 *~

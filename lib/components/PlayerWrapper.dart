@@ -7,9 +7,7 @@ import 'package:march_tales_app/components/PlayerSlider.dart';
 import 'package:march_tales_app/components/PlayerTrackDetails.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
-
-// import 'package:march_tales_app/features/Track/db/TrackInfo.dart';
-// import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
+import 'PlayerBox/common.dart';
 
 final logger = Logger();
 
@@ -24,6 +22,7 @@ class PlayerWrapper extends StatefulWidget {
     this.position,
     required this.isPlaying,
     required this.isPaused,
+    required this.positionDataStream,
   });
 
   final Track track;
@@ -35,15 +34,15 @@ class PlayerWrapper extends StatefulWidget {
   final Duration? position;
   final bool isPlaying;
   final bool isPaused;
+  final Stream<PositionData> positionDataStream;
 
   @override
   State<PlayerWrapper> createState() => _PlayerWrapperState();
 }
 
 class _PlayerWrapperState extends State<PlayerWrapper> {
-  // TrackInfo? _trackInfo;
-
-  /*
+  /* // SAMPLE: Example of interaction with a local database to fetch TrackInfo records
+  TrackInfo? _trackInfo;
   void updateTrackInfo(TracksInfoDbUpdate update) {
     final Track track = this.widget.track;
     final trackInfo = update.trackInfo;
@@ -53,7 +52,6 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
       });
     }
   }
-
   @override
   void initState() {
     super.initState();
@@ -69,7 +67,6 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
     // Subscribe to the future updates
     tracksInfoDb.updateEvents.subscribe(this.updateTrackInfo);
   }
-
   @override
   void dispose() {
     tracksInfoDb.updateEvents.unsubscribe(this.updateTrackInfo);
@@ -79,10 +76,6 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    // final appState = context.watch<AppState>();
-    // final theme = Theme.of(context);
-    // final colorScheme = theme.colorScheme;
-
     final Track track = widget.track;
     final Duration duration = track.duration;
     final Duration? position = widget.position; // appState.playingPosition;
@@ -98,14 +91,12 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
               flex: 1,
               child: PlayerTrackDetails(
                 title: track.title,
-                // trackInfo: this._trackInfo,
                 position: position,
                 duration: duration,
               ),
             ),
       PlayerControls(
         track: track,
-        // trackInfo: this._trackInfo,
         playSeekBackward: widget.playSeekBackward,
         playSeekForward: widget.playSeekForward,
         togglePause: widget.togglePause,
@@ -121,16 +112,15 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         PlayerSlider(
+          positionDataStream: this.widget.positionDataStream,
+          // positionStream: this.widget.positionStream,
           position: position,
           duration: duration,
           onSeek: widget.playSeek,
-          // onSeek: (Duration position) {
-          //   widget.playSeek(position);
-          // },
         ),
         Padding(
           // Show top padding only if there no track slider above
-          padding: EdgeInsets.fromLTRB(padding, 0, padding, padding),
+          padding: EdgeInsets.fromLTRB(padding, 0, padding, 5),
           // padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           child: Row(
             spacing: 10,

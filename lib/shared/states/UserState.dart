@@ -8,7 +8,7 @@ final logger = Logger();
 
 mixin UserState {
   void notifyListeners();
-  SharedPreferences? getPrefs(); // From `PrefsState`
+  SharedPreferences? getPrefs(); // From `AppState`
 
   // UserState
 

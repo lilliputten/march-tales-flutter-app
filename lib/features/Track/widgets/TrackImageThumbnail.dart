@@ -29,7 +29,7 @@ class TrackImageThumbnail extends StatelessWidget {
       throw Exception('TrackImageThumbnail: At least one dimension should be defined');
     }
     final imageWidth = width != 0 ? width : height * previewDimensionsRatio;
-    final imageHeight = height != 0 ? height : width * previewDimensionsRatio;
+    final imageHeight = height != 0 ? height : width / previewDimensionsRatio;
     final String url = file.isEmpty ? '' : '${AppConfig.TALES_SERVER_HOST}${file}';
     // logger.t('[TrackImageThumbnail] url=${url.replaceAll("/", "/")}');
     return ThumbnailImage(url: url, width: imageWidth, height: imageHeight, borderRadius: borderRadius);

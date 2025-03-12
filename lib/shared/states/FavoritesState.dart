@@ -36,7 +36,6 @@ mixin FavoritesState {
     // final type = update.type;
     // final isAuthorized = this.isAuthorized();
     // logger.t('[FavoritesState:_handleUpdateUserState] type=${type} isAuthorized=${isAuthorized} update=${update}');
-    // debugger();
     this.loadFavorites();
   }
 
@@ -136,7 +135,8 @@ mixin FavoritesState {
         }
         if (favorite) {
           this._favoriteIds.add(id);
-          // Load missed data...
+          // Load missed data
+          // XXX FUTURE: Implement data load only on favirites page initalization. Check if the data exists in cached tracks list.
           futures.add(this._loadMissedFavoritesData());
         } else {
           this._favoriteIds.remove(id);
@@ -148,7 +148,7 @@ mixin FavoritesState {
       } catch (err, stacktrace) {
         logger.e('[setFavorite] ${err}', error: err, stackTrace: stacktrace);
         debugger();
-        // TODO: Show error toast?
+        // XXX: Show error toast?
         rethrow;
       } finally {
         this.notifyListeners();

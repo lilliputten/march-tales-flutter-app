@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:i18n_extension/i18n_extension.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:march_tales_app/AppWrapper.dart';
 import 'package:march_tales_app/Init.dart';
@@ -18,16 +17,26 @@ import 'shared/states/AppState.dart';
 final formatter = YamlFormatter();
 final logger = Logger();
 
+class VersionException implements Exception {
+  String cause;
+  VersionException(this.cause);
+}
+
 class RootApp extends StatelessWidget {
-  const RootApp({super.key});
+  const RootApp({
+    super.key,
+    required this.prefs,
+  });
+
+  final SharedPreferences prefs;
 
   @override
   Widget build(BuildContext context) {
-    final Future initFuture = Init.initialize();
+    final Future initFuture = Init.initialize(prefs);
 
     return ChangeNotifierProvider(
       create: (context) {
-        final appState = AppState();
+        final appState = AppState(prefs: prefs);
         appState.initialize();
         // Initialize locale
         final locale = I18n.locale.languageCode;
@@ -36,7 +45,13 @@ class RootApp extends StatelessWidget {
         // Wait for the config & tick initialization and request for the first track record
         initFuture.then((initData) async {
           // TODO: Check for the valid app version?
-          appState.setPrefs(Init.prefs);
+          final versionsMismatched = Init.serverAPKMajorMinorVersion != Init.appMajorMinorVersion;
+          if (versionsMismatched) {
+            appState.setVersionsMismatched();
+            throw VersionException(
+                'The app version (${Init.appVersion}) is outdated (the actual one is ${Init.serverAPKVersion}). Please update the application.');
+          }
+          // logger.t('[ChangeNotifierProvider] Versions: versionsMismatched=${versionsMismatched} serverVersion=${Init.serverVersion} appVersion=${Init.appVersion}');
           appState.setUser(
               userId: Init.userId ?? 0,
               userName: Init.userName ?? '',
@@ -47,32 +62,30 @@ class RootApp extends StatelessWidget {
             appState.loadFavorites(), // TODO: Don't load favorites if had been already loaded on `setUser`
             appState.reloadTracks(),
           ];
-          // if (!appState.favoritesHasBeenLoaded && !appState.isFavoritesLoading) {
-          //   futures.add(appState.loadFavorites());
-          // }
           await Future.wait<dynamic>(futures);
         }).catchError((err) {
           logger.e('Error: ${err}');
-          // appState.setGlobalError(err);
-          debugger();
+          appState.setGlobalError(err);
         });
         // logger.d('[ChangeNotifierProvider:create]: $initFuture');
         return appState;
       },
       child: AppWrapper(
-          builder: FutureBuilder(
-        future: initFuture,
-        builder: (context, snapshot) {
-          if (snapshot.error != null) {
-            return AppErrorScreen(error: snapshot.error);
-          }
-          if (snapshot.connectionState == ConnectionState.done) {
-            return HomePage();
-          } else {
-            return SplashScreen();
-          }
-        },
-      )),
+        builder: FutureBuilder(
+          future: initFuture,
+          builder: (context, snapshot) {
+            final appState = context.watch<AppState>();
+            if (snapshot.error != null || appState.error != null) {
+              return AppErrorScreen(error: snapshot.error ?? appState.error);
+            }
+            if (snapshot.connectionState == ConnectionState.done) {
+              return HomePage();
+            } else {
+              return SplashScreen();
+            }
+          },
+        ),
+      ),
     );
   }
 }

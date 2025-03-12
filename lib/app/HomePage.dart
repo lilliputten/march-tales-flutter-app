@@ -1,109 +1,82 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/app/AppColors.dart';
-import 'package:march_tales_app/app/BottomNavigation.dart';
-import 'package:march_tales_app/app/homePages.dart';
-import 'package:march_tales_app/components/PlayerBox.dart';
+import 'package:march_tales_app/app/AppErrorScreen.dart';
+import 'package:march_tales_app/app/PageWrapper.dart';
+import 'package:march_tales_app/routes/buildRouteWidget.dart';
+import 'package:march_tales_app/routes/routeConstants.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
-import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
-
-// import 'package:march_tales_app/app/AppDrawer.dart';
 
 final logger = Logger();
 
-final playerBoxKey = GlobalKey<PlayerBoxState>();
+final navigatorKey = GlobalKey<NavigatorState>();
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  const HomePage({
+    super.key,
+  });
+
+  @override
+  State<HomePage> createState() => HomePageState();
+}
+
+class HomePageState extends State<HomePage> /* with RestorationMixin */ {
+  /* // RestorationMixin: To store navigator state?
+   * @override
+   * String get restorationId => 'HomePageRestoration';
+   * @override
+   * void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+   *   // Register the `RestorableRouteFuture` with the state restoration framework.
+   *   registerForRestoration(navigatorStateValue, 'navigatorStateValue'); // Retrieve and store navigatorStateValue
+   * }
+   */
+
+  _buildRoute(RouteSettings routeSettings) {
+    try {
+      return buildRouteWidget(this.context, routeSettings); // , this.widget.routeObserver);
+    } catch (err, stacktrace) {
+      logger.e('[HomePage] _buildRoute: Error: ${err}', error: err, stackTrace: stacktrace);
+      debugger();
+      return AppErrorScreen(error: err);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
-    final selectedIndex = appState.getNavigationTabIndex();
-    // final playingTrack = appState.playingTrack;
-
-    appState.playerBoxKey = playerBoxKey;
-
-    final theme = Theme.of(context);
-    final AppColors appColors = theme.extension<AppColors>()!;
-    final style = theme.textTheme.bodyMedium!;
-    final colorScheme = theme.colorScheme;
-
-    final homePages = getHomePages();
-
-    final widget = homePages[selectedIndex].widget;
-    final Widget page = widget();
-
-    // The container for the current page, with its background color
-    // and subtle switching animation.
-    final pageArea = ColoredBox(
-      color: colorScheme.surfaceContainerHighest,
-      child: AnimatedSwitcher(
-        duration: Duration(milliseconds: 200),
-        child: page,
-      ),
-    );
-
+    final routeObserver = appState.getRouteObserver();
     return RestorationScope(
-      restorationId: 'HomePage_Widget',
-      child: Scaffold(
-        appBar: AppBar(
-          titleSpacing: 15,
-          backgroundColor: appColors.brandColor,
-          foregroundColor: appColors.onBrandColor,
-          title: FittedBox(
-            fit: BoxFit.contain,
-            child: Row(
-              spacing: 10,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: Image(
-                    image: AssetImage('assets/images/march-cat/march-cat-sq-48.jpg'),
-                  ),
-                ),
-                Text(
-                  appTitle.i18n,
-                  maxLines: 1,
-                  overflow: TextOverflow.fade,
-                  style: style.copyWith(
-                    fontFamily: 'Lobster',
-                    fontSize: 28,
-                    color: appColors.onBrandColor,
-                  ),
-                ),
-              ],
-            ),
+      restorationId: 'HomePage',
+      child: PageWrapper(
+        navigatorKey: navigatorKey,
+        child: PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) async {
+            if (!didPop) {
+              final navigator = routeObserver.navigator;
+              // Navigate with nested navigator...
+              navigator?.pop(result);
+            }
+          },
+          child: Navigator(
+            restorationScopeId: 'HomeNavigator',
+            observers: [routeObserver],
+            key: navigatorKey,
+            initialRoute: initialRoute,
+            onGenerateRoute: (routeSettings) {
+              // Pages generator...
+              return MaterialPageRoute(
+                builder: (context) {
+                  return this._buildRoute(routeSettings);
+                },
+                settings: routeSettings,
+              );
+            },
           ),
-          // actions?
-        ),
-        bottomNavigationBar: BottomNavigation(
-          homePages: homePages,
-          selectedIndex: selectedIndex,
-          handleIndex: (int value) {
-            appState.updateNavigationTabIndex(value);
-            // setState(() {
-            //   _selectedIndex.value = value;
-            // });
-          },
-        ),
-        // bottomSheet: Text('bottomSheet'),
-        // endDrawer: AppDrawer(), // TODO: Side navigation panel
-        // onTap: (int i){setState((){index = i;});},
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            return Column(
-              children: [
-                // TopMenuBox(),
-                Expanded(child: pageArea),
-                PlayerBox(
-                  key: playerBoxKey,
-                  // track: playingTrack,
-                ),
-              ],
-            );
-          },
         ),
       ),
     );

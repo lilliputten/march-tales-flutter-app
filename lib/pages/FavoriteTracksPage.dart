@@ -18,8 +18,6 @@ class FavoriteTracksPage extends StatelessWidget {
     final isFavoritesLoading = appState.isFavoritesLoading;
     final tracks = appState.getSortedFavorites();
 
-    logger.d('[FavoriteTracksPage] tracks=${tracks}');
-
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
 
@@ -62,6 +60,7 @@ class FavoriteTracksPage extends StatelessWidget {
             count: tracks.length,
             isLoading: isFavoritesLoading,
             asFavorite: true,
+            useScrollController: true,
             onRefresh: () async {
               await appState.loadFavorites();
             },

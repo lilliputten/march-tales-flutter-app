@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
+import 'package:march_tales_app/routes/appRoutes.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/sharedTranslationsData.i18n.dart';
 
@@ -21,16 +22,18 @@ class AppWrapper extends StatelessWidget {
   const AppWrapper({
     super.key,
     required this.builder,
+    // required this.routeObserver,
   });
 
   final FutureBuilder builder;
+  // final RouteObserver<PageRoute> routeObserver;
 
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
     return MaterialApp(
       restorationScopeId: 'app',
-      // title: 'The March Cat Tales',
+      // title: 'The March Cat Tales'.i18n,
       onGenerateTitle: (context) => appTitle.i18n,
       debugShowCheckedModeBanner: false,
       locale: I18n.locale,
@@ -54,6 +57,7 @@ class AppWrapper extends StatelessWidget {
         extensions: themeExtensions,
       ),
       home: builder,
+      routes: appRoutes,
     );
   }
 }

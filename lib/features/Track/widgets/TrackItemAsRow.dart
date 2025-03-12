@@ -3,33 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/features/Track/types/Track.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackDetails.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackItemControl.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemBase.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemDetails.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemPlayControl.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
-class TrackItemAsRow extends StatelessWidget {
+class TrackItemAsRow extends TrackItemBase {
   const TrackItemAsRow({
     super.key,
-    required this.track,
-    required this.isActiveTrack,
-    required this.isAlreadyPlayed,
-    required this.isPlaying,
-    required this.progress,
-    required this.isFavorite,
-    this.asFavorite,
+    required super.track,
+    required super.isActiveTrack,
+    required super.isAlreadyPlayed,
+    required super.isPlaying,
+    required super.progress,
+    required super.isFavorite,
+    super.asFavorite,
+    super.fullView,
+    super.compact,
+    required super.onClick,
   });
-
-  final Track track;
-  final bool isActiveTrack;
-  final bool isAlreadyPlayed;
-  final bool isPlaying;
-  final double progress;
-  final bool isFavorite;
-  final bool? asFavorite;
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +39,9 @@ class TrackItemAsRow extends StatelessWidget {
       child: InkWell(
         onTap: () {
           playerBoxState?.setTrack(track, play: false);
-          // appState.setPlayingTrack(track, play: false);
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          padding: const EdgeInsets.all(5),
           child: Row(
             spacing: 10,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -58,18 +52,18 @@ class TrackItemAsRow extends StatelessWidget {
                 flex: 1,
                 child: Opacity(
                   opacity: opacity,
-                  child: TrackDetails(
+                  child: TrackItemDetails(
                     track: track,
                     isActiveTrack: isActiveTrack,
                     isAlreadyPlayed: isAlreadyPlayed,
                     isPlaying: isPlaying,
                     isFavorite: isFavorite,
                     asFavorite: asFavorite,
+                    fullView: fullView,
                   ),
                 ),
               ),
-              // TrackFavoriteIcon(track: track),
-              TrackItemControl(
+              TrackItemPlayControl(
                 track: track,
                 isActiveTrack: isActiveTrack,
                 isAlreadyPlayed: isAlreadyPlayed,

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
@@ -5,50 +7,46 @@ import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/core/constants/previewDimensionsRatio.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackDetails.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackFullViewExtraBlock.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackImageThumbnail.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackItemControl.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemBase.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemControls.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackItemDetails.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
 const double _screenHorizontalPadding = 15;
 
-class TrackItemAsCard extends StatelessWidget {
+class TrackItemAsCard extends TrackItemBase {
   const TrackItemAsCard({
     super.key,
-    required this.track,
-    required this.isActiveTrack,
-    required this.isAlreadyPlayed,
-    required this.isPlaying,
-    required this.progress,
-    required this.isFavorite,
-    this.asFavorite,
+    required super.track,
+    required super.isActiveTrack,
+    required super.isAlreadyPlayed,
+    required super.isPlaying,
+    required super.progress,
+    required super.isFavorite,
+    super.asFavorite,
+    super.fullView,
+    super.compact,
+    super.onClick,
   });
-
-  final Track track;
-  final bool isActiveTrack;
-  final bool isAlreadyPlayed;
-  final bool isPlaying;
-  final double progress;
-  final bool isFavorite;
-  final bool? asFavorite;
 
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
-    final playerBoxState = appState.getPlayerBoxState();
 
-    final double opacity = isAlreadyPlayed ? 0.5 : 1;
+    final double opacity = isAlreadyPlayed && !fullView ? 0.5 : 1;
 
-    final double width = MediaQuery.sizeOf(context).width;
+    final double screenWidth = MediaQuery.sizeOf(context).width;
     final double height = MediaQuery.sizeOf(context).height;
-    final showVertical = height >= width;
+    final showVertical = height >= screenWidth && !this.compact;
 
     // Build track info widget items list...
     final itemsList = showVertical
         ? _trackItemAsCardItemsVertical(
-            width: showVertical ? width : width / 3,
+            width: screenWidth,
             detailsOpacity: opacity,
             appState: appState,
             track: track,
@@ -58,9 +56,11 @@ class TrackItemAsCard extends StatelessWidget {
             progress: progress,
             isFavorite: isFavorite,
             asFavorite: asFavorite,
+            fullView: fullView,
+            compact: compact,
           )
         : _trackItemAsCardItemsHorizontal(
-            width: width,
+            width: screenWidth,
             detailsOpacity: opacity,
             appState: appState,
             track: track,
@@ -70,6 +70,8 @@ class TrackItemAsCard extends StatelessWidget {
             progress: progress,
             isFavorite: isFavorite,
             asFavorite: asFavorite,
+            fullView: fullView,
+            compact: compact,
           );
 
     // Build wrapper...
@@ -92,13 +94,13 @@ class TrackItemAsCard extends StatelessWidget {
       color: Colors.transparent,
       borderRadius: BorderRadius.all(Radius.circular(10)),
       child: InkWell(
-        onTap: () {
-          // TODO: Call setTrack from `PlayerBoxState`
-          playerBoxState?.setTrack(track, play: false);
-          // appState.setPlayingTrack(track, play: false);
-        },
+        onTap: onClick != null
+            ? () {
+                onClick!(track);
+              }
+            : null,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          padding: const EdgeInsets.all(5),
           child: content,
         ),
       ),
@@ -116,31 +118,45 @@ List<Widget> _trackItemAsCardDetailItems({
   required final bool isPlaying,
   required final double progress,
   required final bool isFavorite,
-  final bool? asFavorite = false,
+  final bool asFavorite = false,
+  final bool fullView = false,
+  final bool compact = false,
+  final bool vertical = false,
 }) {
   // final double height = width / previewDimensionsRatio;
   return [
     Expanded(
       flex: 1,
-      child: Opacity(
-        opacity: detailsOpacity,
-        child: TrackDetails(
-          track: track,
-          isActiveTrack: isActiveTrack,
-          isAlreadyPlayed: isAlreadyPlayed,
-          isPlaying: isPlaying,
-          isFavorite: isFavorite,
-          asFavorite: asFavorite,
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 10,
+        children: [
+          Opacity(
+            opacity: detailsOpacity,
+            child: TrackItemDetails(
+              track: track,
+              isActiveTrack: isActiveTrack,
+              isAlreadyPlayed: isAlreadyPlayed,
+              isPlaying: isPlaying,
+              isFavorite: isFavorite,
+              asFavorite: asFavorite,
+              fullView: fullView,
+              compact: compact,
+            ),
+          ),
+          vertical || !fullView ? null : TrackFullViewExtraBlock(track: track)
+        ].nonNulls.toList(),
       ),
     ),
     // TrackFavoriteIcon(track: track),
-    TrackItemControl(
+    TrackItemControls(
       track: track,
       isActiveTrack: isActiveTrack,
       isAlreadyPlayed: isAlreadyPlayed,
       isPlaying: isPlaying,
       progress: progress,
+      isFavorite: isFavorite,
+      fullView: fullView,
     ),
   ];
 }
@@ -155,11 +171,14 @@ List<Widget> _trackItemAsCardItemsHorizontal({
   required final bool isPlaying,
   required final double progress,
   required final bool isFavorite,
-  final bool? asFavorite = false,
+  final bool asFavorite = false,
+  final bool fullView = false,
+  final bool compact = false,
 }) {
   // final double height = width / previewDimensionsRatio;
+  final double thumbWidth = min(200, width / 5);
   return [
-    TrackImageThumbnail(track: track, height: 100),
+    TrackImageThumbnail(track: track, width: thumbWidth, borderRadius: compact ? 5 : 10),
     ..._trackItemAsCardDetailItems(
       width: width,
       detailsOpacity: detailsOpacity,
@@ -171,7 +190,11 @@ List<Widget> _trackItemAsCardItemsHorizontal({
       progress: progress,
       isFavorite: isFavorite,
       asFavorite: asFavorite,
+      fullView: fullView,
+      compact: compact,
+      vertical: false,
     ),
+    // TrackFullViewExtraBlock(track: track),
   ];
 }
 
@@ -185,7 +208,9 @@ List<Widget> _trackItemAsCardItemsVertical({
   required final bool isPlaying,
   required final double progress,
   required final bool isFavorite,
-  final bool? asFavorite = false,
+  final bool asFavorite = false,
+  final bool fullView = false,
+  final bool compact = false,
 }) {
   final double height = (width - _screenHorizontalPadding * 2) / previewDimensionsRatio;
   return [
@@ -205,7 +230,11 @@ List<Widget> _trackItemAsCardItemsVertical({
         progress: progress,
         isFavorite: isFavorite,
         asFavorite: asFavorite,
+        fullView: fullView,
+        compact: compact,
+        vertical: true,
       ),
     ),
-  ];
+    fullView ? TrackFullViewExtraBlock(track: track) : null,
+  ].nonNulls.toList();
 }

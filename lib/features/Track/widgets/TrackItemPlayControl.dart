@@ -12,14 +12,16 @@ final logger = Logger();
 const double _trackItemControlIconSize = 24;
 const double _trackItemControlCircleSize = _trackItemControlIconSize + 16;
 
-class TrackItemControl extends StatelessWidget {
-  const TrackItemControl({
+class TrackItemPlayControl extends StatelessWidget {
+  const TrackItemPlayControl({
     super.key,
     required this.track,
     required this.isActiveTrack,
     required this.isAlreadyPlayed,
     required this.isPlaying,
     required this.progress,
+    this.isFavorite = false,
+    this.fullView = false,
   });
 
   final Track track;
@@ -27,6 +29,8 @@ class TrackItemControl extends StatelessWidget {
   final bool isAlreadyPlayed;
   final bool isPlaying;
   final double progress;
+  final bool isFavorite;
+  final bool fullView;
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +41,12 @@ class TrackItemControl extends StatelessWidget {
     // final colorScheme = theme.colorScheme;
     final AppColors appColors = theme.extension<AppColors>()!;
 
-    final mainColor = !isAlreadyPlayed ? appColors.brandColor : appColors.brandColor.withValues(alpha: 0.3);
+    final mainColor = !isAlreadyPlayed || fullView ? appColors.brandColor : appColors.brandColor.withValues(alpha: 0.3);
 
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
+        // Round frame
         SizedBox(
           width: _trackItemControlCircleSize,
           height: _trackItemControlCircleSize,
@@ -53,6 +58,7 @@ class TrackItemControl extends StatelessWidget {
                   value: 1,
                 ),
         ),
+        // Optional progress indicator (for tracks shich are playing right now)
         SizedBox(
           width: _trackItemControlCircleSize,
           height: _trackItemControlCircleSize,
@@ -64,6 +70,7 @@ class TrackItemControl extends StatelessWidget {
                   value: progress,
                 ),
         ),
+        // Play/pause icon
         IconButton(
           icon: Icon(
             isPlaying ? Icons.pause : Icons.play_arrow,
@@ -77,7 +84,6 @@ class TrackItemControl extends StatelessWidget {
           padding: EdgeInsets.all(0.0),
           onPressed: () {
             playerBoxState?.toggleTrackPlay(track, play: !isPlaying);
-            // appState.setPlayingTrack(track, play: true);
           },
         ),
       ],

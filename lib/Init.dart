@@ -22,16 +22,20 @@ Future<dynamic> readJson(String filename) async {
   return data;
 }
 
-final parseProjectInfoReg = RegExp(r'^(\S+) v\.(\S+) / (.*)$');
+final parseProjectInfoReg = RegExp(r'^(\S+) v\.((\d+\.\d+)\.\d+) / (.*)$');
 
 class Init {
   static SharedPreferences? prefs;
   static String? serverProjectInfo;
   static String? serverVersion;
+  static String? serverMajorMinorVersion;
+  static String? serverAPKVersion;
+  static String? serverAPKMajorMinorVersion;
   static String? serverId;
   static String? serverTimestamp;
   static String? appProjectInfo;
   static String? appVersion;
+  static String? appMajorMinorVersion;
   static String? appId;
   static String? appTimestamp;
   static int? userId;
@@ -39,35 +43,32 @@ class Init {
   static String? userEmail;
   static Map<String, dynamic>? authConfig;
 
-  // static late TracksInfoDb tracksInfoDb;
-
-  static Future initialize() async {
+  static Future initialize(SharedPreferences externalPrefs) async {
+    prefs = externalPrefs;
     await serverSession.initialize();
     List<Future> futures = [
-      _initPrefs(),
       _loadLocalData(),
       loadServerStatus(),
       _initTracksInfoDb(),
-      // _loadConfig(),
-      // _registerServices(),
     ];
     final List<dynamic> waitResults = await Future.wait(futures);
-    // logger.t('[Init:initialize]: waitResults: ${waitResults}');
     final results = {
       'prefs': prefs,
       'waitResults': waitResults,
       'authConfig': authConfig,
       'serverProjectInfo': serverProjectInfo,
       'serverId': serverId,
+      'serverAPKVersion': serverAPKVersion,
+      'serverAPKMajorMinorVersion': serverAPKMajorMinorVersion,
       'serverVersion': serverVersion,
+      'serverMajorMinorVersion': serverMajorMinorVersion,
       'serverTimestamp': serverTimestamp,
       'appProjectInfo': appProjectInfo,
       'appId': appId,
       'appVersion': appVersion,
+      'appMajorMinorVersion': appMajorMinorVersion,
       'appTimestamp': appTimestamp,
-      // 'tracksInfoDb': tracksInfoDb,
     };
-    // logger.d('results: ${formatter.format(results)}');
     return results;
   }
 
@@ -91,15 +92,35 @@ class Init {
       throw Exception(msg);
     }
     logger.t('[Init:loadServerStatus] done: tickData: ${tickData}');
+    serverAPKVersion = tickData!['androidAppVersion'];
+    try {
+      // logger.t('[Init:loadServerStatus] done: serverProjectInfo: ${serverProjectInfo}');
+      if (serverAPKVersion != null) {
+        final RegExpMatch? match = RegExp(r'^(\d+\.\d+)').firstMatch(serverAPKVersion!);
+        if (match == null) {
+          throw Exception('Can not parse server apk version');
+        }
+        serverAPKMajorMinorVersion = match.group(1);
+      }
+    } catch (err, stacktrace) {
+      final String msg = 'Can not parse received tick data: ${err}';
+      logger.e('[Init:loadServerStatus] error ${msg}', error: err, stackTrace: stacktrace);
+      // debugger();
+      showErrorToast(msg);
+      throw Exception(msg);
+    }
     serverProjectInfo = tickData!['projectInfo'];
     try {
       // logger.t('[Init:loadServerStatus] done: serverProjectInfo: ${serverProjectInfo}');
       if (serverProjectInfo != null) {
-        final Iterable<RegExpMatch> found = parseProjectInfoReg.allMatches(serverProjectInfo!);
-        final matches = found.elementAt(0);
-        serverId = matches.group(1);
-        serverVersion = matches.group(2);
-        serverTimestamp = matches.group(3);
+        final RegExpMatch? match = parseProjectInfoReg.firstMatch(serverProjectInfo!);
+        if (match == null) {
+          throw Exception('Can not parse server project info');
+        }
+        serverId = match.group(1);
+        serverVersion = match.group(2);
+        serverMajorMinorVersion = match.group(3);
+        serverTimestamp = match.group(4);
       }
     } catch (err, stacktrace) {
       final String msg = 'Can not parse received tick data: ${err}';
@@ -122,57 +143,25 @@ class Init {
     return tickData;
   }
 
-  /* // UNUSED
-   * static _loadConfig() async {
-   *   // final String url = 'http://10.0.2.2:8000/_allauth/app/v1/config';
-   *   final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_AUTH_PREFIX}/config';
-   *   logger.t('[Init:_loadConfig] Starting loading settings: ${url}');
-   *   try {
-   *     final jsonData = await serverSession.get(Uri.parse(url));
-   *     // logger.t('[Init:_loadConfig] done: jsonData: ${jsonData}');
-   *     authConfig = jsonData!['data'];
-   *     // logger.t('[Init:_loadConfig] done: authConfig: ${authConfig}');
-   *     // logger.t('[Init:_loadConfig] finished loading settings');
-   *     return '_loadConfig: ok';
-   *   } catch (err, stacktrace) {
-   *     final String msg = 'Can not fetch url ${url}: ${err}';
-   *     logger.e('[Init:_loadConfig] error ${msg}', error: err, stackTrace: stacktrace);
-   *     debugger();
-   *     showErrorToast(msg);
-   *     throw Exception(msg);
-   *   }
-   * }
-   */
-
   static _loadLocalData() async {
     try {
       final String dataString = await rootBundle.loadString('assets/project-info.json');
       final jsonData = await json.decode(dataString);
       appProjectInfo = jsonData!['projectInfo'];
       if (appProjectInfo != null) {
-        final Iterable<RegExpMatch> found = parseProjectInfoReg.allMatches(appProjectInfo!);
-        final matches = found.elementAt(0);
-        appId = matches.group(1);
-        appVersion = matches.group(2);
-        appTimestamp = matches.group(3);
+        final RegExpMatch? match = parseProjectInfoReg.firstMatch(appProjectInfo!);
+        if (match == null) {
+          throw Exception('Can not parse app project info');
+        }
+        appId = match.group(1);
+        appVersion = match.group(2);
+        appMajorMinorVersion = match.group(3);
+        appTimestamp = match.group(4);
       }
       return '_loadLocalData: ok';
     } catch (err, stacktrace) {
       final String msg = 'Can not parse local data: ${err}';
       logger.e('[Init:_loadLocalData] error ${msg}', error: err, stackTrace: stacktrace);
-      // debugger();
-      showErrorToast(msg);
-      throw Exception(msg);
-    }
-  }
-
-  static _initPrefs() async {
-    try {
-      prefs = await SharedPreferences.getInstance();
-      return '_initPrefs: ok';
-    } catch (err, stacktrace) {
-      final String msg = 'Can not initialize a persistent instance: ${err}';
-      logger.e('[Init:_initPrefs] error ${msg}', error: err, stackTrace: stacktrace);
       // debugger();
       showErrorToast(msg);
       throw Exception(msg);

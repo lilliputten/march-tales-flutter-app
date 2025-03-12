@@ -7,7 +7,7 @@ final logger = Logger();
 
 mixin LocaleState {
   void notifyListeners();
-  SharedPreferences? getPrefs(); // From `PrefsState`
+  SharedPreferences? getPrefs(); // From `AppState`
   reloadAllTracks({bool notify = true}); // From `TrackState`
   reloadFavoritesData(); // From `FavoritesState`
 
