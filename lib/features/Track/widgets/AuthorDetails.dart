@@ -57,8 +57,10 @@ class AuthorDescription extends StatelessWidget {
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
 
+    final text = author.description.isNotEmpty ? author.description : author.short_description;
+
     return MarkdownBody(
-      data: author.description,
+      data: text,
       selectable: true,
       styleSheet: MarkdownStyleSheet(
         textAlign: WrapAlignment.start,
@@ -100,9 +102,9 @@ class AuthorImageThumbnail extends StatelessWidget {
   }
 }
 
-class AuthorDetailsInfo extends StatelessWidget {
-  const AuthorDetailsInfo({
-    super.key,
+class _AuthorDetailsInfo extends StatelessWidget {
+  const _AuthorDetailsInfo({
+    // super.key,
     required this.author,
     this.fullView = false,
   });
@@ -173,7 +175,7 @@ class AuthorDetails extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.all(5),
-          child: AuthorDetailsInfo(author: author, fullView: fullView),
+          child: _AuthorDetailsInfo(author: author, fullView: fullView),
         ),
         Padding(
           padding: const EdgeInsets.all(_sidePadding),
