@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:logger/logger.dart';
+import 'package:march_tales_app/screens/AuthorsListScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
@@ -178,7 +179,7 @@ class AuthorDetails extends StatelessWidget {
           padding: const EdgeInsets.all(sidePadding),
           child: CustomRouteButton(
             text: 'All authors list'.i18n,
-            routeName: '', // RubricsListScreen.routeName,
+            routeName: AuthorsListScreen.routeName,
             arguments: null,
           ),
         ),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
@@ -5,8 +7,6 @@ import 'package:logger/logger.dart';
 import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/ScreenWrapper.dart';
 import 'package:march_tales_app/components/LoadingSplash.dart';
-import 'package:march_tales_app/core/config/AppConfig.dart';
-import 'package:march_tales_app/features/Track/loaders/loadAuthorDetails.dart';
 import 'package:march_tales_app/features/Track/types/Author.dart';
 import 'package:march_tales_app/features/Track/widgets/AuthorView.dart';
 
@@ -14,42 +14,40 @@ final logger = Logger();
 
 const _routeName = '/AuthorScreen';
 
-const _debugAuthorId = 1;
-
 @pragma('vm:entry-point')
-class AuthorScreen extends StatefulWidget {
-  const AuthorScreen({
+class AuthorPayloadScreen extends StatefulWidget {
+  const AuthorPayloadScreen({
     super.key,
   });
 
   static const routeName = _routeName;
 
   @override
-  State<AuthorScreen> createState() => AuthorScreenState();
+  State<AuthorPayloadScreen> createState() => AuthorPayloadScreenState();
 }
 
-class AuthorScreenState extends State<AuthorScreen> {
+class AuthorPayloadScreenState extends State<AuthorPayloadScreen> {
   late Future<Author> dataFuture;
 
   @override
   void didChangeDependencies() {
-    final int id = this._getAuthorId();
     super.didChangeDependencies();
-    this.dataFuture = loadAuthorDetails(id);
+    final Author data = this._getAuthorData();
+    final future = Future.value(data);
+    this.dataFuture = future;
   }
 
-  int _getAuthorId() {
+  Author _getAuthorData() {
     try {
-      final int? id = ModalRoute.of(context)?.settings.arguments as int?;
-      if (id == null) {
-        throw Exception('No author id has been passed for AuthorScreen');
+      final Author? data = ModalRoute.of(context)?.settings.arguments as Author?;
+      if (data == null) {
+        throw Exception('No author data has been passed for AuthorPayloadScreen');
       }
-      return id;
-    } catch (err) {
-      if (AppConfig.LOCAL) {
-        // Return demo id for debug purposes
-        return _debugAuthorId;
-      }
+      return data;
+    } catch (err, stacktrace) {
+      final String msg = 'Can not get author data: ${err}';
+      logger.e('[AuthorPayloadScreen:_getAuthorData] error ${msg}', error: err, stackTrace: stacktrace);
+      debugger();
       rethrow;
     }
   }

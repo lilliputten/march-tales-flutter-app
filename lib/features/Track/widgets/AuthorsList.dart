@@ -5,37 +5,36 @@ import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/components/MoreButton.dart';
-import 'package:march_tales_app/features/Track/types/Track.dart';
-import 'package:march_tales_app/features/Track/widgets/TrackItem.dart';
+import 'package:march_tales_app/features/Track/types/Author.dart';
+import 'package:march_tales_app/features/Track/widgets/AuthorListInlineItem.dart';
+import 'package:march_tales_app/features/Track/widgets/AuthorListItem.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
-class TracksList extends StatefulWidget {
-  const TracksList({
+class AuthorsList extends StatefulWidget {
+  const AuthorsList({
     super.key,
-    required this.tracks,
+    required this.authors,
     required this.count,
-    required this.isLoading,
+    this.isLoading = false,
     this.useScrollController = false,
-    this.asFavorite = false,
     this.onRefresh,
     this.onLoadNext,
   });
 
-  final List<Track> tracks;
+  final List<Author> authors;
   final int count;
   final bool isLoading;
-  final bool asFavorite;
   final bool useScrollController;
   final RefreshCallback? onRefresh;
   final void Function()? onLoadNext;
 
   @override
-  State<TracksList> createState() => TracksListState();
+  State<AuthorsList> createState() => AuthorsListState();
 }
 
-class TracksListState extends State<TracksList> {
+class AuthorsListState extends State<AuthorsList> {
   late AppState _appState;
   ScrollController scrollController = new ScrollController();
 
@@ -65,7 +64,7 @@ class TracksListState extends State<TracksList> {
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
 
-    final keyId = this.widget.asFavorite ? 'FavoritesList' : 'TracksList';
+    final keyId = 'AuthorsList';
 
     return RefreshIndicator(
       color: appColors.brandColor,
@@ -75,14 +74,13 @@ class TracksListState extends State<TracksList> {
           await this.widget.onRefresh!();
         }
       },
-      child: TracksListView(
+      child: AuthorsListView(
         keyId: keyId,
-        tracks: this.widget.tracks,
+        authors: this.widget.authors,
         count: this.widget.count,
         isLoading: this.widget.isLoading,
         useScrollController: this.widget.useScrollController,
         scrollController: this.widget.useScrollController ? this.scrollController : null,
-        asFavorite: this.widget.asFavorite,
         onRefresh: this.widget.onRefresh,
         onLoadNext: this.widget.onLoadNext,
       ),
@@ -90,39 +88,37 @@ class TracksListState extends State<TracksList> {
   }
 }
 
-class TracksListView extends StatelessWidget {
-  final List<Track> tracks;
+class AuthorsListView extends StatelessWidget {
+  final List<Author> authors;
   final String? keyId;
 
-  /// Total available track count
+  /// Total available author count
   final int count;
   final bool isLoading;
-  final bool asFavorite;
   final bool useScrollController;
   final ScrollController? scrollController;
   final RefreshCallback? onRefresh;
   final void Function()? onLoadNext;
 
-  const TracksListView({
+  const AuthorsListView({
     super.key,
     this.keyId,
-    required this.tracks,
+    required this.authors,
     required this.count,
     required this.isLoading,
     this.useScrollController = false,
     this.scrollController,
-    this.asFavorite = false,
     this.onRefresh,
     this.onLoadNext,
   });
 
   @override
   Widget build(BuildContext context) {
-    final tracksCount = this.tracks.length;
-    final hasMoreTracks = this.count > tracksCount;
-    final showItems = hasMoreTracks ? tracksCount + 1 : tracksCount;
+    final authorsCount = this.authors.length;
+    final hasMoreAuthors = this.count > authorsCount;
+    final showItems = hasMoreAuthors ? authorsCount + 1 : authorsCount;
 
-    final resolvedKeyId = this.keyId ?? (this.asFavorite ? 'FavoritesList' : 'TracksList');
+    final resolvedKeyId = this.keyId ?? 'AuthorsList';
     final listKey = PageStorageKey<String>(resolvedKeyId);
 
     return ListView.separated(
@@ -131,13 +127,13 @@ class TracksListView extends StatelessWidget {
       // shrinkWrap: true,
       controller: this.scrollController,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      separatorBuilder: (context, index) => SizedBox(height: 10),
+      separatorBuilder: (context, index) => SizedBox(height: 15),
       itemCount: showItems,
       itemBuilder: (context, i) {
-        if (i == tracksCount) {
+        if (i == authorsCount) {
           return MoreButton(onLoadNext: this.onLoadNext, isLoading: this.isLoading);
         } else {
-          return TrackItem(track: this.tracks[i], asFavorite: this.asFavorite);
+          return AuthorListItem(author: this.authors[i], active: true);
         }
       },
     );
