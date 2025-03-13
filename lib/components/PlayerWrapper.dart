@@ -23,6 +23,7 @@ class PlayerWrapper extends StatefulWidget {
     required this.isPlaying,
     required this.isPaused,
     required this.positionDataStream,
+    this.onClick,
   });
 
   final Track track;
@@ -35,45 +36,13 @@ class PlayerWrapper extends StatefulWidget {
   final bool isPlaying;
   final bool isPaused;
   final Stream<PositionData> positionDataStream;
+  final VoidCallback? onClick;
 
   @override
   State<PlayerWrapper> createState() => _PlayerWrapperState();
 }
 
 class _PlayerWrapperState extends State<PlayerWrapper> {
-  /* // SAMPLE: Example of interaction with a local database to fetch TrackInfo records
-  TrackInfo? _trackInfo;
-  void updateTrackInfo(TracksInfoDbUpdate update) {
-    final Track track = this.widget.track;
-    final trackInfo = update.trackInfo;
-    if (trackInfo.id == track.id) {
-      setState(() {
-        this._trackInfo = trackInfo;
-      });
-    }
-  }
-  @override
-  void initState() {
-    super.initState();
-    final Track track = this.widget.track;
-    // Load inital value
-    tracksInfoDb.getById(track.id).then((trackInfo) {
-      if (trackInfo != null) {
-        setState(() {
-          this._trackInfo = trackInfo;
-        });
-      }
-    });
-    // Subscribe to the future updates
-    tracksInfoDb.updateEvents.subscribe(this.updateTrackInfo);
-  }
-  @override
-  void dispose() {
-    tracksInfoDb.updateEvents.unsubscribe(this.updateTrackInfo);
-    super.dispose();
-  }
-  */
-
   @override
   Widget build(BuildContext context) {
     final Track track = widget.track;
@@ -84,7 +53,12 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
     final double screenWidth = MediaQuery.sizeOf(context).width;
 
     final items = [
-      screenWidth < minTreshold + 100 ? null : TrackImageThumbnail(track: track, height: 50, borderRadius: 5),
+      screenWidth < minTreshold + 100
+          ? null
+          : InkWell(
+              onTap: this.widget.onClick,
+              child: TrackImageThumbnail(track: track, height: 50, borderRadius: 5),
+            ),
       screenWidth < minTreshold
           ? null
           : Expanded(
@@ -93,6 +67,7 @@ class _PlayerWrapperState extends State<PlayerWrapper> {
                 title: track.title,
                 position: position,
                 duration: duration,
+                onClick: this.widget.onClick,
               ),
             ),
       PlayerControls(

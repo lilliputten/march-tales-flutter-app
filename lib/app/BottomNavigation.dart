@@ -8,10 +8,13 @@ class BottomNavigation extends StatelessWidget {
   final List<HomePageData> homePages;
   final int selectedIndex;
   final Function(int) handleIndex;
+  final bool hidableNavigation;
+
   const BottomNavigation({
     required this.homePages,
     required this.selectedIndex,
     required this.handleIndex,
+    this.hidableNavigation = true,
   });
 
   @override
@@ -21,6 +24,7 @@ class BottomNavigation extends StatelessWidget {
 
     return HidableWrapper(
       widgetSize: 82,
+      wrap: hidableNavigation,
       child: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: appColors.brandColor,

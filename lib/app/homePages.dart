@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 
+import 'package:logger/logger.dart';
+
 import 'package:march_tales_app/core/types/HomePageData.dart';
 import 'package:march_tales_app/pages/FavoriteTracksPage.dart';
 import 'package:march_tales_app/pages/SettingsPage.dart';
 import 'package:march_tales_app/pages/TracksPage.dart';
 import 'homePages.i18n.dart';
 
-// import 'package:march_tales_app/pages/GeneratorPage.dart';
+final logger = Logger();
+
+enum HomePages {
+  root,
+  favorites,
+  settings,
+}
 
 List<HomePageData> getHomePages() {
   final homePages = [
@@ -20,11 +28,6 @@ List<HomePageData> getHomePages() {
       label: 'Favorites'.i18n,
       icon: Icon(Icons.favorite_border),
     ),
-    // HomePageData(
-    //   widget: () => GeneratorPage(),
-    //   label: 'Generator'.i18n,
-    //   icon: Icon(Icons.generating_tokens_outlined),
-    // ),
     HomePageData(
       widget: () => SettingsPage(),
       label: 'Settings'.i18n,

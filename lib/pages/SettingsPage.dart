@@ -7,13 +7,14 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:march_tales_app/Init.dart';
 import 'package:march_tales_app/app/AppColors.dart';
-import 'package:march_tales_app/components/CustomBackButton.dart';
 import 'package:march_tales_app/components/LoginButton.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/supportedLocales.dart';
 import 'SettingsPage.i18n.dart';
+
+// import 'package:march_tales_app/components/CustomBackButton.dart';
 
 final logger = Logger();
 
@@ -414,7 +415,7 @@ class SettingsWidget extends StatelessWidget {
           SettingsSectionTitle(title: 'Application info'.i18n),
           AppInfo(),
           // SizedBox(height: 5),
-          CustomBackButton(isRoot: true),
+          // CustomBackButton(isRoot: true),
         ],
       ),
     );

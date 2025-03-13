@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/PageWrapper.dart';
 import 'package:march_tales_app/routes/buildRouteWidget.dart';
-import 'package:march_tales_app/routes/routeConstants.dart';
+import 'package:march_tales_app/routes/initialRoute.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();

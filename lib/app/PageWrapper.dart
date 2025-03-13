@@ -65,6 +65,10 @@ class PageWrapperState extends State<PageWrapper> {
     final appState = context.watch<AppState>();
     final selectedIndex = appState.getNavigationTabIndex();
 
+    final isSettings = selectedIndex == HomePages.settings.index;
+    final showPlayer = !isSettings;
+    final hidableNavigation = !isSettings;
+
     appState.playerBoxKey = playerBoxKey;
 
     final theme = Theme.of(context);
@@ -136,6 +140,7 @@ class PageWrapperState extends State<PageWrapper> {
         bottomNavigationBar: BottomNavigation(
           homePages: getHomePages(),
           selectedIndex: selectedIndex,
+          hidableNavigation: hidableNavigation,
           handleIndex: (int value) {
             appState.updateNavigationTabIndex(value);
             // Clear all the current (!) navigator routes in order to see the top tabs' content...
@@ -159,6 +164,8 @@ class PageWrapperState extends State<PageWrapper> {
                 ),
                 PlayerBox(
                   key: playerBoxKey,
+                  show: showPlayer,
+                  navigatorState: navigatorState,
                 ),
               ],
             );

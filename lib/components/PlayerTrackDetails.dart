@@ -63,10 +63,12 @@ class PlayerTrackDetails extends StatelessWidget {
     required this.title,
     required this.duration,
     this.position,
+    this.onClick,
   });
   final String? title;
   final Duration duration;
   final Duration? position;
+  final VoidCallback? onClick;
 
   @override
   Widget build(BuildContext context) {
@@ -79,20 +81,23 @@ class PlayerTrackDetails extends StatelessWidget {
       return Container();
     }
 
-    return Column(
-      spacing: 4,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          this.title!,
-          overflow: TextOverflow.ellipsis,
-          style: style.copyWith(color: textColor),
-        ),
-        TrackTimes(
-          position: position,
-          duration: duration,
-        ),
-      ],
+    return InkWell(
+      onTap: this.onClick,
+      child: Column(
+        spacing: 4,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            this.title!,
+            overflow: TextOverflow.ellipsis,
+            style: style.copyWith(color: textColor),
+          ),
+          TrackTimes(
+            position: position,
+            duration: duration,
+          ),
+        ],
+      ),
     );
   }
 }

@@ -22,6 +22,7 @@ import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
 import 'package:march_tales_app/features/Track/trackConstants.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'package:march_tales_app/screens/TrackDetailsScreen.dart';
 import 'PlayerBox.i18n.dart';
 import 'PlayerBox/common.dart';
 
@@ -29,10 +30,14 @@ final logger = Logger();
 
 // NOTE: This module shouldn't use `AppState` due to one-way control flow (it's used in `ActivePlayerState`)
 
-// @see https://docs.flutter.dev/cookbook/networking/fetch-data
 class PlayerBox extends StatefulWidget {
+  final bool show;
+  final NavigatorState? navigatorState;
+
   const PlayerBox({
     super.key,
+    this.show = true,
+    this.navigatorState,
   });
 
   @override
@@ -494,6 +499,18 @@ class PlayerBoxState extends State<PlayerBox> {
     }
   }
 
+  void _handleClick() {
+    // Show track details page
+    // @see https://docs.flutter.dev/cookbook/navigation/navigate-with-arguments
+    // @see https://api.flutter.dev/flutter/widgets/Navigator/restorablePush.html
+    if (this.widget.navigatorState != null && this._track != null) {
+      this.widget.navigatorState!.restorablePushNamed(
+            TrackDetailsScreen.routeName,
+            arguments: this._track!.id,
+          );
+    }
+  }
+
   // Widget build
 
   @override
@@ -512,6 +529,7 @@ class PlayerBoxState extends State<PlayerBox> {
     return HidableWrapper(
       widgetSize: 101,
       wrap: !isPlaying,
+      show: this.widget.show,
       child: StreamBuilder(
         stream: player.playerStateStream,
         builder: (context, AsyncSnapshot snapshot) {
@@ -526,6 +544,7 @@ class PlayerBoxState extends State<PlayerBox> {
             isPlaying: this._isPlaying,
             isPaused: this._isPaused,
             positionDataStream: this._positionDataStream,
+            onClick: this._handleClick,
           );
         },
       ),

@@ -10,19 +10,23 @@ class HidableWrapper extends StatelessWidget {
   const HidableWrapper({
     super.key,
     this.wrap = true,
+    this.show = true,
     required this.widgetSize,
     required this.child,
   });
 
   final bool wrap;
+  final bool show;
   final double widgetSize;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
+    if (!this.show) {
+      return SizedBox();
+    }
     if (!this.wrap) {
-      // return this.child;
       return SizedBox(
         height: this.widgetSize,
         child: this.child,
