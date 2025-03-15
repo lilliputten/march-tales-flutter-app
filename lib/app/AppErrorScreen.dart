@@ -12,7 +12,7 @@ class AppErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String text = convertErrorLikeToString(error);
-    // TODO: Check for `VersionException` type and show an extra update block for it
+    // XXX FUTURE: Check for `VersionException` type and show an extra update block for it
     return Material(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),

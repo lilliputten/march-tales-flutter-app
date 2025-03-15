@@ -119,13 +119,13 @@ class PlayerBoxState extends State<PlayerBox> {
     }
     // Save position to local db
     tracksInfoDb.updatePosition(this._track!.id, position: position ?? Duration.zero); // await!
-    // TODO -- 2025.03.01, 21:06 -- Update position on the server
-    // TODO: Involve last saved position and save once in a period, eg, 5 secs
+    // XXX FUTURE: 2025.03.01, 21:06 -- Update position on the server
+    // XXX FUTURE: Involve last saved position and save once in a period, eg, 5 secs
   }
 
   Future<void> _loadTrackPosition() async {
     if (this._track != null) {
-      // TODO: Load data from the server if isAuthorized
+      // XXX FUTURE: Load data from the server if isAuthorized
       final trackInfo = await tracksInfoDb.getById(this._track!.id);
       setState(() {
         this._position = trackInfo?.position; // ?? Duration.zero;

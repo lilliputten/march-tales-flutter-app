@@ -12,7 +12,7 @@ import 'TracksInfoDbStructure.dart';
 
 enum TracksInfoDbUpdateType { incrementPlayedCount, updatePosition, setFavorite, save }
 
-// TODO: To extract the event manager to the dedicated module in `lib/core/singletons/`?
+// XXX FUTURE: To extract the event manager to the dedicated module in `lib/core/singletons/`?
 class TracksInfoDbUpdate extends EventArgs {
   TrackInfo trackInfo;
   TracksInfoDbUpdateType type;

@@ -23,7 +23,7 @@ mixin TrackState {
 
   /// Tracks list
 
-  // TODO: Store track filters state (in the separated state mixin?)
+  // XXX FUTURE: Store track filters state (in the separated state mixin?)
 
   bool tracksIsLoading = false;
   bool tracksHasBeenLoaded = false;
@@ -87,7 +87,7 @@ mixin TrackState {
   }
 
   updateSingleTrack(Track track, {bool notify = true}) {
-    // TODO: Listen for
+    // XXX FUTURE: Listen for
     final idx = this.tracks.indexWhere((it) => it.id == track.id);
     if (idx != -1) {
       tracks[idx] = track;

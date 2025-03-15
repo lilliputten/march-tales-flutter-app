@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'MoreButton.i18n.dart';
 
 class MoreButton extends StatelessWidget {
-  // TODO: To use auto-update and lazy-scroll
+  // XXX FUTURE: To use auto-update and lazy-scroll
   const MoreButton({
     super.key,
     required this.isLoading,
