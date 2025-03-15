@@ -1,2 +1,4 @@
-const int defaultTracksDownloadLimit = 10;
+import 'package:march_tales_app/core/config/AppConfig.dart';
+
+const int defaultTracksDownloadLimit = AppConfig.LOCAL ? 3 : 10;
 const Duration playerSeekGap = Duration(seconds: 5);

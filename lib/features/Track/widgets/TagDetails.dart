@@ -5,10 +5,10 @@ import 'package:logger/logger.dart';
 import 'package:march_tales_app/components/CustomBackButton.dart';
 import 'package:march_tales_app/components/CustomRouteButton.dart';
 import 'package:march_tales_app/components/SectionTitle.dart';
+import 'package:march_tales_app/components/data-driven/ShowTracksListBlockLoader.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/features/Track/types/Tag.dart';
 import 'package:march_tales_app/features/Track/widgets/RubricsInlineList.dart';
-import 'package:march_tales_app/features/Track/widgets/TracksListByIds.dart';
 import 'package:march_tales_app/screens/TagsListScreen.dart';
 import 'TagDetails.i18n.dart';
 
@@ -114,22 +114,10 @@ class TagDetails extends StatelessWidget {
           ),
         ),
         // Show tracks list from `author.track_ids`
-        tag.track_ids.isEmpty
-            ? null
-            : Padding(
-                padding: const EdgeInsets.all(sidePadding),
-                child: SectionTitle(
-                  text: "All tag's tracks".i18n,
-                  extraText: '(${tag.track_ids.length})',
-                ),
-              ),
-        tag.track_ids.isEmpty
-            ? null
-            : TracksListByIds(
-                ids: tag.track_ids,
-                useScrollController: false,
-                compact: true,
-              ),
+        ShowTracksListBlockLoader(
+          query: '?filter=tag__id:${tag.id}',
+          title: "All tag's tracks".i18n,
+        ),
         Padding(
           padding: const EdgeInsets.all(sidePadding),
           child: CustomBackButton(),

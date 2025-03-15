@@ -7,13 +7,12 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/components/CustomBackButton.dart';
 import 'package:march_tales_app/components/CustomRouteButton.dart';
-import 'package:march_tales_app/components/SectionTitle.dart';
+import 'package:march_tales_app/components/data-driven/ShowTracksListBlockLoader.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/features/Track/types/Author.dart';
 import 'package:march_tales_app/features/Track/widgets/RubricsInlineList.dart';
 import 'package:march_tales_app/features/Track/widgets/SquareThumbnailImage.dart';
 import 'package:march_tales_app/features/Track/widgets/TagsInlineList.dart';
-import 'package:march_tales_app/features/Track/widgets/TracksListByIds.dart';
 import 'package:march_tales_app/screens/AuthorsListScreen.dart';
 import 'AuthorDetails.i18n.dart';
 
@@ -186,22 +185,26 @@ class AuthorDetails extends StatelessWidget {
           ),
         ),
         // Show tracks list from `author.track_ids`
-        author.track_ids.isEmpty
-            ? null
-            : Padding(
-                padding: const EdgeInsets.all(_sidePadding),
-                child: SectionTitle(
-                  text: "All author's tracks".i18n,
-                  extraText: '(${author.track_ids.length})',
-                ),
-              ),
-        author.track_ids.isEmpty
-            ? null
-            : TracksListByIds(
-                ids: author.track_ids,
-                useScrollController: false,
-                compact: true,
-              ),
+        ShowTracksListBlockLoader(
+          query: '?filter=author_id:${author.id}',
+          title: "All author's tracks".i18n,
+        ),
+        // author.track_ids.isEmpty
+        //     ? null
+        //     : Padding(
+        //         padding: const EdgeInsets.all(_sidePadding),
+        //         child: SectionTitle(
+        //           text: "All author's tracks".i18n,
+        //           extraText: '(${author.track_ids.length})',
+        //         ),
+        //       ),
+        // author.track_ids.isEmpty
+        //     ? null
+        //     : TracksListByIds(
+        //         ids: author.track_ids,
+        //         useScrollController: false,
+        //         compact: true,
+        //       ),
         Padding(
           padding: const EdgeInsets.all(_sidePadding),
           child: CustomBackButton(),

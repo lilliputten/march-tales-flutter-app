@@ -112,8 +112,6 @@ class Track {
   final String description;
   final String track_status;
   final TrackAuthor author;
-  final List<TrackTag> tags;
-  final List<TrackRubric> rubrics;
   final String audio_file;
   // final double audio_duration;
   final Duration duration;
@@ -126,6 +124,11 @@ class Track {
   final int published_by_id;
   final int updated_by_id;
   final DateTime updated_at;
+  // XXX FUTURE: To use ids only (full=0) instead of full data (full=2)
+  final List<TrackTag> tags;
+  final List<TrackRubric> rubrics;
+  final List<int> tag_ids;
+  final List<int> rubric_ids;
 
   const Track({
     required this.id,
@@ -141,12 +144,15 @@ class Track {
     required this.track_status,
     required this.youtube_url,
     required this.author,
-    required this.rubrics,
-    required this.tags,
     required this.published_at,
     required this.published_by_id,
     required this.updated_at,
     required this.updated_by_id,
+    // XXX FUTURE: To use ids only (full=0) instead of full data (full=2)
+    required this.rubrics,
+    required this.tags,
+    required this.rubric_ids,
+    required this.tag_ids,
   });
 
   @override
@@ -163,8 +169,6 @@ class Track {
         description: json['description'].toString(),
         track_status: json['track_status'].toString(),
         author: TrackAuthor.fromJson(json['author']),
-        tags: List<dynamic>.from(json['tags']).map((data) => TrackTag.fromJson(data)).toList(),
-        rubrics: List<dynamic>.from(json['rubrics']).map((data) => TrackRubric.fromJson(data)).toList(),
         audio_file: json['audio_file'].toString(),
         // audio_duration: json['audio_duration'].toDouble(),
         duration: Duration(milliseconds: durationMs), // json['audio_duration'].toDouble(),
@@ -177,11 +181,20 @@ class Track {
         published_by_id: json['published_by_id'],
         updated_at: DateTime.parse(json['updated_at'].toString()),
         updated_by_id: json['updated_by_id'],
+        // XXX FUTURE: To use ids only (full=0) instead of full data (full=2)
+        rubrics: json.containsKey('rubrics')
+            ? List<dynamic>.from(json['rubrics']).map((data) => TrackRubric.fromJson(data)).toList()
+            : [],
+        tags: json.containsKey('tags')
+            ? List<dynamic>.from(json['tags']).map((data) => TrackTag.fromJson(data)).toList()
+            : [],
+        rubric_ids: List<dynamic>.from(json['rubric_ids']).map((val) => val as int).toList(),
+        tag_ids: List<dynamic>.from(json['tag_ids']).map((val) => val as int).toList(),
       );
     } catch (err, stacktrace) {
       final String msg = 'Can not parse Track data: $err';
       logger.e(msg, error: err, stackTrace: stacktrace);
-      logger.d('Raw json data for the previous error is: : ${formatter.format(json)}');
+      logger.w('Raw json data for the previous error is: : ${formatter.format(json)}');
       debugger();
       throw FormatException(msg);
     }

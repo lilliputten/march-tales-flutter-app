@@ -15,7 +15,7 @@ final logger = Logger();
 
 const _routeName = '/AuthorScreen';
 
-const _debugAuthorId = 3;
+const _debugAuthorId = 1;
 
 @pragma('vm:entry-point')
 class AuthorScreen extends StatefulWidget {

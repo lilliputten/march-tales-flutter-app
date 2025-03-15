@@ -19,7 +19,13 @@ final logger = Logger();
 
 class VersionException implements Exception {
   String cause;
+
   VersionException(this.cause);
+
+  @override
+  String toString() {
+    return 'VersionException: ${cause}';
+  }
 }
 
 class RootApp extends StatelessWidget {
@@ -44,12 +50,13 @@ class RootApp extends StatelessWidget {
         appState.updateLocale(locale);
         // Wait for the config & tick initialization and request for the first track record
         initFuture.then((initData) async {
-          // TODO: Check for the valid app version?
+          // Check for the valid app version?
           final versionsMismatched = Init.serverAPKMajorMinorVersion != Init.appMajorMinorVersion;
           if (versionsMismatched) {
             appState.setVersionsMismatched();
-            throw VersionException(
-                'The app version (${Init.appVersion}) is outdated (the actual one is ${Init.serverAPKVersion}). Please update the application.');
+            final errMsg =
+                'The app version (${Init.appVersion}) is outdated (the actual version is ${Init.serverAPKVersion}). Please update the application.';
+            throw VersionException(errMsg);
           }
           // logger.t('[ChangeNotifierProvider] Versions: versionsMismatched=${versionsMismatched} serverVersion=${Init.serverVersion} appVersion=${Init.appVersion}');
           appState.setUser(
@@ -59,12 +66,12 @@ class RootApp extends StatelessWidget {
               omitEvents: true);
           // Retrieve data
           final List<Future> futures = [
-            appState.loadFavorites(), // TODO: Don't load favorites if had been already loaded on `setUser`
+            appState.loadFavorites(),
             appState.reloadTracks(),
           ];
           await Future.wait<dynamic>(futures);
         }).catchError((err) {
-          logger.e('Error: ${err}');
+          logger.e('Error: ${err.toString()}');
           appState.setGlobalError(err);
         });
         // logger.d('[ChangeNotifierProvider:create]: $initFuture');

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
+import 'package:march_tales_app/core/constants/routes.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
@@ -17,7 +18,8 @@ Future<LoadTracksListResults> loadTracksByIds(
   int? limit,
   // TODO: Add filter/sort parameters
 }) async {
-  final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks/by-ids/';
+  final String url =
+      '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks/by-ids/?full=${tracksFullDataParam}';
   try {
     final uri = Uri.parse(url);
     final params = {...uri.queryParameters};
