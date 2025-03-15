@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:i18n_extension/i18n_extension.dart';
 import 'package:logger/logger.dart';
+import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -71,8 +74,9 @@ class RootApp extends StatelessWidget {
           ];
           await Future.wait<dynamic>(futures);
         }).catchError((err) {
-          logger.e('Error: ${err.toString()}');
+          logger.e('Error: ${err}');
           appState.setGlobalError(err);
+          // showErrorToast(err);
         });
         // logger.d('[ChangeNotifierProvider:create]: $initFuture');
         return appState;

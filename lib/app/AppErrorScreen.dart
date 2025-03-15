@@ -16,24 +16,28 @@ class AppErrorScreen extends StatelessWidget {
     return Material(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-        child: Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            spacing: 20,
-            children: [
-              Icon(
-                Icons.error,
-                color: Colors.red, // .withValues(alpha: 0.5),
-                size: 80,
+        child: Column(
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: 20,
+                children: [
+                  Icon(
+                    Icons.error,
+                    color: Colors.red, // .withValues(alpha: 0.5),
+                    size: 80,
+                  ),
+                  SelectableText(
+                    text,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ],
               ),
-              SelectableText(
-                text,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.red),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
