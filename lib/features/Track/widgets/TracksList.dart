@@ -1,28 +1,16 @@
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
-import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/components/MoreButton.dart';
+import 'package:march_tales_app/components/mixins/ScrollControllerProviderMixin.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItem.dart';
-import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
 class TracksList extends StatefulWidget {
-  const TracksList({
-    super.key,
-    required this.tracks,
-    required this.count,
-    required this.isLoading,
-    this.useScrollController = false,
-    this.asFavorite = false,
-    this.onRefresh,
-    this.onLoadNext,
-  });
-
   final List<Track> tracks;
   final int count;
   final bool isLoading;
@@ -30,36 +18,27 @@ class TracksList extends StatefulWidget {
   final bool useScrollController;
   final RefreshCallback? onRefresh;
   final void Function()? onLoadNext;
+  final bool fullView;
+  final bool compact;
+
+  const TracksList({
+    super.key,
+    required this.tracks,
+    required this.count,
+    this.isLoading = false,
+    this.useScrollController = false,
+    this.asFavorite = false,
+    this.onRefresh,
+    this.onLoadNext,
+    this.fullView = false,
+    this.compact = false,
+  });
 
   @override
   State<TracksList> createState() => TracksListState();
 }
 
-class TracksListState extends State<TracksList> {
-  late AppState _appState;
-  ScrollController scrollController = new ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    this._appState = context.read<AppState>();
-    if (this.widget.useScrollController) {
-      Future.delayed(Duration.zero, () {
-        this._appState.addScrollController(this.scrollController);
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    if (this.widget.useScrollController) {
-      Future.delayed(Duration.zero, () {
-        this._appState.removeScrollController(this.scrollController);
-      });
-    }
-    super.dispose();
-  }
-
+class TracksListState extends State<TracksList> with ScrollControllerProviderMixin {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -81,7 +60,7 @@ class TracksListState extends State<TracksList> {
         count: this.widget.count,
         isLoading: this.widget.isLoading,
         useScrollController: this.widget.useScrollController,
-        scrollController: this.widget.useScrollController ? this.scrollController : null,
+        scrollController: this.widget.useScrollController ? this.getScrollController() : null,
         asFavorite: this.widget.asFavorite,
         onRefresh: this.widget.onRefresh,
         onLoadNext: this.widget.onLoadNext,
@@ -102,6 +81,8 @@ class TracksListView extends StatelessWidget {
   final ScrollController? scrollController;
   final RefreshCallback? onRefresh;
   final void Function()? onLoadNext;
+  final bool fullView;
+  final bool compact;
 
   const TracksListView({
     super.key,
@@ -114,6 +95,8 @@ class TracksListView extends StatelessWidget {
     this.asFavorite = false,
     this.onRefresh,
     this.onLoadNext,
+    this.fullView = false,
+    this.compact = false,
   });
 
   @override
@@ -137,7 +120,8 @@ class TracksListView extends StatelessWidget {
         if (i == tracksCount) {
           return MoreButton(onLoadNext: this.onLoadNext, isLoading: this.isLoading);
         } else {
-          return TrackItem(track: this.tracks[i], asFavorite: this.asFavorite);
+          return TrackItem(
+              track: this.tracks[i], fullView: this.fullView, compact: this.compact, asFavorite: this.asFavorite);
         }
       },
     );

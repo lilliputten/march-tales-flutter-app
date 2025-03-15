@@ -5,6 +5,7 @@ import 'package:logger/logger.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
+import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/RubricsInlineList.dart';
 import 'package:march_tales_app/features/Track/widgets/TagsInlineList.dart';
@@ -64,8 +65,7 @@ class TrackFullViewExtraBlock extends StatelessWidget {
 
     final items = [
       // Description
-      // AppConfig.LOCAL ? null :
-      TrackDescription(track: track),
+      AppConfig.LOCAL ? null : TrackDescription(track: track),
       // Author
       InkWell(
         onTap: () {

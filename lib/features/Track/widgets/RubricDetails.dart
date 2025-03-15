@@ -5,10 +5,10 @@ import 'package:logger/logger.dart';
 import 'package:march_tales_app/components/CustomBackButton.dart';
 import 'package:march_tales_app/components/CustomRouteButton.dart';
 import 'package:march_tales_app/components/SectionTitle.dart';
+import 'package:march_tales_app/components/data-driven/ShowTracksListBlockLoader.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/features/Track/types/Rubric.dart';
 import 'package:march_tales_app/features/Track/widgets/TagsInlineList.dart';
-import 'package:march_tales_app/features/Track/widgets/TracksListByIds.dart';
 import 'package:march_tales_app/screens/RubricsListScreen.dart';
 import 'RubricDetails.i18n.dart';
 
@@ -144,22 +144,10 @@ class RubricDetails extends StatelessWidget {
               ),
         */
         // Show tracks list from `author.track_ids`
-        rubric.track_ids.isEmpty
-            ? null
-            : Padding(
-                padding: const EdgeInsets.all(sidePadding),
-                child: SectionTitle(
-                  text: "All rubric's tracks".i18n,
-                  extraText: '(${rubric.track_ids.length})',
-                ),
-              ),
-        rubric.track_ids.isEmpty
-            ? null
-            : TracksListByIds(
-                ids: rubric.track_ids,
-                useScrollController: false,
-                compact: true,
-              ),
+        ShowTracksListBlockLoader(
+          query: '?filter=rubric__id:${rubric.id}',
+          title: "All rubric's tracks".i18n,
+        ),
         Padding(
           padding: const EdgeInsets.all(sidePadding),
           child: CustomBackButton(),
