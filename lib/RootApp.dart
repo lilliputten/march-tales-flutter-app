@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -12,7 +11,6 @@ import 'package:march_tales_app/Init.dart';
 import 'package:march_tales_app/SplashScreen.dart';
 import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/HomePage.dart';
-import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'core/helpers/YamlFormatter.dart';
 import 'core/server/ServerSession.dart';
 import 'shared/states/AppState.dart';

@@ -5,6 +5,7 @@ import 'package:logger/logger.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/constants/routes.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
+import 'package:march_tales_app/core/helpers/addQueryParam.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/features/Track/loaders/LoadTracksListResults.dart';
@@ -14,25 +15,25 @@ final logger = Logger();
 
 Future<LoadTracksListResults> loadTracksByIds(
   Iterable<int> ids, {
-  int? offset,
-  int? limit,
-  // TODO: Add filter/sort parameters
+  int offset = 0,
+  int limit = 0,
+  int full = tracksFullDataParam,
+  String query = '',
 }) async {
-  final String url =
-      '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks/by-ids/?full=${tracksFullDataParam}';
+  query = addQueryParam(query, 'full', full, ifAbsent: true);
+  if (limit != 0) {
+    query = addQueryParam(query, 'limit', limit, ifAbsent: true);
+  }
+  if (offset != 0) {
+    query = addQueryParam(query, 'offset', offset, ifAbsent: true);
+  }
+  if (ids.isNotEmpty) {
+    query = addQueryParam(query, 'ids', ids.join(','), ifAbsent: true);
+  }
+  final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks/by-ids/${query}';
   try {
     final uri = Uri.parse(url);
-    final params = {...uri.queryParameters};
-    if (ids.isNotEmpty) {
-      params['ids'] = ids.join(',');
-    }
-    if (limit != null && limit != 0) {
-      params['limit'] = limit.toString();
-    }
-    if (offset != null && offset != 0) {
-      params['offset'] = offset.toString();
-    }
-    final jsonData = await serverSession.get(uri.replace(queryParameters: params));
+    final jsonData = await serverSession.get(uri);
     return LoadTracksListResults.fromJson(jsonData);
   } catch (err, stacktrace) {
     final String msg = 'Error fetching tracks with an url $url: $err';

@@ -127,22 +127,6 @@ class RubricDetails extends StatelessWidget {
             arguments: null,
           ),
         ),
-        /*
-        // Show authors list from `author.author_ids`
-        rubric.authors.isEmpty
-            ? null
-            : Padding(
-                padding: const EdgeInsets.all(sidePadding),
-                child: SectionTitle(text: "All rubric's authors".i18n, extraText: '(${rubric.authors.length})'),
-              ),
-        rubric.authors.isEmpty
-            ? null
-            : AuthorsList(
-                authors: rubric.authors,
-                // useScrollController: false,
-                // compact: true,
-              ),
-        */
         // Show tracks list from `author.track_ids`
         ShowTracksListBlockLoader(
           query: '?filter=track_status:PUBLISHED&filter=rubric__id:${rubric.id}',

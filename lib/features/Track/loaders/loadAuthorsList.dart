@@ -4,6 +4,7 @@ import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
+import 'package:march_tales_app/core/helpers/addQueryParam.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/features/Track/loaders/LoadAuthorsListResults.dart';
@@ -14,19 +15,20 @@ final logger = Logger();
 Future<LoadAuthorsListResults> loadAuthorsList({
   int offset = 0,
   int limit = 0,
-  // TODO: Add filter/sort parameters
+  String query = '',
 }) async {
-  final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/authors/';
+  // NOTE: It's possible url to contain a few params with the same name (filters, eg) so wi can't use `uri.replace(queryParameters: params)`
+  // query = addQueryParam(query, 'full', full, ifAbsent: true);
+  if (limit != 0) {
+    query = addQueryParam(query, 'limit', limit, ifAbsent: true);
+  }
+  if (offset != 0) {
+    query = addQueryParam(query, 'offset', offset, ifAbsent: true);
+  }
+  final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/authors/${query}';
   try {
     final uri = Uri.parse(url);
-    final params = {...uri.queryParameters};
-    if (limit != 0) {
-      params['limit'] = limit.toString();
-    }
-    if (offset != 0) {
-      params['offset'] = offset.toString();
-    }
-    final jsonData = await serverSession.get(uri.replace(queryParameters: params));
+    final jsonData = await serverSession.get(uri);
     return LoadAuthorsListResults.fromJson(jsonData);
   } catch (err, stacktrace) {
     final String msg = 'Error fetching authors with an url $url: $err';

@@ -189,22 +189,6 @@ class AuthorDetails extends StatelessWidget {
           query: '?filter=track_status:PUBLISHED&filter=author_id:${author.id}',
           title: "All author's tracks".i18n,
         ),
-        // author.track_ids.isEmpty
-        //     ? null
-        //     : Padding(
-        //         padding: const EdgeInsets.all(_sidePadding),
-        //         child: SectionTitle(
-        //           text: "All author's tracks".i18n,
-        //           extraText: '(${author.track_ids.length})',
-        //         ),
-        //       ),
-        // author.track_ids.isEmpty
-        //     ? null
-        //     : TracksListByIds(
-        //         ids: author.track_ids,
-        //         useScrollController: false,
-        //         compact: true,
-        //       ),
         Padding(
           padding: const EdgeInsets.all(_sidePadding),
           child: CustomBackButton(),
