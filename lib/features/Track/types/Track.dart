@@ -188,8 +188,11 @@ class Track {
         tags: json.containsKey('tags')
             ? List<dynamic>.from(json['tags']).map((data) => TrackTag.fromJson(data)).toList()
             : [],
-        rubric_ids: List<dynamic>.from(json['rubric_ids']).map((val) => val as int).toList(),
-        tag_ids: List<dynamic>.from(json['tag_ids']).map((val) => val as int).toList(),
+        rubric_ids: json.containsKey('rubric_ids')
+            ? List<dynamic>.from(json['rubric_ids']).map((val) => val as int).toList()
+            : [],
+        tag_ids:
+            json.containsKey('tag_ids') ? List<dynamic>.from(json['tag_ids']).map((val) => val as int).toList() : [],
       );
     } catch (err, stacktrace) {
       final String msg = 'Can not parse Track data: $err';

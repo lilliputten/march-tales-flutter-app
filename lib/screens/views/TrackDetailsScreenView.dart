@@ -33,7 +33,7 @@ class TrackDetailsScreenView extends StatelessWidget {
                 children: [
                   TrackItem(track: this.track, fullView: true),
                   ShowTracksListBlockLoader(
-                    query: '?filter=author_id:${track.author.id}',
+                    query: '?filter=track_status:PUBLISHED&filter=author_id:${track.author.id}',
                     title: "Other author's tracks".i18n,
                   ),
                   Padding(

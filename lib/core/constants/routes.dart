@@ -2,4 +2,4 @@
 /// 0 - Indices only.
 /// 1 - Data only.
 /// 2 - Both indices and data.
-const int tracksFullDataParam = 0;
+const int tracksFullDataParam = 1;
