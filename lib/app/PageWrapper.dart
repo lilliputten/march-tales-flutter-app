@@ -65,9 +65,9 @@ class PageWrapperState extends State<PageWrapper> {
     final appState = context.watch<AppState>();
     final selectedIndex = appState.getNavigationTabIndex();
 
-    final isSettings = selectedIndex == HomePages.settings.index;
-    final showPlayer = !isSettings;
-    final hidableNavigation = !isSettings;
+    // final isSettings = selectedIndex == HomePages.settings.index;
+    final hidableNavigation = appState.isHidableNavigation();
+    final showPlayer = hidableNavigation;
 
     appState.playerBoxKey = playerBoxKey;
 

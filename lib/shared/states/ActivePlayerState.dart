@@ -24,6 +24,10 @@ mixin ActivePlayerState {
   bool isPlaying = false;
   bool isPaused = false;
 
+  bool isPlayingAndNotPaused() {
+    return this.isPlaying && !this.isPaused;
+  }
+
   _processPlayingTrackUpdate(PlayingTrackUpdate update) {
     bool updateRequires = false;
     final type = update.type;

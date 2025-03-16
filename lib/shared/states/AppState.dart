@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:march_tales_app/shared/states/FilterState.dart';
 import 'ActivePlayerState.dart';
 import 'FavoritesState.dart';
 import 'LocaleState.dart';
@@ -11,7 +12,15 @@ import 'TrackState.dart';
 import 'UserState.dart';
 
 class AppState extends ChangeNotifier
-    with UserState, ActivePlayerState, FavoritesState, LocaleState, NavigationState, ThemeState, TrackState {
+    with
+        UserState,
+        ActivePlayerState,
+        FilterState,
+        FavoritesState,
+        LocaleState,
+        NavigationState,
+        ThemeState,
+        TrackState {
   SharedPreferences prefs;
 
   bool versionsMismatched = false;

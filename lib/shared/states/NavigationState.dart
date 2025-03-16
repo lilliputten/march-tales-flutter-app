@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
 
+import 'package:march_tales_app/app/homePages.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 
 import 'package:shared_preferences/shared_preferences.dart'; // DEBUG: To remove later
@@ -49,6 +50,12 @@ mixin NavigationState {
   }
 
   int _selectedTabIndex = _defaultTabIndex;
+
+  bool isHidableNavigation() {
+    final isSettings = this._selectedTabIndex == HomePages.settings.index;
+    final hidableNavigation = !isSettings;
+    return hidableNavigation;
+  }
 
   bool loadNavigationStateSavedPrefs({bool notify = true}) {
     bool hasChanges = false;
