@@ -129,7 +129,7 @@ class RubricDetails extends StatelessWidget {
         ),
         // Show tracks list from `author.track_ids`
         ShowTracksListBlockLoader(
-          query: '?filter=track_status:PUBLISHED&filter=rubric__id:${rubric.id}',
+          query: '?filter=rubric__id:${rubric.id}',
           title: "All rubric's tracks".i18n,
         ),
         Padding(

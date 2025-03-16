@@ -4,14 +4,14 @@ import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/shared/states/AppState.dart';
 
-abstract class ScrollControlleProvider {
-  const ScrollControlleProvider();
+abstract class ScrollControllerProvider {
+  const ScrollControllerProvider();
 
   ScrollController getScrollController();
 }
 
 @optionalTypeArgs
-mixin ScrollControllerProviderMixin<T extends StatefulWidget> on State<T> implements ScrollControlleProvider {
+mixin ScrollControllerProviderMixin<T extends StatefulWidget> on State<T> implements ScrollControllerProvider {
   late final AppState _appState;
   final ScrollController _scrollController = new ScrollController();
 

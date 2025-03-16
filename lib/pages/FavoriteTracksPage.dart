@@ -53,7 +53,7 @@ class FavoriteTracksPage extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // TopMenuBox(),
+        // TopFilterBox(),
         Expanded(
           child: TracksList(
             // key: ValueKey('FavoritesList'),

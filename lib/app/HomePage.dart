@@ -1,19 +1,20 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/PageWrapper.dart';
+import 'package:march_tales_app/components/mixins/IsRootStateMixin.dart';
+import 'package:march_tales_app/core/constants/stateKeys.dart';
 import 'package:march_tales_app/routes/buildRouteWidget.dart';
 import 'package:march_tales_app/routes/initialRoute.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
-
-final navigatorKey = GlobalKey<NavigatorState>();
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -24,7 +25,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage> /* with RestorationMixin */ {
+class HomePageState extends State<HomePage> with IsRootStateMixin /* with RestorationMixin */ {
   /* // RestorationMixin: To store navigator state?
    * @override
    * String get restorationId => 'HomePageRestoration';
@@ -49,17 +50,33 @@ class HomePageState extends State<HomePage> /* with RestorationMixin */ {
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
     final routeObserver = appState.getRouteObserver();
+    final pageIndex = appState.getNavigationTabIndex();
+    final isMainTab = pageIndex == 0;
+    final isRoot = this.isRoot();
     return RestorationScope(
       restorationId: 'HomePage',
       child: PageWrapper(
-        navigatorKey: navigatorKey,
+        isRoot: isRoot,
+        pageIndex: pageIndex,
         child: PopScope(
           canPop: false,
           onPopInvokedWithResult: (didPop, result) async {
+            final navigator = routeObserver.navigator;
+            final canPop = navigator?.canPop() ?? false;
+            logger.t(
+                '[HomePage:onPopInvokedWithResult] isRoot=${isRoot} didPop=${didPop} result=${result} canPop=${canPop}');
+            debugger();
             if (!didPop) {
-              final navigator = routeObserver.navigator;
-              // Navigate with nested navigator...
-              navigator?.pop(result);
+              // Navigate with the nested navigator if history is not empty
+              if (canPop && !isRoot) {
+                navigator?.pop(result);
+              } else if (!isMainTab) {
+                // Go to the main tab
+                appState.updateNavigationTabIndex(0);
+              } else {
+                // Exit from the application
+                SystemNavigator.pop();
+              }
             }
           },
           child: Navigator(

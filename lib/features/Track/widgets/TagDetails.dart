@@ -115,7 +115,7 @@ class TagDetails extends StatelessWidget {
         ),
         // Show tracks list from `author.track_ids`
         ShowTracksListBlockLoader(
-          query: '?filter=track_status:PUBLISHED&filter=tag__id:${tag.id}',
+          query: '?filter=tag__id:${tag.id}',
           title: "All tag's tracks".i18n,
         ),
         Padding(

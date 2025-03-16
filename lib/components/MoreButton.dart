@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'package:march_tales_app/app/AppColors.dart';
 import 'MoreButton.i18n.dart';
 
 class MoreButton extends StatelessWidget {
-  // XXX FUTURE: To use auto-update and lazy-scroll
   const MoreButton({
     super.key,
     required this.isLoading,
@@ -16,8 +16,9 @@ class MoreButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final buttonColorTheme = theme.buttonTheme.colorScheme!;
-    final baseColor = buttonColorTheme.primary;
+    final AppColors appColors = theme.extension<AppColors>()!;
+    // final buttonColorTheme = theme.buttonTheme.colorScheme!;
+    final baseColor = appColors.brandColor; // buttonColorTheme.primary;
     final color = isLoading ? baseColor.withValues(alpha: 0.5) : baseColor;
     const double iconSize = 20;
     return Center(

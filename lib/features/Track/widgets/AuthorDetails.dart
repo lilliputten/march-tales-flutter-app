@@ -186,7 +186,7 @@ class AuthorDetails extends StatelessWidget {
         ),
         // Show tracks list from `author.track_ids`
         ShowTracksListBlockLoader(
-          query: '?filter=track_status:PUBLISHED&filter=author_id:${author.id}',
+          query: '?filter=author_id:${author.id}',
           title: "All author's tracks".i18n,
         ),
         Padding(

@@ -4,25 +4,26 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
+import 'package:march_tales_app/app/homePages.dart';
 import 'package:march_tales_app/components/HidableWrapper.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
-import 'TopMenuBox.i18n.dart';
+import 'TopFilterBox.i18n.dart';
 
 final logger = Logger();
 
-class TopMenuBox extends StatefulWidget {
-  const TopMenuBox({
+class TopFilterBox extends StatefulWidget {
+  const TopFilterBox({
     super.key,
   });
 
   @override
-  State<TopMenuBox> createState() => TopMenuBoxState();
+  State<TopFilterBox> createState() => TopFilterBoxState();
 }
 
 const double inputBorderRadius = 10;
 const double inputBorderWidth = 1;
 
-class TopMenuBoxState extends State<TopMenuBox> {
+class TopFilterBoxState extends State<TopFilterBox> {
   late TextEditingController _controller;
 
   @override
@@ -50,13 +51,14 @@ class TopMenuBoxState extends State<TopMenuBox> {
     final textStyle = baseStyle.copyWith(color: appColors.onBrandColor);
     final hintStyle = baseStyle.copyWith(color: appColors.onBrandColor.withValues(alpha: 0.5));
 
+    final pageIndex = appState.getNavigationTabIndex();
+    final isTracksPage = pageIndex == HomePages.root.index;
     final isPlayingAndNotPaused = appState.isPlayingAndNotPaused();
-    final hidableNavigation = appState.isHidableNavigation();
 
     return HidableWrapper(
-      widgetSize: 82,
+      widgetSize: 80,
       // bypass: AppConfig.LOCAL,
-      show: hidableNavigation,
+      show: isTracksPage,
       wrap: !isPlayingAndNotPaused,
       child: ColoredBox(
         color: appColors.brandColor.withValues(alpha: 0.7),
@@ -100,11 +102,11 @@ class TopMenuBoxState extends State<TopMenuBox> {
                   ),
                 ),
                 onSubmitted: (String value) {
-                  logger.t('[TopMenuBox:onSubmitted] value=${value}');
+                  logger.t('[TopFilterBox:onSubmitted] value=${value}');
                   appState.applyFilters();
                 },
                 onChanged: (String value) {
-                  logger.t('[TopMenuBox:onChanged] value=${value}');
+                  logger.t('[TopFilterBox:onChanged] value=${value}');
                   appState.setFilterSearch(value);
                 },
               ),

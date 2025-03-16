@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
-
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/components/PlayerBox.dart';
+import 'package:march_tales_app/core/constants/stateKeys.dart';
 import 'package:march_tales_app/core/singletons/playingTrackEvents.dart';
 import 'package:march_tales_app/core/types/PlayingTrackUpdate.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
@@ -15,9 +14,6 @@ mixin ActivePlayerState {
   void updateSingleTrack(Track track, {bool notify = true}); // TrackState
 
   // Player & active track
-
-  // Using PlayerBox as an audio controller (access it via `playerBoxKey?.currentState`)
-  GlobalKey<PlayerBoxState>? playerBoxKey; // NOTE: One-way flow!
 
   Track? playingTrack;
 
@@ -62,6 +58,6 @@ mixin ActivePlayerState {
   }
 
   PlayerBoxState? getPlayerBoxState() {
-    return this.playerBoxKey?.currentState;
+    return playerBoxKey.currentState;
   }
 }
