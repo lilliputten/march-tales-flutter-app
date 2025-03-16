@@ -10,23 +10,14 @@ import 'package:march_tales_app/Init.dart';
 import 'package:march_tales_app/SplashScreen.dart';
 import 'package:march_tales_app/app/AppErrorScreen.dart';
 import 'package:march_tales_app/app/HomePage.dart';
-import 'core/helpers/YamlFormatter.dart';
-import 'core/server/ServerSession.dart';
-import 'shared/states/AppState.dart';
+import 'package:march_tales_app/core/exceptions/VersionException.dart';
+import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
+import 'package:march_tales_app/core/server/ServerSession.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
+import 'RootApp.i18n.dart';
 
 final formatter = YamlFormatter();
 final logger = Logger();
-
-class VersionException implements Exception {
-  String cause;
-
-  VersionException(this.cause);
-
-  @override
-  String toString() {
-    return 'VersionException: ${cause}';
-  }
-}
 
 class RootApp extends StatelessWidget {
   const RootApp({
@@ -54,8 +45,8 @@ class RootApp extends StatelessWidget {
           final versionsMismatched = Init.serverAPKMajorMinorVersion != Init.appMajorMinorVersion;
           if (versionsMismatched) {
             appState.setVersionsMismatched();
-            final errMsg =
-                'The app (${Init.appVersion}) is outdated (actual version is ${Init.serverAPKVersion}). Please update the application.';
+            logger.e('The app version (${Init.appVersion}) is outdated. Actual version is ${Init.serverAPKVersion}.');
+            final errMsg = 'Your version of the app is outdated.'.i18n;
             throw VersionException(errMsg);
           }
           // logger.t('[ChangeNotifierProvider] Versions: versionsMismatched=${versionsMismatched} serverVersion=${Init.serverVersion} appVersion=${Init.appVersion}');

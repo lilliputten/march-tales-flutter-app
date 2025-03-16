@@ -55,6 +55,9 @@ class TopFilterBoxState extends State<TopFilterBox> {
     final isTracksPage = pageIndex == HomePages.root.index;
     final isPlayingAndNotPaused = appState.isPlayingAndNotPaused();
 
+    final searchValue = appState.getFilterSearch();
+    final hasValue = searchValue.isNotEmpty;
+
     return HidableWrapper(
       widgetSize: 80,
       // bypass: AppConfig.LOCAL,
@@ -85,21 +88,28 @@ class TopFilterBoxState extends State<TopFilterBox> {
                     borderRadius: BorderRadius.all(Radius.circular(inputBorderRadius)),
                     borderSide: BorderSide(width: inputBorderWidth, color: appColors.onBrandColor),
                   ),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: appColors.onBrandColor,
-                  ),
-                  suffixIcon: IconButton(
+                  prefixIcon: IconButton(
                     onPressed: () {
-                      _controller.clear();
-                      appState.setFilterSearch('');
                       appState.applyFilters();
                     },
                     icon: Icon(
-                      Icons.clear,
+                      Icons.search,
                       color: appColors.onBrandColor,
                     ),
                   ),
+                  suffixIcon: hasValue
+                      ? IconButton(
+                          onPressed: () {
+                            _controller.clear();
+                            appState.setFilterSearch('');
+                            // appState.applyFilters();
+                          },
+                          icon: Icon(
+                            Icons.clear,
+                            color: appColors.onBrandColor,
+                          ),
+                        )
+                      : null,
                 ),
                 onSubmitted: (String value) {
                   logger.t('[TopFilterBox:onSubmitted] value=${value}');

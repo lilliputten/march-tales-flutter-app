@@ -8,10 +8,12 @@ import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
+import 'package:march_tales_app/core/exceptions/ConnectionException.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
+import 'Init.i18n.dart';
 
 final formatter = YamlFormatter();
 final logger = Logger();
@@ -85,11 +87,11 @@ class Init {
       // logger.t('[Init:loadServerStatus] Started loading tick data: ${url}');
       tickData = await serverSession.get(Uri.parse(url));
     } catch (err, stacktrace) {
-      final String msg = 'Can not fetch url ${url}: ${err}';
-      logger.e('[Init:loadServerStatus] error ${msg}', error: err, stackTrace: stacktrace);
+      final String msg = 'Server connection error.'.i18n; // ${url}: ${err}';
+      logger.e('[Init:loadServerStatus] error ${msg} / ${url}: ${err}', error: err, stackTrace: stacktrace);
       showErrorToast(msg);
       // debugger();
-      throw Exception(msg);
+      throw ConnectionException(msg);
     }
     logger.t('[Init:loadServerStatus] done: tickData: ${tickData}');
     serverAPKVersion = tickData!['androidAppVersion'];
@@ -98,12 +100,12 @@ class Init {
       if (serverAPKVersion != null) {
         final RegExpMatch? match = RegExp(r'^(\d+\.\d+)').firstMatch(serverAPKVersion!);
         if (match == null) {
-          throw Exception('Can not parse server apk version');
+          throw Exception('Can not parse server apk version.');
         }
         serverAPKMajorMinorVersion = match.group(1);
       }
     } catch (err, stacktrace) {
-      final String msg = 'Can not parse received tick data: ${err}';
+      final String msg = 'Can not parse received app version: ${err}';
       logger.e('[Init:loadServerStatus] error ${msg}', error: err, stackTrace: stacktrace);
       // debugger();
       showErrorToast(msg);
@@ -115,7 +117,7 @@ class Init {
       if (serverProjectInfo != null) {
         final RegExpMatch? match = parseProjectInfoReg.firstMatch(serverProjectInfo!);
         if (match == null) {
-          throw Exception('Can not parse server project info');
+          throw Exception('Can not parse server project info.');
         }
         serverId = match.group(1);
         serverVersion = match.group(2);
@@ -123,7 +125,7 @@ class Init {
         serverTimestamp = match.group(4);
       }
     } catch (err, stacktrace) {
-      final String msg = 'Can not parse received tick data: ${err}';
+      final String msg = 'Can not parse received server version: ${err}';
       logger.e('[Init:loadServerStatus] error ${msg}', error: err, stackTrace: stacktrace);
       // debugger();
       showErrorToast(msg);
@@ -134,8 +136,8 @@ class Init {
       userName = tickData['user_name'] != null ? tickData['user_name'].toString() : '';
       userEmail = tickData['user_email'] != null ? tickData['user_email'].toString() : '';
     } catch (err, stacktrace) {
-      final String msg = 'Can not parse received tick data: ${err}';
-      logger.e('[Init:loadServerStatus] error ${msg}', error: err, stackTrace: stacktrace);
+      final String msg = 'Can not parse received user data.';
+      logger.e('[Init:loadServerStatus] error ${msg}: ${err}', error: err, stackTrace: stacktrace);
       debugger();
       showErrorToast(msg);
       throw Exception(msg);
@@ -151,7 +153,7 @@ class Init {
       if (appProjectInfo != null) {
         final RegExpMatch? match = parseProjectInfoReg.firstMatch(appProjectInfo!);
         if (match == null) {
-          throw Exception('Can not parse app project info');
+          throw Exception('Can not parse app project info.');
         }
         appId = match.group(1);
         appVersion = match.group(2);
