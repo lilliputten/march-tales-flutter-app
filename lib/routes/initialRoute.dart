@@ -8,7 +8,7 @@ import 'package:march_tales_app/screens/AuthorScreen.dart';
 // import 'package:march_tales_app/screens/TagsListScreen.dart';
 // import 'package:march_tales_app/screens/RubricsListScreen.dart';
 
-const _useDebugRoute = true;
+const _useDebugRoute = false;
 
 // const _debugRoute = TrackDetailsScreen.routeName;
 const _debugRoute = AuthorScreen.routeName;

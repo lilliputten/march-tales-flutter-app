@@ -20,6 +20,7 @@ mixin TrackState {
   // Future<Track?> ensureLoadedPlayingTrackDetails({bool notify = true});
   // Future<Track?> updatePlayingTrackDetails({bool notify = true});
   PlayerBoxState? getPlayerBoxState(); // From `ActivePlayerState`
+  String getFilterQuery(); // From FilterState
 
   /// Tracks list
 
@@ -87,7 +88,6 @@ mixin TrackState {
   }
 
   updateSingleTrack(Track track, {bool notify = true}) {
-    // XXX FUTURE: Listen for
     final idx = this.tracks.indexWhere((it) => it.id == track.id);
     if (idx != -1) {
       tracks[idx] = track;
@@ -106,8 +106,13 @@ mixin TrackState {
         await Future.delayed(Duration(seconds: 2));
       }
       final offset = tracks.length;
-      // logger.t('Starting loading tracks (offset: ${offset})');
-      final LoadTracksListResults results = await loadTracksList(offset: offset, limit: tracksLimit);
+      final query = this.getFilterQuery();
+      logger.t('[TrackState:loadNextTracks] Start offset=${offset} query=${query}');
+      final LoadTracksListResults results = await loadTracksList(
+        offset: offset,
+        limit: tracksLimit,
+        query: query,
+      );
       tracks.addAll(results.results);
       availableTracksCount = results.count;
       logger.t('Loaded tracks (count: ${availableTracksCount}):\n${formatter.format(tracks)}');

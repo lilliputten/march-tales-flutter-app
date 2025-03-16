@@ -4,6 +4,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
+import 'package:march_tales_app/components/TopMenuBox.dart';
 import 'package:march_tales_app/features/Track/widgets/TracksList.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'TracksPage.i18n.dart';
@@ -76,7 +77,7 @@ class TracksPage extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // TopMenuBox(), // TODO
+        TopMenuBox(),
         Expanded(
           child: TracksList(
             // key: ValueKey('TracksList'),
