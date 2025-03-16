@@ -42,8 +42,9 @@ class ShowTracksListBlockLoaderState extends State<ShowTracksListBlockLoader> {
   String? error;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
+    // NOTE: We are getting an error if laod data in `didChangeDependencies`: 'setState() called after dispose();
     this.loadData();
   }
 

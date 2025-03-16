@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
+import 'package:march_tales_app/components/mixins/IsRootStateMixin.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
@@ -11,6 +12,9 @@ import 'TopFilterBox.i18n.dart';
 
 final logger = Logger();
 
+const double inputBorderRadius = 10;
+const double inputBorderWidth = 1;
+
 class TopFilterBox extends StatefulWidget {
   const TopFilterBox({
     super.key,
@@ -20,10 +24,7 @@ class TopFilterBox extends StatefulWidget {
   State<TopFilterBox> createState() => TopFilterBoxState();
 }
 
-const double inputBorderRadius = 10;
-const double inputBorderWidth = 1;
-
-class TopFilterBoxState extends State<TopFilterBox> {
+class TopFilterBoxState extends State<TopFilterBox> with IsRootStateMixin {
   late TextEditingController _controller;
 
   @override
@@ -51,22 +52,24 @@ class TopFilterBoxState extends State<TopFilterBox> {
     final textStyle = baseStyle.copyWith(color: appColors.onBrandColor);
     final hintStyle = baseStyle.copyWith(color: appColors.onBrandColor.withValues(alpha: 0.5));
 
+    final isRoot = this.isRoot();
     final pageIndex = appState.getNavigationTabIndex();
     final isTracksPage = pageIndex == HomePages.root.index;
     final isPlayingAndNotPaused = appState.isPlayingAndNotPaused();
+    final showHideable = isRoot && isTracksPage;
 
     final searchValue = appState.getFilterSearch();
     final hasValue = searchValue.isNotEmpty;
 
     return HidableWrapper(
-      widgetSize: 80,
+      widgetSize: 70,
       // bypass: AppConfig.LOCAL,
-      show: isTracksPage,
+      show: showHideable,
       wrap: !isPlayingAndNotPaused,
       child: ColoredBox(
         color: appColors.brandColor.withValues(alpha: 0.7),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+          padding: const EdgeInsets.fromLTRB(15, 10, 15, 0), // .symmetric(vertical: 15, horizontal: 15),
           child: Column(
             children: [
               TextField(
@@ -102,7 +105,7 @@ class TopFilterBoxState extends State<TopFilterBox> {
                           onPressed: () {
                             _controller.clear();
                             appState.setFilterSearch('');
-                            // appState.applyFilters();
+                            appState.applyFilters();
                           },
                           icon: Icon(
                             Icons.clear,
