@@ -55,17 +55,17 @@ class TopFilterBoxState extends State<TopFilterBox> with IsRootStateMixin {
     final isRoot = this.isRoot();
     final pageIndex = appState.getNavigationTabIndex();
     final isTracksPage = pageIndex == HomePages.root.index;
-    final isPlayingAndNotPaused = appState.isPlayingAndNotPaused();
+    // final isPlayingAndNotPaused = appState.isPlayingAndNotPaused();
     final showHideable = isRoot && isTracksPage;
 
     final searchValue = appState.getFilterSearch();
     final hasValue = searchValue.isNotEmpty;
 
     return HidableWrapper(
-      widgetSize: 70,
+      widgetSize: 72,
       // bypass: AppConfig.LOCAL,
       show: showHideable,
-      wrap: !isPlayingAndNotPaused,
+      // wrap: !isPlayingAndNotPaused,
       child: ColoredBox(
         color: appColors.brandColor.withValues(alpha: 0.7),
         child: Padding(

@@ -11,6 +11,8 @@ import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/features/Track/loaders/LoadTracksListResults.dart';
 import 'package:march_tales_app/features/Track/trackConstants.dart';
 
+import 'shared-translations.i18n.dart';
+
 final formatter = YamlFormatter();
 final logger = Logger();
 
@@ -35,10 +37,11 @@ Future<LoadTracksListResults> loadTracksList({
     final jsonData = await serverSession.get(uri);
     return LoadTracksListResults.fromJson(jsonData);
   } catch (err, stacktrace) {
-    final String msg = 'Error fetching tracks with an url $url: $err';
-    logger.e(msg, error: err, stackTrace: stacktrace);
+    final String msg = 'Error loading tracks list.';
+    logger.e('${msg} url=$url: $err', error: err, stackTrace: stacktrace);
     debugger();
-    showErrorToast(msg);
-    throw Exception(msg);
+    final String extraMsg = msg.i18n;
+    showErrorToast(extraMsg);
+    throw Exception(extraMsg);
   }
 }

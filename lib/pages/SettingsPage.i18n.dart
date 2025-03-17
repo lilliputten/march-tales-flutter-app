@@ -19,6 +19,9 @@ extension Localization on String {
           'User:': 'Пользователь:',
           'Web site:': 'Веб сайт:',
           "You've been succcessfully logged out": 'Вы успешно вышли из системы',
+          'VK:': 'ВК:',
+          'Telegram:': 'Телеграм:',
+          'YouTube:': 'Ютуб:',
         },
       };
   String get i18n => localize(this, _t);

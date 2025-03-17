@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Flutter local",
+      "name": "Flutter local debug",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
@@ -17,16 +17,16 @@
       // "flutterMode": "release",
     },
     {
-      "name": "Flutter local release",
+      "name": "Flutter server debug",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
       "args": [
         "--dart-define=DEBUG=true",
-        "--dart-define-from-file=.env.local",
-        // "--dart-define-from-file=.env",
+        // "--dart-define-from-file=.env.local",
+        "--dart-define-from-file=.env",
       ],
-      "flutterMode": "release",
+      // "flutterMode": "release",
     },
     {
       "name": "Flutter server release",
