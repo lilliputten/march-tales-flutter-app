@@ -69,6 +69,7 @@ config-local.sh
 # android/key.properties
 keystroke.jks
 android/key.properties
+debug-info
 
 # Unused & temp files
 \!UNUSED
