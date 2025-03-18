@@ -61,6 +61,15 @@ config-local.sh
 /databases
 /db-*
 
+# Google Play signup resources
+# @see https://docs.flutter.dev/deployment/android#sign-the-app
+# @see files:
+# .scripts/create-signup-key.sh
+# keystroke.jks
+# android/key.properties
+keystroke.jks
+android/key.properties
+
 # Unused & temp files
 \!UNUSED
 *.UNUSED

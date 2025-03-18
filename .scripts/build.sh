@@ -1,10 +1,12 @@
 #!/bin/sh
-# @desc Create/update version tag (from build folder)
-# @changed 2025.01.22, 21:19
+# @desc Create apk/aab build
+# @changed 2025.03.18, 05:06
 
-# scriptsPath=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
-# rootPath=`dirname "$scriptsPath"`
-# prjPath="$rootPath" # `pwd`
+if [ $# -lt 1 ]; then
+  echo "Usage: $0 [--apk] [--aab]"
+  exit 0
+fi
+
 scriptsPath=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
 rootPath=`dirname "$scriptsPath"`
 utilsPath="$rootPath/.utils"
@@ -22,14 +24,27 @@ VERSION=`cat "$VERSION_PATH"`
 # TIMESTAMP=`date -r "$VERSION_PATH" "+%Y.%m.%d %H:%M:%S %z"`
 # TIMETAG=`date -r "$VERSION_PATH" "+%y%m%d-%H%M"`
 
-echo "Generating build $PROJECT_INFO..."
-
 APK_FOLDER="build/app/outputs/apk/release"
+AAB_FOLDER="build/app/outputs/bundle/release"
 
-flutter build apk \
-  --build-name=$VERSION \
-  --dart-define-from-file=.env \
-  && echo "See release in $APK_FOLDER:" \
-  && ls -lah $APK_FOLDER/*.apk \
-  && echo "OK"
+if [[ "$ARGS" =~ .*--apk.* ]]; then
+  echo "Generating apk build $PROJECT_INFO..."
+  flutter build apk \
+    --build-name=$VERSION \
+    --dart-define-from-file=.env \
+    && echo "See release in $APK_FOLDER" \
+    && ls -lah $APK_FOLDER/*.apk \
+    && echo "OK"
+fi
+
+# Create signed bundle (aab)
+if [[ "$ARGS" =~ .*--aab.* ]]; then
+  echo "Generating aab bundle $PROJECT_INFO..."
+  flutter build appbundle \
+    --build-name=$VERSION \
+    --dart-define-from-file=.env \
+    && echo "See release in $AAB_FOLDER" \
+    ; ls -lah $AAB_FOLDER/*.aab \
+    && echo "OK"
+fi
 
