@@ -4,6 +4,7 @@ import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/app/ErrorBlock.dart';
 import 'package:march_tales_app/components/data-driven/views/TracksListBlockWithTitle.dart';
+import 'package:march_tales_app/core/constants/defaultTracksFetchingLimit.dart';
 import 'package:march_tales_app/core/exceptions/ConnectionException.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTracksList.dart';
@@ -47,9 +48,9 @@ class ShowTracksListBlockLoaderState extends State<ShowTracksListBlockLoader> {
        * if (AppConfig.LOCAL) {
        *   await Future.delayed(Duration(seconds: 2));
        * }
-       * throw new ConnectionException('Test error');
+       * throw new Exception('Test error');
        */
-      final data = await loadTracksList(limit: 2, offset: this._tracks.length, query: this.widget.query);
+      final data = await loadTracksList(limit: defaultTracksFetchingLimit, offset: this._tracks.length, query: this.widget.query);
       setState(() {
         this._tracks = [...this._tracks, ...data.results];
         this._count = data.count;
@@ -77,9 +78,8 @@ class ShowTracksListBlockLoaderState extends State<ShowTracksListBlockLoader> {
   }
 
   _loadData() {
-    final future = this._loadDataFuture();
     setState(() {
-      this.dataFuture = future;
+      this.dataFuture = this._loadDataFuture();
     });
   }
 
@@ -91,7 +91,7 @@ class ShowTracksListBlockLoaderState extends State<ShowTracksListBlockLoader> {
         final isReady = snapshot.connectionState == ConnectionState.done;
         final isError = isReady && snapshot.error != null;
         final hasData = !isError && snapshot.data != null;
-        logger.t('[ShowTracksListBlockLoader] isReady=${isReady} error=${snapshot.error}');
+        // logger.t('[ShowTracksListBlockLoader] isReady=${isReady} error=${snapshot.error}');
         if (isError) {
           return ErrorBlock(
             error: snapshot.error,

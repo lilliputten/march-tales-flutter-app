@@ -1,15 +1,14 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/app/AppErrorScreen.dart';
+import 'package:march_tales_app/app/ErrorBlock.dart';
 import 'package:march_tales_app/app/ScreenWrapper.dart';
 import 'package:march_tales_app/components/LoadingSplash.dart';
 import 'package:march_tales_app/components/mixins/ScrollControllerProviderMixin.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
+import 'package:march_tales_app/core/exceptions/ConnectionException.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/features/Track/loaders/getTrackFromStateOrLoad.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
@@ -41,10 +40,10 @@ class TrackDetailsScreenState extends State<TrackDetailsScreen> with ScrollContr
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    this._loadDataFuture();
+    this.dataFuture = this._loadDataFuture();
   }
 
-  _loadDataFuture() {
+  Future<Track> _loadDataFuture() async {
     /* // DEBUG
      * this.dataFuture = Future.delayed(Duration(seconds: 1), () {
      *   return 'Track ${id}';
@@ -52,13 +51,21 @@ class TrackDetailsScreenState extends State<TrackDetailsScreen> with ScrollContr
      */
     final int id = this._getTrackId();
     try {
+      /* // DEBUG
+       * if (AppConfig.LOCAL) {
+       *   await Future.delayed(Duration(seconds: 2));
+       * }
+       * throw new Exception('Test error');
+       */
       final appState = context.read<AppState>();
-      this.dataFuture = getTrackFromStateOrLoad(id, appState: appState);
+      return getTrackFromStateOrLoad(id, appState: appState);
     } catch (err, stacktrace) {
       final String msg = 'Error loading track data.';
       logger.e('${msg} id=${id}: $err', error: err, stackTrace: stacktrace);
-      debugger();
-      showErrorToast(msg.i18n);
+      // debugger();
+      final translatedMsg = msg.i18n;
+      showErrorToast(translatedMsg);
+      throw ConnectionException(translatedMsg);
     }
   }
 
@@ -79,23 +86,28 @@ class TrackDetailsScreenState extends State<TrackDetailsScreen> with ScrollContr
   }
 
   _retryDataLoad() {
-    this.dataFuture = this._loadDataFuture();
+    setState(() {
+      this.dataFuture = this._loadDataFuture();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return ScreenWrapper(
-      title: 'Show track',
+      title: 'Track'.i18n,
       child: FutureBuilder(
         future: this.dataFuture,
         builder: (context, snapshot) {
-          if (snapshot.error != null) {
-            return AppErrorScreen(
+          final isReady = snapshot.connectionState == ConnectionState.done;
+          final isError = isReady && snapshot.error != null;
+          final hasData = !isError && snapshot.data != null;
+          if (isError) {
+            return ErrorBlock(
               error: snapshot.error,
               onRetry: this._retryDataLoad,
+              large: true,
             );
-          }
-          if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+          } else if (hasData) {
             final Track track = snapshot.data!;
             return TrackDetailsScreenView(
               track: track,

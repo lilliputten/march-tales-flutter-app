@@ -4,7 +4,7 @@ extension Localization on String {
   static var _t = Translations.byLocale('en') +
       {
         'ru': {
-          'Rubrics list': 'Список разделов',
+          'Rubrics': 'Разделы',
           'Error loading rubrics list.': 'Ошибка загрузки списка разделов.',
         },
       };

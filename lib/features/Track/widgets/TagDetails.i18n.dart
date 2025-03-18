@@ -7,7 +7,7 @@ extension Localization on String {
           'Tag': 'Тег',
           'Authors:': 'Авторы:',
           'Tags:': 'Теги:',
-          'Rubrics:': 'Рубрики:',
+          'Rubrics:': 'Разделы:',
           'All tags': 'Список всех тегов',
           "All tag's tracks": 'Все треки с этим тегом',
         },

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
 
-import 'package:march_tales_app/components/MoreButton.dart';
+import 'package:march_tales_app/blocks/MoreButton.dart';
+import 'package:march_tales_app/blocks/NoTracksInfo.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TrackItem.dart';
 
@@ -41,6 +42,7 @@ class TracksListBlock extends StatelessWidget {
     final items = [
       ...trackItems,
       isLoading || hasMoreTracks ? MoreButton(onLoadNext: this.onLoadNext, isLoading: this.isLoading) : null,
+      !isLoading && count == 0 ? NoTracksInfo() : null,
     ].nonNulls;
 
     return Column(

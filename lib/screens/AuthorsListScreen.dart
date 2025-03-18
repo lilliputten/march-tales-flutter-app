@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
 
-import 'package:march_tales_app/app/AppErrorScreen.dart';
+import 'package:march_tales_app/app/ErrorBlock.dart';
 import 'package:march_tales_app/app/ScreenWrapper.dart';
 import 'package:march_tales_app/components/LoadingSplash.dart';
 import 'package:march_tales_app/components/mixins/ScrollControllerProviderMixin.dart';
@@ -40,6 +40,10 @@ class AuthorsListScreenState extends State<AuthorsListScreen> with ScrollControl
 
   _loadDataFuture() async {
     try {
+      /* // DEBUG
+       * await Future.delayed(Duration(seconds: 2));
+       * throw new Exception('Test error');
+       */
       return await loadAuthorsList();
     } catch (err, stacktrace) {
       final String msg = 'Error loading authors list.';
@@ -52,7 +56,9 @@ class AuthorsListScreenState extends State<AuthorsListScreen> with ScrollControl
   }
 
   _retryDataLoad() {
-    this.dataFuture = this._loadDataFuture();
+    setState(() {
+      this.dataFuture = this._loadDataFuture();
+    });
   }
 
   @override
@@ -62,13 +68,16 @@ class AuthorsListScreenState extends State<AuthorsListScreen> with ScrollControl
       child: FutureBuilder(
         future: this.dataFuture,
         builder: (context, snapshot) {
-          if (snapshot.error != null) {
-            return AppErrorScreen(
+          final isReady = snapshot.connectionState == ConnectionState.done;
+          final isError = isReady && snapshot.error != null;
+          final hasData = !isError && snapshot.data != null;
+          if (isError) {
+            return ErrorBlock(
               error: snapshot.error,
               onRetry: this._retryDataLoad,
+              large: true,
             );
-          }
-          if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+          } else if (hasData) {
             final LoadAuthorsListResults data = snapshot.data!;
             return AuthorsListScreenView(
               authors: data.results,

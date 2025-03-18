@@ -12,13 +12,14 @@ final logger = Logger();
 
 Future<LoadAuthorsListResults> loadAuthorsList({
   int offset = 0,
-  int limit = 0,
+  int? limit,
   String query = '',
 }) async {
   // NOTE: It's possible url to contain a few params with the same name (filters, eg) so wi can't use `uri.replace(queryParameters: params)`
   // query = addQueryParam(query, 'full', full, ifAbsent: true);
-  // NOTE: Temporarily load the full list (without a limit)
-  query = addQueryParam(query, 'limit', limit, ifAbsent: true);
+  if (limit != null) {
+    query = addQueryParam(query, 'limit', limit, ifAbsent: true);
+  }
   if (offset != 0) {
     query = addQueryParam(query, 'offset', offset, ifAbsent: true);
   }

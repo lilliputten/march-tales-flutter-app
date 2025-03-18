@@ -103,7 +103,7 @@ mixin TrackState {
       notifyListeners();
       // DEBUG: Emulate delay
       if (AppConfig.LOCAL) {
-        await Future.delayed(Duration(seconds: 2));
+        // await Future.delayed(Duration(seconds: 2));
       }
       final offset = tracks.length;
       final query = this.getFilterQuery();

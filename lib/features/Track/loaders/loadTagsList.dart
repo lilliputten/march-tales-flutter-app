@@ -11,12 +11,14 @@ final logger = Logger();
 
 Future<LoadTagsListResults> loadTagsList({
   int offset = 0,
-  int limit = 0,
+  int? limit,
   String query = '',
 }) async {
   // query = addQueryParam(query, 'full', full, ifAbsent: true);
   // NOTE: Temporarily load the full list (without a limit)
-  query = addQueryParam(query, 'limit', limit, ifAbsent: true);
+  if (limit != null) {
+    query = addQueryParam(query, 'limit', limit, ifAbsent: true);
+  }
   if (offset != 0) {
     query = addQueryParam(query, 'offset', offset, ifAbsent: true);
   }

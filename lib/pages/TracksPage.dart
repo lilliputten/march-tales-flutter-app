@@ -4,9 +4,9 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
+import 'package:march_tales_app/blocks/NoTracksInfo.dart';
 import 'package:march_tales_app/features/Track/widgets/TracksList.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
-import 'TracksPage.i18n.dart';
 
 final logger = Logger();
 
@@ -63,10 +63,7 @@ class TracksPage extends StatelessWidget {
         children: [
           Expanded(
             child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                child: Text('No tracks'.i18n),
-              ),
+              child: NoTracksInfo(padding: 20),
             ),
           ),
         ],

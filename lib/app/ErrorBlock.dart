@@ -36,7 +36,7 @@ class ErrorBlock extends StatelessWidget {
   _getTitleStyle() {
     return TextStyle(
       color: Colors.red,
-      fontSize: this.large ? 20 : 14,
+      fontSize: this.large ? 20 : 16,
       fontWeight: FontWeight.bold,
     );
   }
@@ -81,7 +81,7 @@ class ErrorBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     String text = convertErrorLikeToString(error);
 
-    final double iconSize = this.large ? 100 : 40;
+    final double iconSize = this.large ? 80 : 40;
     final double spacing = this.large ? 15 : 10;
 
     final items = [

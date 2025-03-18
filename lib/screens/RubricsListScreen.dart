@@ -52,23 +52,27 @@ class RubricsListScreenState extends State<RubricsListScreen> with ScrollControl
   }
 
   _retryDataLoad() {
-    this.dataFuture = this._loadDataFuture();
+    setState(() {
+      this.dataFuture = this._loadDataFuture();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return ScreenWrapper(
-      title: 'Rubrics list',
+      title: 'Rubrics'.i18n,
       child: FutureBuilder(
         future: this.dataFuture,
         builder: (context, snapshot) {
-          if (snapshot.error != null) {
+          final isReady = snapshot.connectionState == ConnectionState.done;
+          final isError = isReady && snapshot.error != null;
+          final hasData = !isError && snapshot.data != null;
+          if (isError) {
             return AppErrorScreen(
               error: snapshot.error,
               onRetry: this._retryDataLoad,
             );
-          }
-          if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+          } else if (hasData) {
             final LoadRubricsListResults data = snapshot.data!;
             return RubricsListScreenView(
               rubrics: data.results,
