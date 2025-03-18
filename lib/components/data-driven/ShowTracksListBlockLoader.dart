@@ -50,7 +50,8 @@ class ShowTracksListBlockLoaderState extends State<ShowTracksListBlockLoader> {
        * }
        * throw new Exception('Test error');
        */
-      final data = await loadTracksList(limit: defaultTracksFetchingLimit, offset: this._tracks.length, query: this.widget.query);
+      final data = await loadTracksList(
+          limit: defaultTracksFetchingLimit, offset: this._tracks.length, query: this.widget.query);
       setState(() {
         this._tracks = [...this._tracks, ...data.results];
         this._count = data.count;

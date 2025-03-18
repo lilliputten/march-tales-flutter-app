@@ -44,7 +44,7 @@ class TagsListScreenState extends State<TagsListScreen> with ScrollControllerPro
        * await Future.delayed(Duration(seconds: 2));
        * throw new Exception('Test error');
        */
-      return await loadTagsList();
+      return await loadTagsList(limit: 0);
     } catch (err, stacktrace) {
       final String msg = 'Error loading tags list.';
       logger.e('${msg}: $err', error: err, stackTrace: stacktrace);

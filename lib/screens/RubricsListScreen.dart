@@ -40,7 +40,7 @@ class RubricsListScreenState extends State<RubricsListScreen> with ScrollControl
 
   _loadDataFuture() async {
     try {
-      return await loadRubricsList();
+      return await loadRubricsList(limit: 0);
     } catch (err, stacktrace) {
       final String msg = 'Error loading rubrics list.';
       logger.e('${msg}: $err', error: err, stackTrace: stacktrace);

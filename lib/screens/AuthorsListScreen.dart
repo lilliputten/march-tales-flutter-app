@@ -44,7 +44,7 @@ class AuthorsListScreenState extends State<AuthorsListScreen> with ScrollControl
        * await Future.delayed(Duration(seconds: 2));
        * throw new Exception('Test error');
        */
-      return await loadAuthorsList();
+      return await loadAuthorsList(limit: 0);
     } catch (err, stacktrace) {
       final String msg = 'Error loading authors list.';
       logger.e('${msg}: $err', error: err, stackTrace: stacktrace);
