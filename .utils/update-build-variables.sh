@@ -15,6 +15,12 @@ test -f "$scriptsPath/config.sh" && . "$scriptsPath/config.sh"
 # Read (and derive) variables from changed files...
 VERSION_PATH="$rootPath/${VERSION_FILE}"
 VERSION=`cat "$VERSION_PATH"`
+
+if [ ! -z "$VERSION_CODE_FILE" ]; then
+  VERSION_CODE_PATH="$rootPath/${VERSION_CODE_FILE}"
+  PLUS_VERSION_CODE="+`cat "$VERSION_CODE_PATH"`"
+fi
+
 TIMESTAMP=`date -r "$VERSION_PATH" "+%Y.%m.%d %H:%M:%S %z"`
 TIMETAG=`date -r "$VERSION_PATH" "+%y%m%d-%H%M"`
 
@@ -60,7 +66,7 @@ UPDATE_FILE() {
     > $FILE || exit 1
   elif [ "$EXT" = "yaml" ]; then # env.local files
     cat $FILE.bak \
-      | sed "s/\(version:\s*\)\(\"\|'\|\).*\2/\1\2$VERSION\2/" \
+      | sed "s/\(version:\s*\)\(\"\|'\|\)[0-9.+]*\2/\1\2$VERSION$PLUS_VERSION_CODE\2/" \
       | sed "s/\(timestamp:\s*\)\([\"']\).*\2/\1\2$TIMESTAMP\2/" \
       | sed "s/\(timetag:\s*\)\([\"']\).*\2/\1\2$TIMETAG\2/" \
     > $FILE || exit 1
