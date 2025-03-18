@@ -4,14 +4,12 @@ import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/constants/routes.dart';
-import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/addQueryParam.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/features/Track/loaders/LoadTracksListResults.dart';
 import 'package:march_tales_app/features/Track/trackConstants.dart';
 
-final formatter = YamlFormatter();
 final logger = Logger();
 
 Future<LoadTracksListResults> loadTracksList({

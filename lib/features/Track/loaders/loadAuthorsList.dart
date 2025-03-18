@@ -3,13 +3,11 @@ import 'dart:developer';
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
-import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/addQueryParam.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/features/Track/loaders/LoadAuthorsListResults.dart';
 
-final formatter = YamlFormatter();
 final logger = Logger();
 
 Future<LoadAuthorsListResults> loadAuthorsList({
@@ -19,9 +17,8 @@ Future<LoadAuthorsListResults> loadAuthorsList({
 }) async {
   // NOTE: It's possible url to contain a few params with the same name (filters, eg) so wi can't use `uri.replace(queryParameters: params)`
   // query = addQueryParam(query, 'full', full, ifAbsent: true);
-  if (limit != 0) {
-    query = addQueryParam(query, 'limit', limit, ifAbsent: true);
-  }
+  // NOTE: Temporarily load the full list (without a limit)
+  query = addQueryParam(query, 'limit', limit, ifAbsent: true);
   if (offset != 0) {
     query = addQueryParam(query, 'offset', offset, ifAbsent: true);
   }

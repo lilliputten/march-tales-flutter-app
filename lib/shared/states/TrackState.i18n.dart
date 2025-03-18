@@ -4,8 +4,7 @@ extension Localization on String {
   static var _t = Translations.byLocale('en') +
       {
         'ru': {
-          'March Cat Tales': 'Сказки Мартовского Кота',
-          'Error loading currently playing track data.': 'Ошибка загрузки данных текущего трека.',
+          'Error loading tracks list.': 'Ошибка загрузки списка треков.',
         },
       };
   String get i18n => localize(this, _t);

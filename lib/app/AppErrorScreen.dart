@@ -15,8 +15,10 @@ class AppErrorScreen extends StatelessWidget {
   const AppErrorScreen({
     super.key,
     required this.error,
+    this.onRetry,
   });
   final dynamic error;
+  final VoidCallback? onRetry;
 
   getIcon() {
     if (error is ConnectionException) {
@@ -29,7 +31,7 @@ class AppErrorScreen extends StatelessWidget {
   }
 
   Widget getConnectionExceptionContent() {
-    // XXX FUTURE: Dispaly a 'Retry' button to re-launch the app?
+    // XXX FUTURE: Display a 'Retry' button to re-launch the app?
     return SelectableText(
       'Check the network connection and try again later.'.i18n,
       textAlign: TextAlign.center,
@@ -37,10 +39,22 @@ class AppErrorScreen extends StatelessWidget {
   }
 
   Widget getVersionExceptionContent() {
-    // XXX FUTURE: Dispaly a site and google play link buttons?
+    // XXX FUTURE: Display a site and google play link buttons?
     return SelectableText(
       'Please update the app from the website or from Google Play.'.i18n,
       textAlign: TextAlign.center,
+    );
+  }
+
+  Widget retryButton(BuildContext context) {
+    return TextButton.icon(
+      onPressed: this.onRetry,
+      icon: Icon(
+        Icons.refresh,
+      ),
+      label: Text(
+        'Retry'.i18n,
+      ),
     );
   }
 
@@ -68,6 +82,7 @@ class AppErrorScreen extends StatelessWidget {
       ),
       error is ConnectionException ? this.getConnectionExceptionContent() : null,
       error is VersionException ? this.getVersionExceptionContent() : null,
+      onRetry != null ? this.retryButton(context) : null,
     ].nonNulls.toList();
 
     return Material(
