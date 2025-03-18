@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
 
-import 'package:march_tales_app/app/AppErrorScreen.dart';
+import 'package:march_tales_app/app/ErrorBlock.dart';
 import 'package:march_tales_app/components/LoadingSplash.dart';
 import 'package:march_tales_app/features/Track/loaders/LoadTracksListResults.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTracksByIds.dart';
@@ -69,7 +69,7 @@ class TracksListByIdsState extends State<TracksListByIds> {
       future: this.dataFuture,
       builder: (context, snapshot) {
         if (snapshot.error != null) {
-          return AppErrorScreen(error: snapshot.error);
+          return ErrorBlock(error: snapshot.error);
         }
         if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
           final LoadTracksListResults data = snapshot.data!;

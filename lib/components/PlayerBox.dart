@@ -15,6 +15,7 @@ import 'package:march_tales_app/components/HidableWrapper.dart';
 import 'package:march_tales_app/components/PlayerWrapper.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/constants/player.dart';
+import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/singletons/playingTrackEvents.dart';
 import 'package:march_tales_app/core/types/PlayingTrackUpdate.dart';
 import 'package:march_tales_app/features/Track/api-methods/incrementPlayedCount.dart';
@@ -175,9 +176,17 @@ class PlayerBoxState extends State<PlayerBox> {
   Future<Track?> _loadPlayingTrackDetails({required int id, bool notify = true}) async {
     if (id != 0) {
       // Update `playingTrack` if language has been changed
-      final track = await loadTrackDetails(id);
-      this._track = track;
-      await this._setTrack(track, notify: notify);
+      try {
+        final track = await loadTrackDetails(id);
+        this._track = track;
+        await this._setTrack(track, notify: notify);
+      } catch (err, stacktrace) {
+        final String msg = 'Error loading currently playing track data.';
+        logger.e('${msg} id=${id}: $err', error: err, stackTrace: stacktrace);
+        // debugger();
+        final translatedMsg = msg.i18n; // '${msg.i18n} ${"Track ID:".i18n} #${id}.';
+        showErrorToast(translatedMsg);
+      }
     }
     return this._track;
   }

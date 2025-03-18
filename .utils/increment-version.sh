@@ -12,17 +12,22 @@ test -f "$scriptsPath/config.sh" && . "$scriptsPath/config.sh"
 # Check basic required variables...
 test -f "$scriptsPath/config-check.sh" && . "$scriptsPath/config-check.sh" --omit-publish-folder-check
 
+ARGS="$*"
+
 # Update version code (if file specified)
-if [ ! -z "$VERSION_CODE_FILE" ]; then
-  VERSION_CODE_PATH="$rootPath/${VERSION_CODE_FILE}"
-  VERSION_CODE="1"
-  if [ -f "$VERSION_CODE_PATH" ]; then
-    VERSION_CODE=`cat "$VERSION_CODE_PATH"`
-    # Increment version code number
-    VERSION_CODE=`expr $VERSION_CODE + 1`
+if [[ "$ARGS" =~ .*--code.* ]]; then
+  if [ ! -z "$VERSION_CODE_FILE" ]; then
+    VERSION_CODE_PATH="$rootPath/${VERSION_CODE_FILE}"
+    VERSION_CODE="1"
+    if [ -f "$VERSION_CODE_PATH" ]; then
+      VERSION_CODE=`cat "$VERSION_CODE_PATH"`
+      # Increment version code number
+      VERSION_CODE=`expr $VERSION_CODE + 1`
+    fi
+    echo "$VERSION_CODE" > "$VERSION_CODE_PATH"
+    echo "Updated version code: $VERSION_CODE"
+    exit 1
   fi
-  echo "$VERSION_CODE" > "$VERSION_CODE_PATH"
-  echo "Updated version code: $VERSION_CODE"
 fi
 
 # Read version from file...

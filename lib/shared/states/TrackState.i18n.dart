@@ -4,10 +4,7 @@ extension Localization on String {
   static var _t = Translations.byLocale('en') +
       {
         'ru': {
-          'All tags': 'Все теги',
-          'All rubrics': 'Все разделы',
-          'All authors': 'Все авторы',
-          "Other author's tracks": 'Другие треки автора',
+          'Error loading tracks list.': 'Ошибка загрузки списка треков.',
         },
       };
   String get i18n => localize(this, _t);
