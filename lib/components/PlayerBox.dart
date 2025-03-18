@@ -183,7 +183,7 @@ class PlayerBoxState extends State<PlayerBox> {
       } catch (err, stacktrace) {
         final String msg = 'Error loading currently playing track data.';
         logger.e('${msg} id=${id}: $err', error: err, stackTrace: stacktrace);
-        debugger();
+        // debugger();
         final translatedMsg = msg.i18n; // '${msg.i18n} ${"Track ID:".i18n} #${id}.';
         showErrorToast(translatedMsg);
       }

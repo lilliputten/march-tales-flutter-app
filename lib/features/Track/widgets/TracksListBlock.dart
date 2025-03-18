@@ -40,7 +40,7 @@ class TracksListBlock extends StatelessWidget {
     });
     final items = [
       ...trackItems,
-      hasMoreTracks ? MoreButton(onLoadNext: this.onLoadNext, isLoading: this.isLoading) : null,
+      isLoading || hasMoreTracks ? MoreButton(onLoadNext: this.onLoadNext, isLoading: this.isLoading) : null,
     ].nonNulls;
 
     return Column(
