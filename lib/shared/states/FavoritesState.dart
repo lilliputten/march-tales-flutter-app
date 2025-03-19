@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
+import 'package:march_tales_app/core/exceptions/ConnectionException.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/core/singletons/userStateEvents.dart';
@@ -10,6 +11,7 @@ import 'package:march_tales_app/core/types/UserStateUpdate.dart';
 import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTracksByIds.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'FavoritesState.i18n.dart';
 
 final logger = Logger();
 
@@ -136,7 +138,7 @@ mixin FavoritesState {
         if (favorite) {
           this._favoriteIds.add(id);
           // Load missed data
-          // XXX FUTURE: Implement data load only on favirites page initalization. Check if the data exists in cached tracks list.
+          // XXX FUTURE: Implement data load only on favorites page initalization. Check if the data exists in cached tracks list.
           futures.add(this._loadMissedFavoritesData());
         } else {
           this._favoriteIds.remove(id);
@@ -157,18 +159,30 @@ mixin FavoritesState {
   }
 
   _removeUnusedFavoritesData() {
-    this._favoriteTracksData.removeWhere((id, _) => !this._favoriteIds.contains(id));
     // final unusedKeys = this._favoriteTracksData.keys.where((id) => !this._favoriteIds.contains(id));
+    this._favoriteTracksData.removeWhere((id, _) => !this._favoriteIds.contains(id));
   }
 
-  _loadMissedFavoritesData() async {
-    final missedIds = this._favoriteIds.where((id) => !this._favoriteTracksData.containsKey(id));
-    if (missedIds.isNotEmpty) {
+  _loadMissedTracksByIds(Iterable<int> missedIds) async {
+    try {
       final results = await loadTracksByIds(missedIds);
       // this._favoriteTracksData = {}..addAll(this._favoriteTracksData);
       for (Track track in results.results) {
         this._favoriteTracksData[track.id] = track;
       }
+    } catch (err, stacktrace) {
+      final String msg = 'Error loading favorite tracks.';
+      logger.e('${msg} missedIds=${missedIds}: $err', error: err, stackTrace: stacktrace);
+      debugger();
+      final translatedMsg = msg.i18n;
+      throw ConnectionException(translatedMsg);
+    }
+  }
+
+  _loadMissedFavoritesData() async {
+    final missedIds = this._favoriteIds.where((id) => !this._favoriteTracksData.containsKey(id));
+    if (missedIds.isNotEmpty) {
+      await this._loadMissedTracksByIds(missedIds);
     }
   }
 

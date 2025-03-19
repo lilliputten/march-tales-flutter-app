@@ -6,7 +6,6 @@ import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/constants/routes.dart';
 import 'package:march_tales_app/core/exceptions/ConnectionException.dart';
 import 'package:march_tales_app/core/helpers/addQueryParam.dart';
-import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/features/Track/loaders/LoadTracksListResults.dart';
 import 'package:march_tales_app/features/Track/trackConstants.dart';
@@ -42,7 +41,6 @@ Future<LoadTracksListResults> loadTracksList({
     final String msg = 'Error fetching tracks with an url $url: $err';
     logger.e(msg, error: err, stackTrace: stacktrace);
     debugger();
-    showErrorToast(msg);
     throw ConnectionException(msg);
   }
 }

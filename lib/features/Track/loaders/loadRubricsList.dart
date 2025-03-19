@@ -32,7 +32,6 @@ Future<LoadRubricsListResults> loadRubricsList({
     final String msg = 'Error fetching rubrics with an url $url: $err';
     logger.e(msg, error: err, stackTrace: stacktrace);
     debugger();
-    // showErrorToast(msg);
     throw Exception(msg);
   }
 }

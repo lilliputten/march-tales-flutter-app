@@ -31,7 +31,6 @@ Future<LoadTagsListResults> loadTagsList({
     final String msg = 'Error fetching tags with an url $url: $err';
     logger.e(msg, error: err, stackTrace: stacktrace);
     debugger();
-    // showErrorToast(msg);
     throw Exception(msg);
   }
 }

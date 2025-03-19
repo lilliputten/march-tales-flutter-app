@@ -20,8 +20,6 @@ Future<Track> loadTrackDetails(int id) async {
     final String msg = 'Error fetching track details with an url $url: $err';
     logger.e('${msg} url $url: $err', error: err, stackTrace: stacktrace);
     // debugger();
-    // final translatedMsg = msg.i18n;
-    // showErrorToast(translatedMsg);
     throw ConnectionException(msg);
   }
 }

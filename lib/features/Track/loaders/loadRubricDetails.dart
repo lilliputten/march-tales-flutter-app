@@ -4,7 +4,6 @@ import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
-import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/features/Track/types/Rubric.dart';
 
@@ -21,7 +20,7 @@ Future<Rubric> loadRubricDetails(int id) async {
     final String msg = 'Error fetching rubrics with an url $url: $err';
     logger.e(msg, error: err, stackTrace: stacktrace);
     debugger();
-    showErrorToast(msg);
+    // showErrorToast(msg);
     throw Exception(msg);
   }
 }

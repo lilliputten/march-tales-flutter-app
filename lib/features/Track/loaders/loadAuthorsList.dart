@@ -4,7 +4,6 @@ import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/addQueryParam.dart';
-import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/features/Track/loaders/LoadAuthorsListResults.dart';
 
@@ -32,7 +31,6 @@ Future<LoadAuthorsListResults> loadAuthorsList({
     final String msg = 'Error fetching authors with an url $url: $err';
     logger.e(msg, error: err, stackTrace: stacktrace);
     debugger();
-    showErrorToast(msg);
     throw Exception(msg);
   }
 }

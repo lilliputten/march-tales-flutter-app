@@ -10,7 +10,35 @@ import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
+class ShowWrappedInfo extends StatelessWidget {
+  final Widget child;
+
+  const ShowWrappedInfo({
+    super.key,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Center(
+            child: child,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class FavoriteTracksPage extends StatelessWidget {
+  const FavoriteTracksPage({
+    super.key,
+  });
+
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
@@ -21,36 +49,20 @@ class FavoriteTracksPage extends StatelessWidget {
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
 
-    if (!favoritesHasBeenLoaded && isFavoritesLoading) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Center(
-              child: CircularProgressIndicator(strokeWidth: 2, color: appColors.brandColor),
-            ),
-          ),
-        ],
+    final isLoading = !favoritesHasBeenLoaded && isFavoritesLoading;
+    if (isLoading) {
+      return ShowWrappedInfo(
+        child: CircularProgressIndicator(strokeWidth: 2, color: appColors.brandColor),
       );
     } else if (tracks.isEmpty) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Center(
-              child: NoTracksInfo(padding: 20),
-            ),
-          ),
-        ],
+      return ShowWrappedInfo(
+        child: NoTracksInfo(padding: 20),
       );
     }
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // TopFilterBox(),
         Expanded(
           child: TracksList(
             // key: ValueKey('FavoritesList'),
@@ -62,9 +74,7 @@ class FavoriteTracksPage extends StatelessWidget {
             onRefresh: () async {
               await appState.loadFavorites();
             },
-            // onLoadNext: () {
-            //   appState.loadNextTracks();
-            // },
+            // XXX: onLoadNext?
           ),
         ),
       ],
