@@ -24,7 +24,7 @@ import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
 import 'package:march_tales_app/features/Track/trackConstants.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/screens/TrackDetailsScreen.dart';
-import 'PlayerBox.i18n.dart';
+import 'PlayerBox/PlayerBox.i18n.dart';
 import 'PlayerBox/common.dart';
 
 final logger = Logger();
@@ -226,13 +226,13 @@ class PlayerBoxState extends State<PlayerBox> {
         // logger.t('[PlayerBox:_playerStateHandler] set state: finished');
         this._pausePlayback(notify: false);
         this._setPausedStatus(notify: false);
-        // Set position to the full dration value: as sign of the finished playback
+        // Set position to the full duration value: as sign of the finished playback
         this._savePlayingPosition(this._player.duration, notify: false);
-        updateType = PlayingTrackUpdateType.pausedStatus;
+        updateType = PlayingTrackUpdateType.completedStatus; // pausedStatus;
         this._incrementCurrentTrackPlayedCount();
       }
     } else {
-      // Not rally playing and...
+      // Not really playing and...
       if (isCurrentlyPlaying) {
         // logger.t('[PlayerBox:_playerStateHandler] set state: paused');
         this._setPausedStatus(notify: false);

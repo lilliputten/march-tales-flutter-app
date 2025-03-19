@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/components/PlayerBox.dart';
-import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/exceptions/ConnectionException.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/features/Track/loaders/LoadTracksListResults.dart';
@@ -32,10 +31,20 @@ mixin TrackState {
   int availableTracksCount = 0;
   int tracksLimit = defaultTracksDownloadLimit;
   List<Track> tracks = [];
-  // XXX: Store loading handler to be able cancelling it?
+  // XXX: Store loading handler to allow cancelling?
 
   List<Track> getTracks() {
     return tracks;
+  }
+
+  Track? findNextLocalTrack(int id) {
+    // XXX FUTURE: Use sorted list?
+    if (this.tracks.isEmpty) {
+      return null;
+    }
+    final thisIdx = this.tracks.indexWhere((it) => it.id == id);
+    final nextIdx = (thisIdx + 1) % this.tracks.length;
+    return this.tracks[nextIdx];
   }
 
   void setTracks(List<Track> value, {bool notify = true}) {
@@ -101,13 +110,8 @@ mixin TrackState {
     try {
       tracksIsLoading = true;
       notifyListeners();
-      // DEBUG: Emulate delay
-      if (AppConfig.LOCAL) {
-        // await Future.delayed(Duration(seconds: 2));
-      }
       final offset = tracks.length;
       final query = this.getFilterQuery();
-      logger.t('[TrackState:loadNextTracks] Start offset=${offset} query=${query}');
       final LoadTracksListResults results = await loadTracksList(
         offset: offset,
         limit: tracksLimit,
@@ -115,7 +119,6 @@ mixin TrackState {
       );
       tracks.addAll(results.results);
       availableTracksCount = results.count;
-      logger.t('Loaded tracks (count: ${availableTracksCount}):\n${formatter.format(tracks)}');
       tracksHasBeenLoaded = true;
       tracksLoadError = null;
       return results;

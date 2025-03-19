@@ -4,10 +4,10 @@ import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/app/ErrorBlock.dart';
 import 'package:march_tales_app/components/data-driven/views/TracksListBlockWithTitle.dart';
-import 'package:march_tales_app/core/constants/defaultTracksFetchingLimit.dart';
 import 'package:march_tales_app/core/exceptions/ConnectionException.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTracksList.dart';
+import 'package:march_tales_app/features/Track/trackConstants.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'ShowTracksListBlockLoader.dart.i18n.dart';
 
@@ -51,7 +51,7 @@ class ShowTracksListBlockLoaderState extends State<ShowTracksListBlockLoader> {
        * throw new Exception('Test error');
        */
       final data = await loadTracksList(
-          limit: defaultTracksFetchingLimit, offset: this._tracks.length, query: this.widget.query);
+          limit: defaultTracksDownloadLimit, offset: this._tracks.length, query: this.widget.query);
       setState(() {
         this._tracks = [...this._tracks, ...data.results];
         this._count = data.count;

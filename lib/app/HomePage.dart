@@ -63,9 +63,7 @@ class HomePageState extends State<HomePage> with IsRootStateMixin /* with Restor
           onPopInvokedWithResult: (didPop, result) async {
             final navigator = routeObserver.navigator;
             final canPop = navigator?.canPop() ?? false;
-            logger.t(
-                '[HomePage:onPopInvokedWithResult] isRoot=${isRoot} didPop=${didPop} result=${result} canPop=${canPop}');
-            debugger();
+            // logger.t('[HomePage:onPopInvokedWithResult] isRoot=${isRoot} didPop=${didPop} result=${result} canPop=${canPop}');
             if (!didPop) {
               // Navigate with the nested navigator if history is not empty
               if (canPop && !isRoot) {

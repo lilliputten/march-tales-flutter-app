@@ -8,6 +8,7 @@ enum PlayingTrackUpdateType {
   position,
   playingStatus,
   pausedStatus,
+  completedStatus,
   playedCount,
 }
 

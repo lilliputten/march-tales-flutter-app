@@ -115,11 +115,11 @@ class TopFilterBoxState extends State<TopFilterBox> with IsRootStateMixin {
                       : null,
                 ),
                 onSubmitted: (String value) {
-                  logger.t('[TopFilterBox:onSubmitted] value=${value}');
+                  // logger.t('[TopFilterBox:onSubmitted] value=${value}');
                   appState.applyFilters();
                 },
                 onChanged: (String value) {
-                  logger.t('[TopFilterBox:onChanged] value=${value}');
+                  // logger.t('[TopFilterBox:onChanged] value=${value}');
                   appState.setFilterSearch(value);
                 },
               ),
