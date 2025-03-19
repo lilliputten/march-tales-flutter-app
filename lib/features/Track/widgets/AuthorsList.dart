@@ -23,12 +23,16 @@ class AuthorsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final items = this.authors.map((author) {
+      return AuthorListItem(author: author, fullView: fullView, compact: compact, active: active);
+    }).toList();
+
+    // XXX FUTURE: Implement incremental loading here, like in the `TracksList`
+
     return Column(
       spacing: 15,
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: this.authors.map((author) {
-        return AuthorListItem(author: author, fullView: fullView, compact: compact, active: active);
-      }).toList(),
+      children: items,
     );
   }
 }

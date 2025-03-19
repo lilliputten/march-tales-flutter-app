@@ -19,6 +19,7 @@ PUBLISH_BRANCH="publish-${APP_ID}"
 # DIST_REPO comes from the actual git configuration
 
 VERSION_FILE="project-version.txt"
+VERSION_CODE_FILE="project-version-code.txt"
 PROJECT_INFO_FILE="project-info.txt"
 PROJECT_INFO_JSON_FILE="assets/project-info.json"
 

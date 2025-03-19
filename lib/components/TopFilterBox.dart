@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
-import 'package:march_tales_app/components/mixins/IsRootStateMixin.dart';
 import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/app/homePages.dart';
 import 'package:march_tales_app/components/HidableWrapper.dart';
+import 'package:march_tales_app/components/mixins/IsRootStateMixin.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'TopFilterBox.i18n.dart';
 

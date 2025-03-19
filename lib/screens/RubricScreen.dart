@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
 
-import 'package:march_tales_app/app/AppErrorScreen.dart';
+import 'package:march_tales_app/app/ErrorBlock.dart';
 import 'package:march_tales_app/app/ScreenWrapper.dart';
 import 'package:march_tales_app/components/LoadingSplash.dart';
 import 'package:march_tales_app/components/mixins/ScrollControllerProviderMixin.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
+import 'package:march_tales_app/core/exceptions/ConnectionException.dart';
+import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/features/Track/loaders/loadRubricDetails.dart';
 import 'package:march_tales_app/features/Track/types/Rubric.dart';
 import 'package:march_tales_app/screens/views/RubricScreenView.dart';
+import 'RubricScreen.i18n.dart';
 
 final logger = Logger();
 
@@ -34,9 +37,8 @@ class RubricScreenState extends State<RubricScreen> with ScrollControllerProvide
 
   @override
   void didChangeDependencies() {
-    final int id = this._getRubricId();
     super.didChangeDependencies();
-    this.dataFuture = loadRubricDetails(id);
+    this.dataFuture = this._loadDataFuture();
   }
 
   int _getRubricId() {
@@ -55,17 +57,46 @@ class RubricScreenState extends State<RubricScreen> with ScrollControllerProvide
     }
   }
 
+  Future<Rubric> _loadDataFuture() async {
+    final int id = this._getRubricId();
+    try {
+      /* // DEBUG
+       * await Future.delayed(Duration(seconds: 2));
+       * throw new Exception('Test error');
+       */
+      return loadRubricDetails(id);
+    } catch (err, stacktrace) {
+      final String msg = 'Error loading rubric data.';
+      logger.e('${msg}: $err', error: err, stackTrace: stacktrace);
+      final translatedMsg = msg.i18n;
+      showErrorToast(translatedMsg);
+      throw ConnectionException(translatedMsg);
+    }
+  }
+
+  _reloadData() {
+    setState(() {
+      this.dataFuture = this._loadDataFuture();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScreenWrapper(
-      title: 'Show rubric',
+      title: 'Rubric'.i18n,
       child: FutureBuilder(
         future: this.dataFuture,
         builder: (context, snapshot) {
-          if (snapshot.error != null) {
-            return AppErrorScreen(error: snapshot.error);
-          }
-          if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+          final isReady = snapshot.connectionState == ConnectionState.done;
+          final isError = isReady && snapshot.error != null;
+          final hasData = !isError && snapshot.data != null;
+          if (isError) {
+            return ErrorBlock(
+              error: snapshot.error,
+              onRetry: this._reloadData,
+              large: true,
+            );
+          } else if (hasData) {
             final rubric = snapshot.data!;
             return RubricScreenView(
               rubric: rubric,

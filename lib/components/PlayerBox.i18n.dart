@@ -5,6 +5,7 @@ extension Localization on String {
       {
         'ru': {
           'March Cat Tales': 'Сказки Мартовского Кота',
+          'Error loading currently playing track data.': 'Ошибка загрузки данных текущего трека.',
         },
       };
   String get i18n => localize(this, _t);

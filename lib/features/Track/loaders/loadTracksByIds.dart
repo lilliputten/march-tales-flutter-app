@@ -16,12 +16,12 @@ final logger = Logger();
 Future<LoadTracksListResults> loadTracksByIds(
   Iterable<int> ids, {
   int offset = 0,
-  int limit = 0,
+  int? limit,
   int full = tracksFullDataParam,
   String query = '',
 }) async {
   query = addQueryParam(query, 'full', full, ifAbsent: true);
-  if (limit != 0) {
+  if (limit != null) {
     query = addQueryParam(query, 'limit', limit, ifAbsent: true);
   }
   if (offset != 0) {

@@ -29,6 +29,18 @@
       // "flutterMode": "release",
     },
     {
+      "name": "Flutter local release",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--dart-define=DEBUG=true",
+        "--dart-define-from-file=.env.local",
+        // "--dart-define-from-file=.env",
+      ],
+      "flutterMode": "release",
+    },
+    {
       "name": "Flutter server release",
       "request": "launch",
       "type": "dart",

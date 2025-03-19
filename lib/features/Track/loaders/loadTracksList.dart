@@ -4,16 +4,13 @@ import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/constants/routes.dart';
-import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
+import 'package:march_tales_app/core/exceptions/ConnectionException.dart';
 import 'package:march_tales_app/core/helpers/addQueryParam.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/features/Track/loaders/LoadTracksListResults.dart';
 import 'package:march_tales_app/features/Track/trackConstants.dart';
 
-import 'shared-translations.i18n.dart';
-
-final formatter = YamlFormatter();
 final logger = Logger();
 
 Future<LoadTracksListResults> loadTracksList({
@@ -22,6 +19,11 @@ Future<LoadTracksListResults> loadTracksList({
   int full = tracksFullDataParam,
   String query = '',
 }) async {
+  // DEBUG
+  if (AppConfig.LOCAL) {
+    await Future.delayed(Duration(seconds: 1));
+  }
+  // throw new ConnectionException('Test error');
   // NOTE: It's possible url to contain a few params with the same name (filters, eg) so wi can't use `uri.replace(queryParameters: params)`
   // final newUri = uri.replace(queryParameters: params);
   query = addQueryParam(query, 'full', full, ifAbsent: true);
@@ -37,11 +39,10 @@ Future<LoadTracksListResults> loadTracksList({
     final jsonData = await serverSession.get(uri);
     return LoadTracksListResults.fromJson(jsonData);
   } catch (err, stacktrace) {
-    final String msg = 'Error loading tracks list.';
-    logger.e('${msg} url=$url: $err', error: err, stackTrace: stacktrace);
+    final String msg = 'Error fetching tracks with an url $url: $err';
+    logger.e(msg, error: err, stackTrace: stacktrace);
     debugger();
-    final String extraMsg = msg.i18n;
-    showErrorToast(extraMsg);
-    throw Exception(extraMsg);
+    showErrorToast(msg);
+    throw ConnectionException(msg);
   }
 }

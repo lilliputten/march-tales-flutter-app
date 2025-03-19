@@ -11,6 +11,7 @@ extension Localization on String {
               'Пожалуйста, обновите приложение с сайта или из Google Play.',
           'Check the network connection and try again later.':
               'Проверьте сетевое подключение и повторите попытку позже.',
+          'Retry': 'Повторить',
         },
       };
 

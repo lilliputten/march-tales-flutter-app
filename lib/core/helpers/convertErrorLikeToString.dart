@@ -7,5 +7,9 @@ String convertErrorLikeToString(dynamic error) {
   } catch (err) {
     // NOOP
   }
-  return text;
+  const String removePrefix = 'Exception: ';
+  if (text.startsWith(removePrefix)) {
+    text = text.substring(removePrefix.length);
+  }
+  return text.trim();
 }

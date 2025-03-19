@@ -1,16 +1,16 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/components/PlayerBox.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
+import 'package:march_tales_app/core/exceptions/ConnectionException.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
-import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/features/Track/loaders/LoadTracksListResults.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTracksList.dart';
 import 'package:march_tales_app/features/Track/trackConstants.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'TrackState.i18n.dart';
 
 final formatter = YamlFormatter();
 final logger = Logger();
@@ -103,7 +103,7 @@ mixin TrackState {
       notifyListeners();
       // DEBUG: Emulate delay
       if (AppConfig.LOCAL) {
-        await Future.delayed(Duration(seconds: 2));
+        // await Future.delayed(Duration(seconds: 2));
       }
       final offset = tracks.length;
       final query = this.getFilterQuery();
@@ -120,12 +120,12 @@ mixin TrackState {
       tracksLoadError = null;
       return results;
     } catch (err, stacktrace) {
-      final String msg = 'Error loading tracks data: $err';
-      logger.e(msg, error: err, stackTrace: stacktrace);
-      debugger();
+      final String msg = 'Error loading tracks list.';
+      logger.e('${msg} $err', error: err, stackTrace: stacktrace);
+      // debugger();
       tracksLoadError = msg;
-      showErrorToast(msg);
-      throw Exception(msg);
+      final translatedMsg = msg.i18n;
+      throw ConnectionException(translatedMsg);
     } finally {
       tracksIsLoading = false;
       notifyListeners();
