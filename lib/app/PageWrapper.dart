@@ -42,6 +42,8 @@ class PageWrapper extends StatelessWidget {
 
     final navigatorState = navigatorKey.currentState;
 
+    // final query = appState.getFilterQuery();
+
     return RestorationScope(
       restorationId: 'PageWrapper',
       child: Scaffold(
