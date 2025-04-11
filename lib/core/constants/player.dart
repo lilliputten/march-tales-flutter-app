@@ -1,1 +1,1 @@
-const int playerTickDelayMs = 250;
+const int playerTickDelayMs = 500;

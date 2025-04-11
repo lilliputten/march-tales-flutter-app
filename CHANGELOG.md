@@ -25,4 +25,3 @@ The initial version is version 0.1.6 with the minimum implemented set of functio
 - Floating record player.
 - Notification player management.
 - Memorizing the playback position of each track.
-

@@ -179,6 +179,7 @@ class PlayerBoxState extends State<PlayerBox> {
       try {
         final track = await loadTrackDetails(id);
         this._track = track;
+        logger.t('[PlayerBox:_loadPlayingTrackDetails] track=${track}');
         await this._setTrack(track, notify: notify);
       } catch (err, stacktrace) {
         final String msg = 'Error loading currently playing track data.';
