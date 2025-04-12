@@ -119,7 +119,7 @@ class PlayerBoxState extends State<PlayerBox> {
       this._sendBroadcastUpdate(PlayingTrackUpdateType.position);
     }
     // Save position to local db
-    tracksInfoDb.updatePosition(this._track!.id, position: position ?? Duration.zero); // await!
+    tracksInfoDb.updatePosition(this._track!.id, position ?? Duration.zero); // await!
     // XXX FUTURE: 2025.03.01, 21:06 -- Update position on the server
     // XXX FUTURE: Involve last saved position and save once in a period, eg, 5 secs
   }

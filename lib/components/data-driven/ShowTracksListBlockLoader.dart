@@ -52,8 +52,9 @@ class ShowTracksListBlockLoaderState extends State<ShowTracksListBlockLoader> {
        */
       final data = await loadTracksList(
           limit: defaultTracksDownloadLimit, offset: this._tracks.length, query: this.widget.query);
+      final tracks = data.results;
       setState(() {
-        this._tracks = [...this._tracks, ...data.results];
+        this._tracks = [...this._tracks, ...tracks];
         this._count = data.count;
       });
       return data;

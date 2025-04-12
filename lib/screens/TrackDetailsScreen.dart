@@ -58,7 +58,7 @@ class TrackDetailsScreenState extends State<TrackDetailsScreen> with ScrollContr
        * throw new Exception('Test error');
        */
       final appState = context.read<AppState>();
-      return getTrackFromStateOrLoad(id, appState: appState);
+      return await getTrackFromStateOrLoad(id, appState: appState);
     } catch (err, stacktrace) {
       final String msg = 'Error loading track data.';
       logger.e('${msg} id=${id}: $err', error: err, stackTrace: stacktrace);

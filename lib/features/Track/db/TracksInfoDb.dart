@@ -133,7 +133,7 @@ class TracksInfoDb {
     }
   }
 
-  Future<TrackInfo> updatePosition(int id, {Duration? position, DateTime? now}) async {
+  Future<TrackInfo> updatePosition(int id, Duration? position, {DateTime? now}) async {
     try {
       final _now = now ??= DateTime.now();
       return this.db.transaction((txn) async {
