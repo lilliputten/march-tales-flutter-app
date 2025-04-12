@@ -58,7 +58,7 @@ config-local.sh
 !.env*SAMPLE
 
 # Local data
-/databases
+/.databases
 /db-*
 
 # Google Play signup resources

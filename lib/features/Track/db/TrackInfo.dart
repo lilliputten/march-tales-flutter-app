@@ -15,6 +15,7 @@ class TrackInfo {
   Duration position; // position?.inMilliseconds ?? 0
   DateTime lastUpdated; // DateTime.now().millisecondsSinceEpoch <-> DateTime.fromMillisecondsSinceEpoch(ms)
   DateTime lastPlayed; // DateTime.now().millisecondsSinceEpoch <-> DateTime.fromMillisecondsSinceEpoch(ms)
+  DateTime lastFavorited; // DateTime.now().millisecondsSinceEpoch <-> DateTime.fromMillisecondsSinceEpoch(ms)
 
   TrackInfo({
     required this.id,
@@ -23,6 +24,7 @@ class TrackInfo {
     required this.position,
     required this.lastUpdated,
     required this.lastPlayed,
+    required this.lastFavorited,
   });
 
   Map<String, dynamic> toMap() {
@@ -33,6 +35,7 @@ class TrackInfo {
       'position': this.position.inMilliseconds / 1000,
       'lastUpdatedMs': this.lastUpdated.millisecondsSinceEpoch,
       'lastPlayedMs': this.lastPlayed.millisecondsSinceEpoch,
+      'lastFavoritedMs': this.lastFavorited.millisecondsSinceEpoch,
     };
   }
 
@@ -46,8 +49,10 @@ class TrackInfo {
         position: Duration(milliseconds: positionMs),
         lastUpdated: DateTime.fromMillisecondsSinceEpoch(data['lastUpdatedMs']),
         lastPlayed: DateTime.fromMillisecondsSinceEpoch(data['lastPlayedMs']),
+        lastFavorited: DateTime.fromMillisecondsSinceEpoch(data['lastFavoritedMs']),
       );
-      logger.t('[TrackInfo:fromMap] lastPlayedMs=${data['lastPlayedMs']} lastPlayed=${trackInfo.lastPlayed} data=${data} trackInfo=${trackInfo}');
+      logger.t(
+          '[TrackInfo:fromMap] lastPlayedMs=${data['lastPlayedMs']} lastPlayed=${trackInfo.lastPlayed} data=${data} trackInfo=${trackInfo}');
       // debugger();
       return trackInfo;
     } catch (err, stacktrace) {
@@ -61,6 +66,6 @@ class TrackInfo {
 
   @override
   String toString() {
-    return 'TrackInfo(id=$id favorite=${favorite} position=${position} playedCount=${playedCount} lastUpdated=${lastUpdated} lastPlayed=${lastPlayed})';
+    return 'TrackInfo(id=$id favorite=${favorite} position=${position} playedCount=${playedCount} lastUpdated=${lastUpdated} lastPlayed=${lastPlayed} lastFavorited=${lastFavorited})';
   }
 }

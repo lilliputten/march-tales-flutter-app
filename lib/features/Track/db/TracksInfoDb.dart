@@ -67,7 +67,6 @@ class TracksInfoDb {
           if (oldVersion < 5) {
             final tempTableName = '${tracksInfoDbName}_temp';
             final createTempTableCommand = getTracksInfoDbCreateCommand(tempTableName);
-            debugger();
             batch.execute(createTempTableCommand);
             final oldColumns = 'id, position, playedCount, lastUpdatedMs, lastPlayedMs';
             final insertCommand =
@@ -75,7 +74,19 @@ class TracksInfoDb {
             batch.execute(insertCommand);
             batch.execute('DROP TABLE ${tracksInfoDbName}');
             batch.execute('ALTER TABLE ${tempTableName} RENAME TO ${tracksInfoDbName};');
-            debugger();
+            // batch.execute(
+            //     'ALTER TABLE ${tracksInfoDbName} ADD favorite INTEGER DEFAULT(0)');
+          }
+          if (oldVersion == 5) {
+            final tempTableName = '${tracksInfoDbName}_temp';
+            final createTempTableCommand = getTracksInfoDbCreateCommand(tempTableName);
+            batch.execute(createTempTableCommand);
+            final oldColumns = 'id, favorite, playedCount, position, lastUpdatedMs, lastPlayedMs';
+            final insertCommand =
+                'INSERT INTO ${tempTableName} ($oldColumns) SELECT $oldColumns FROM ${tracksInfoDbName}';
+            batch.execute(insertCommand);
+            batch.execute('DROP TABLE ${tracksInfoDbName}');
+            batch.execute('ALTER TABLE ${tempTableName} RENAME TO ${tracksInfoDbName};');
             // batch.execute(
             //     'ALTER TABLE ${tracksInfoDbName} ADD favorite INTEGER DEFAULT(0)');
           }
@@ -152,6 +163,7 @@ class TracksInfoDb {
       return this.db.transaction((txn) async {
         final trackInfo = await this.getOrCreate(id, txn: txn);
         trackInfo.favorite = favorite;
+        trackInfo.lastFavorited = _now;
         trackInfo.lastUpdated = _now;
         final _ = await this.insert(trackInfo, txn: txn);
         this.updateEvents.broadcast(TracksInfoDbUpdate(trackInfo: trackInfo, type: TracksInfoDbUpdateType.setFavorite));
@@ -185,14 +197,15 @@ class TracksInfoDb {
   // Low-level api
 
   TrackInfo createNewRecord(int id) {
-    final now = DateTime.now();
+    // final now = DateTime.now();
     final TrackInfo trackInfo = TrackInfo(
       id: id, // track.id
       favorite: false,
       playedCount: 0, // track.played_count (but only for current user!).
       position: Duration.zero, // position
-      lastUpdated: now, // DateTime.now()
-      lastPlayed: now, // DateTime.now()
+      lastUpdated: DateTime.fromMillisecondsSinceEpoch(0), // DateTime.now()
+      lastPlayed: DateTime.fromMillisecondsSinceEpoch(0),
+      lastFavorited: DateTime.fromMillisecondsSinceEpoch(0),
     );
     return trackInfo;
   }
