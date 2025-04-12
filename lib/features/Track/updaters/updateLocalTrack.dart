@@ -32,24 +32,31 @@ Future<bool> updateLocalTrack(Track track) async {
     return false;
   }
   bool updated = false;
-  if (userTrack.position != null &&
-      userTrack.played_at != null &&
+  // Check played count and positions
+  if (userTrack.played_at != null &&
       userTrack.played_at!.millisecondsSinceEpoch > trackInfo.lastPlayed.millisecondsSinceEpoch) {
-    logger.t(
-        '[updateLocalTrack] position: track=${track.id} ${userTrack.position} <= local=${trackInfo.position}, ${userTrack.played_at!} <= ${trackInfo.lastPlayed}');
-    debugger();
-    tracksInfoDb.updatePosition(track.id, userTrack.position, now: userTrack.played_at);
-    // XXX FUTURE: Update user's played count from `userTrack.played_count`?
     updated = true;
+    logger.t(
+        '[updateLocalTrack] played_count: track=${track.id} ${userTrack.played_count} <= ${trackInfo.localPlayedCount}, ${userTrack.played_at!} <= ${trackInfo.lastPlayed}');
+    debugger();
+    tracksInfoDb.updatePlayedCount(track.id,
+        localPlayedCount: userTrack.played_count, totalPlayedCount: track.played_count, timestamp: userTrack.played_at);
+    if (userTrack.position != null && userTrack.position != trackInfo.position) {
+      logger.t(
+          '[updateLocalTrack] position: track=${track.id} ${userTrack.position} <= ${trackInfo.position}, ${userTrack.played_at!} <= ${trackInfo.lastPlayed}');
+      debugger();
+      tracksInfoDb.updatePosition(track.id, userTrack.position, timestamp: userTrack.played_at);
+    }
   }
-  if (userTrack.is_favorite != null &&
-      userTrack.favorited_at != null &&
+  if (userTrack.favorited_at != null &&
       userTrack.favorited_at!.millisecondsSinceEpoch > trackInfo.lastFavorited.millisecondsSinceEpoch) {
-    logger.t(
-        '[updateLocalTrack] favorite: track=${track.id} ${userTrack.is_favorite} <= ${trackInfo.favorite}, ${userTrack.favorited_at!} <= ${trackInfo.lastFavorited}');
-    debugger();
-    tracksInfoDb.setFavorite(track.id, userTrack.is_favorite!, now: userTrack.favorited_at);
-    updated = true;
+    if (userTrack.is_favorite != null && userTrack.is_favorite != trackInfo.favorite) {
+      updated = true;
+      logger.t(
+          '[updateLocalTrack] favorite: track=${track.id} ${userTrack.is_favorite} <= ${trackInfo.favorite}, ${userTrack.favorited_at!} <= ${trackInfo.lastFavorited}');
+      debugger();
+      tracksInfoDb.setFavorite(track.id, userTrack.is_favorite!, timestamp: userTrack.favorited_at);
+    }
   }
   return updated;
 }

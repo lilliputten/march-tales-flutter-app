@@ -129,6 +129,7 @@ class PageWrapper extends StatelessWidget {
                 PlayerBox(
                   key: playerBoxKey,
                   show: showPlayer,
+                  isAuthorized: appState.isAuthorized(),
                   navigatorState: navigatorState,
                 ),
               ],

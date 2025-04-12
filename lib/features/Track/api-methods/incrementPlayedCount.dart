@@ -5,7 +5,6 @@ import 'package:logger/logger.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/constants/routes.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
-import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 
@@ -22,10 +21,10 @@ Future<Track> incrementPlayedCount({
     final jsonData = await serverSession.post(uri);
     return Track.fromJson(jsonData);
   } catch (err, stacktrace) {
-    final String msg = 'Error incrementing track played count with an url $url: $err';
-    logger.e(msg, error: err, stackTrace: stacktrace);
+    final String msg = 'Error incrementing track played count';
+    logger.e('${msg} url: ${url}', error: err, stackTrace: stacktrace);
     debugger();
-    showErrorToast(msg);
+    // showErrorToast(msg);
     throw Exception(msg);
   }
 }

@@ -8,6 +8,7 @@ import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/core/singletons/userStateEvents.dart';
 import 'package:march_tales_app/core/types/UserStateUpdate.dart';
+import 'package:march_tales_app/features/Track/api-methods/postToggleFavorite.dart';
 import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTracksByIds.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
@@ -81,6 +82,12 @@ mixin FavoritesState {
     }
   }
 
+  clearFavorites() {
+    this._favoriteIds = [];
+    this._favoriteTracksData = {};
+    this.notifyListeners();
+  }
+
   loadFavorites() async {
     this.isFavoritesLoading = true;
     this.notifyListeners();
@@ -105,25 +112,6 @@ mixin FavoritesState {
     return this._favoriteIds.contains(id);
   }
 
-  sendToggleFavoriteRequest({
-    required int id,
-    required bool favorite,
-  }) async {
-    final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks/${id}/toggle-favorite/';
-    try {
-      final uri = Uri.parse(url);
-      final jsonData = await serverSession.post(uri, body: {'value': favorite});
-      // NOTE: Returns the list of all actual favorite tracks. Could be used to actualize local data.
-      return jsonData;
-    } catch (err, stacktrace) {
-      final String msg = 'Error incrementing track played count with an url $url: $err';
-      logger.e(msg, error: err, stackTrace: stacktrace);
-      debugger();
-      showErrorToast(msg);
-      throw Exception(msg);
-    }
-  }
-
   setFavorite(int id, bool favorite) async {
     final prevFavorite = this._favoriteIds.contains(id);
     if (prevFavorite != favorite) {
@@ -133,7 +121,7 @@ mixin FavoritesState {
         ];
         if (this.isAuthorized()) {
           // Send data to the server
-          futures.add(this.sendToggleFavoriteRequest(id: id, favorite: favorite));
+          futures.add(postToggleFavorite(id: id, favorite: favorite));
         }
         if (favorite) {
           this._favoriteIds.add(id);

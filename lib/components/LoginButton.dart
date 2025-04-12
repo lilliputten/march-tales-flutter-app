@@ -14,6 +14,7 @@ import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
+import 'package:march_tales_app/features/Track/updaters/syncLocalTracksWithServer.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'LoginButton.i18n.dart';
 
@@ -29,7 +30,7 @@ class _LoginButtonState extends State<LoginButton> {
   // @see https://inappwebview.dev/docs/in-app-browsers/in-app-browser
   final LoginBrowser browser = new LoginBrowser();
 
-  AppState? _appState;
+  late AppState? _appState;
 
   CookieManager cookieManager = CookieManager.instance();
 
@@ -62,6 +63,7 @@ class _LoginButtonState extends State<LoginButton> {
     // Get account data...
     try {
       await Init.loadServerStatus();
+      await syncLocalTracksWithServer(_appState!.getUserId());
       Future.delayed(Duration.zero, () {
         if (context.mounted) {
           // ignore: use_build_context_synchronously
@@ -136,7 +138,7 @@ class _LoginButtonState extends State<LoginButton> {
           );
         },
         icon: Icon(Icons.login, color: appColors.onBrandColor),
-        label: Text('Log in'.i18n, style: style),
+        label: Text('Log in or sign up'.i18n, style: style),
       ),
     );
   }

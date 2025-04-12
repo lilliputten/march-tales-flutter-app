@@ -6,5 +6,6 @@ ADB_DB_NAME="databases/tracks-info.sqlite3"
 DATE_ID=`date "+%y%m%d-%H%M"`
 LOCAL_DB_FOLDER=".databases"
 LOCAL_DB_NAME="$LOCAL_DB_FOLDER/db-tracks-info-$DATE_ID.sqlite3"
+echo "Importing the database $ADB_DB_NAME..."
 adb shell "run-as $APP_NAME cat $ADB_DB_NAME" > "$LOCAL_DB_NAME"
-ls -lah "$LOCAL_DB_FOLDER" | grep sqlite
+ls -lah "$LOCAL_DB_FOLDER" | grep "$DATE_ID"

@@ -4,7 +4,7 @@ extension Localization on String {
   static var _t = Translations.byLocale('en') +
       {
         'ru': {
-          'Log in': 'Войти',
+          'Log in or sign up': 'Войти или зарегистрироваться',
           "You've been succcessfully logged in": 'Вы успешно вошли в систему',
         },
       };

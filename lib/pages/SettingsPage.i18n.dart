@@ -4,6 +4,7 @@ extension Localization on String {
   static var _t = Translations.byLocale('en') +
       {
         'ru': {
+          "You've been succcessfully logged out": 'Вы успешно вышли из системы',
           'Application info': 'Информация о приложении',
           'Application language': 'Язык приложения',
           'Application version:': 'Версия приложения:',
@@ -14,13 +15,15 @@ extension Localization on String {
           'Dark': 'Тёмная',
           'Developer:': 'Разработано:',
           'Light': 'Светлая',
+          'Log in to be able to view your favorites and listen to audio on different devices.':
+              'Авторизуйтесь, чтобы просматривать избранное и прослушивать аудио на разных устройствах.',
           'Log out': 'Выйти',
+          'Open your profile on the web site': 'Откройте свой профиль на веб-сайте',
           'Server version:': 'Версия сервера:',
-          'User:': 'Пользователь:',
-          'Web site:': 'Веб сайт:',
-          "You've been succcessfully logged out": 'Вы успешно вышли из системы',
-          'VK:': 'ВК:',
           'Telegram:': 'Телеграм:',
+          'User:': 'Пользователь:',
+          'VK:': 'ВК:',
+          'Web site:': 'Веб сайт:',
           'YouTube:': 'Ютуб:',
         },
       };
