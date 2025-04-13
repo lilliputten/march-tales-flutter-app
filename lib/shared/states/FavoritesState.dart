@@ -116,12 +116,13 @@ mixin FavoritesState {
     final prevFavorite = this._favoriteIds.contains(id);
     if (prevFavorite != favorite) {
       try {
+        final timestamp = DateTime.now();
         final List<Future<dynamic>> futures = [
-          tracksInfoDb.setFavorite(id, favorite),
+          tracksInfoDb.setFavorite(id, favorite, timestamp: timestamp),
         ];
         if (this.isAuthorized()) {
           // Send data to the server
-          futures.add(postToggleFavorite(id: id, favorite: favorite));
+          futures.add(postToggleFavorite(id: id, favorite: favorite, timestamp: timestamp));
         }
         if (favorite) {
           this._favoriteIds.add(id);

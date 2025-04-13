@@ -14,11 +14,12 @@ postSyncUserTracks({
   final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/user/tracks/sync/';
   try {
     final uri = Uri.parse(url);
-    final list = userTracks.map((userTrack) => userTrack.toJson()).toList();
-    final postData = {'list': list};
+    final items = userTracks.map((userTrack) => userTrack.toJson()).toList();
+    final postData = {'items': items};
     debugger();
     final jsonData = await serverSession.post(uri, body: postData);
-    // NOTE: Returns the list of all actual favorite tracks. Could be used to actualize local data.
+    // NOTE: Returns the list of all actual favorite user tracks. Could be used to actualize local data.
+    debugger();
     return jsonData;
   } catch (err, stacktrace) {
     final String msg = 'Error synchronizing user tracks list';

@@ -18,7 +18,7 @@ import 'package:march_tales_app/core/constants/player.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/singletons/playingTrackEvents.dart';
 import 'package:march_tales_app/core/types/PlayingTrackUpdate.dart';
-import 'package:march_tales_app/features/Track/api-methods/incrementPlayedCount.dart';
+import 'package:march_tales_app/features/Track/api-methods/postIncrementPlayedCount.dart';
 import 'package:march_tales_app/features/Track/api-methods/postUpdatePosition.dart';
 import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
@@ -126,16 +126,18 @@ class PlayerBoxState extends State<PlayerBox> {
       this._sendBroadcastUpdate(PlayingTrackUpdateType.position);
     }
     // Save position to local db
-    tracksInfoDb.updatePosition(this._track!.id, position ?? Duration.zero); // await!
+    final timestamp = DateTime.now();
+    tracksInfoDb.updatePosition(this._track!.id, position ?? Duration.zero,
+        timestamp: timestamp); // this is await function, we don't wait for the finish
     // XXX FUTURE: 2025.03.01, 21:06 -- Update position on the server
     // XXX FUTURE: Involve last saved position and save once in a period, eg, 5 secs
-    final int nowMs = DateTime.now().millisecondsSinceEpoch;
+    final int timestampMs = timestamp.millisecondsSinceEpoch;
     if (this._track != null &&
         this._position != null &&
         this.widget.isAuthorized &&
-        (forceServerUpdate || nowMs - this.savedServerPositionAtMs >= saveServerPositionDelayMs)) {
-      await postUpdatePosition(id: this._track!.id, position: this._position!);
-      this.savedServerPositionAtMs = nowMs;
+        (forceServerUpdate || timestampMs - this.savedServerPositionAtMs >= saveServerPositionDelayMs)) {
+      await postUpdatePosition(id: this._track!.id, position: this._position!, timestamp: timestamp);
+      this.savedServerPositionAtMs = timestampMs;
     }
   }
 
@@ -170,9 +172,10 @@ class PlayerBoxState extends State<PlayerBox> {
     final id = this._track!.id;
     try {
       // Increment the count simultaneously on the server and in the local database...
+      final timestamp = DateTime.now();
       final List<Future> futures = [
-        incrementPlayedCount(id: id),
-        tracksInfoDb.incrementPlayedCount(this._track!.id),
+        postIncrementPlayedCount(id: id, timestamp: timestamp),
+        tracksInfoDb.incrementPlayedCount(this._track!.id, timestamp: timestamp),
       ];
       final results = await Future.wait(futures);
       // Get and store udpated server track data
