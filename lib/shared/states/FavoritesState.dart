@@ -60,16 +60,16 @@ mixin FavoritesState {
     final jsonData = await serverSession.get(Uri.parse(url));
     final List<int> ids =
         jsonData['ids'] != null ? List<dynamic>.from(jsonData['ids']).map((id) => id as int).toList() : [];
-    // logger.t('[FavoritesState:_loadServerFavoriteIds] done ids=${ids}');
+    logger.t('[FavoritesState:_loadServerFavoriteIds] done ids=${ids}');
     return ids;
   }
 
   _loadLocalFavoriteIds() async {
     final trackInfos = await tracksInfoDb.getFavorites();
     // logger.t('[FavoritesState:_loadLocalFavoriteIds] trackInfos=${trackInfos}');
-    final ids = trackInfos.map((trackInfo) => trackInfo.id);
-    // logger.t('[FavoritesState:_loadLocalFavoriteIds] done ids=${ids}');
-    return ids.toList();
+    final ids = trackInfos.map((trackInfo) => trackInfo.id).toList();
+    logger.t('[FavoritesState:_loadLocalFavoriteIds] done ids=${ids}');
+    return ids;
   }
 
   _loadFavoriteIds() async {

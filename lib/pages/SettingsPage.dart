@@ -317,10 +317,15 @@ class AuthInfo extends StatelessWidget {
 
     logout() async {
       final String signoutUrl = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/logout/';
+      final result = await serverSession.get(Uri.parse(signoutUrl));
+      logger.t('[logout] result=${result}');
+      // Clear data...
       serverSession.updateSessionId('');
-      appState.setUser();
+      // Clear favorites
       appState.clearFavorites();
-      await serverSession.get(Uri.parse(signoutUrl));
+      appState.setUser();
+      // debugger();
+      // Clear local tracks info
       await clearLocalTracks();
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -350,7 +355,7 @@ class AuthInfo extends StatelessWidget {
           ],
         ),
         InkWell(
-          onTap: () => launchUrl(Uri.parse('${AppConfig.TALES_SERVER_HOST}/accounts/profile/')),
+          onTap: () => launchUrl(Uri.parse('${AppConfig.TALES_SERVER_HOST}/profile/')),
           child: Text(
             'Open your profile on the web site'.i18n,
             style: linkStyle,
@@ -373,6 +378,8 @@ class AuthInfo extends StatelessWidget {
 class LoginBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+    final locale = appState.currentLocale;
     final theme = Theme.of(context);
     final style = theme.textTheme.bodySmall!;
     return Column(
@@ -386,7 +393,9 @@ class LoginBlock extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ),
-        LoginButton(),
+        LoginButton(
+          locale: locale,
+        ),
       ],
     );
   }

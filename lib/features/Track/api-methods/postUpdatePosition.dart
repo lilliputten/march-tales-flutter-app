@@ -21,7 +21,6 @@ Future<UserTrack> postUpdatePosition({
       'position': double.parse(positionS.toStringAsFixed(3)),
       'timestamp_s': timestamp != null ? (timestamp.millisecondsSinceEpoch / 1000).round() : null,
     };
-    debugger();
     final jsonData = await serverSession.post(uri, body: postData);
     return UserTrack.fromJson(jsonData);
   } catch (err, stacktrace) {

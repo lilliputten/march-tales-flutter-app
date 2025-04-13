@@ -25,5 +25,5 @@ UserTrack getUserTrackFromTrackInfo(TrackInfo trackInfo, int userId) {
 Future syncLocalTracksWithServer(int userId) async {
   Iterable<TrackInfo> trackInfos = await tracksInfoDb.getAll();
   Iterable<UserTrack> userTracks = trackInfos.map((trackInfo) => getUserTrackFromTrackInfo(trackInfo, userId)).toList();
-  postSyncUserTracks(userTracks: userTracks);
+  return await postSyncUserTracks(userTracks: userTracks);
 }

@@ -22,6 +22,13 @@ final logger = Logger();
 final formatter = YamlFormatter();
 
 class LoginButton extends StatefulWidget {
+  const LoginButton({
+    super.key,
+    required this.locale,
+  });
+
+  final String locale;
+
   @override
   State<LoginButton> createState() => _LoginButtonState();
 }
@@ -51,7 +58,6 @@ class _LoginButtonState extends State<LoginButton> {
 
   onFinished(String session) async {
     serverSession.updateSessionId(session);
-    // final List<Cookie> cookies = await cookieManager.getCookies(url: webUrl);
     final csrftoken = await cookieManager.getCookie(url: webUrl, name: 'csrftoken');
     final sessionId = await cookieManager.getCookie(url: webUrl, name: 'sessionid');
     if (csrftoken?.value.isNotEmpty) {
@@ -82,7 +88,6 @@ class _LoginButtonState extends State<LoginButton> {
       throw Exception(msg);
     } finally {
       this._appState?.setUser(userId: Init.userId ?? 0, userName: Init.userName ?? '', userEmail: Init.userEmail ?? '');
-      // logger.t('[onFinished] isSuccess cookies=${cookies} userId=${Init.userId} userEmail=${Init.userEmail} userName=${Init.userName}');
     }
   }
 
@@ -94,7 +99,7 @@ class _LoginButtonState extends State<LoginButton> {
 
     this._appState = context.read<AppState>();
 
-    final locale = serverSession.getLocale();
+    final locale = this.widget.locale; // serverSession.getLocale();
     final csrfToken = serverSession.getCSRFToken();
     final sessionId = serverSession.getSessionId();
 
@@ -112,6 +117,21 @@ class _LoginButtonState extends State<LoginButton> {
     } catch (err, stacktrace) {
       final String msg = 'Can not initialize in-app browser ${err}';
       logger.e('[LoginButton:initState] error ${msg}', error: err, stackTrace: stacktrace);
+      debugger();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final locale = this.widget.locale; // serverSession.getLocale();
+    try {
+      if (locale.isNotEmpty) {
+        cookieManager.setCookie(url: webUrl, name: 'django_language', value: locale);
+      }
+    } catch (err, stacktrace) {
+      final String msg = 'Can not initialize in-app browser with updated parameters ${err}';
+      logger.e('[LoginButton:didChangeDependencies] error ${msg}', error: err, stackTrace: stacktrace);
       debugger();
     }
   }

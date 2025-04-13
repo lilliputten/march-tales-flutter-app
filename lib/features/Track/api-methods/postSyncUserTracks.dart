@@ -16,10 +16,8 @@ postSyncUserTracks({
     final uri = Uri.parse(url);
     final items = userTracks.map((userTrack) => userTrack.toJson()).toList();
     final postData = {'items': items};
-    debugger();
     final jsonData = await serverSession.post(uri, body: postData);
     // NOTE: Returns the list of all actual favorite user tracks. Could be used to actualize local data.
-    debugger();
     return jsonData;
   } catch (err, stacktrace) {
     final String msg = 'Error synchronizing user tracks list';
