@@ -1,6 +1,6 @@
 #!/bin/sh
 # @desc Create apk/aab build
-# @changed 2025.03.18, 05:06
+# @changed 2025.04.15, 15:23
 
 if [ $# -lt 1 ]; then
   echo "Usage: $0 [--apk] [--aab]"
@@ -37,7 +37,7 @@ if [[ "$ARGS" =~ .*--apk.* ]]; then
     --build-name=$VERSION \
     --dart-define-from-file=.env \
     && echo "See release in $APK_FOLDER" \
-    && ls -lah $APK_FOLDER/*.apk \
+    && ls -lah $APK_FOLDER/*${VERSION}*.apk \
     && echo "OK"
 fi
 
@@ -56,7 +56,7 @@ if [[ "$ARGS" =~ .*--aab.* ]]; then
   cd "$DEBUG_INFO_PATH" && zip -r "$DEBUG_INFO_ARC" * ; cd -
   mv "$DEBUG_INFO_PATH/$DEBUG_INFO_ARC" "$AAB_FOLDER/"
   echo "See release in $AAB_FOLDER"
-  cd $AAB_FOLDER && ls -lah * ; cd -
+  cd $AAB_FOLDER && ls -lah *${VERSION}* ; cd -
   echo "OK"
 fi
 
