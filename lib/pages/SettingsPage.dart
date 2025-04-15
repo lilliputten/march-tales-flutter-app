@@ -323,10 +323,10 @@ class AuthInfo extends StatelessWidget {
       serverSession.updateSessionId('');
       // Clear favorites
       appState.clearFavorites();
-      appState.setUser();
-      // debugger();
       // Clear local tracks info
       await clearLocalTracks();
+      appState.setUser();
+      // debugger();
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           showCloseIcon: true,

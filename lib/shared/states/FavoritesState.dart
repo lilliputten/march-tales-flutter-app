@@ -50,7 +50,7 @@ mixin FavoritesState {
         tracks.add(track);
       }
     }
-    tracks.sort((a, b) => a.title.compareTo(b.title));
+    // tracks.sort((a, b) => a.title.compareTo(b.title));
     return tracks;
   }
 
@@ -73,13 +73,9 @@ mixin FavoritesState {
   }
 
   _loadFavoriteIds() async {
-    if (this.isAuthorized()) {
-      final ids = await this._loadServerFavoriteIds();
-      return ids;
-    } else {
-      final ids = await this._loadLocalFavoriteIds();
-      return ids;
-    }
+    List<int> ids = this.isAuthorized() ? await this._loadServerFavoriteIds() : await this._loadLocalFavoriteIds();
+    // logger.t('[_loadFavoriteIds] ${ids}');
+    return ids;
   }
 
   clearFavorites() {

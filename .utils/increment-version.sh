@@ -26,7 +26,7 @@ if [[ "$ARGS" =~ .*--code.* ]]; then
     fi
     echo "$VERSION_CODE" > "$VERSION_CODE_PATH"
     echo "Updated version code: $VERSION_CODE"
-    exit 1
+    # exit 1
   fi
 fi
 

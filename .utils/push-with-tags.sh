@@ -1,6 +1,6 @@
 #!/bin/sh
 # @desc Create/update version tag (from build folder)
-# @changed 2024.12.27, 17:29
+# @changed 2025.04.15, 15:09
 
 scriptsPath=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
 rootPath=`dirname "$scriptsPath"`
@@ -18,7 +18,7 @@ APP_ID=`cat "$rootPath/$APP_ID_FILE"`
 
 echo "Publishing source code $PROJECT_INFO..."
 
-TAG_VALUE="$APP_ID-v.$VERSION"
+TAG_VALUE="v.$VERSION"
 echo "Create/update tag $TAG_VALUE..." \
   && git tag -f "$TAG_VALUE" \
   && git push origin -f --tags \

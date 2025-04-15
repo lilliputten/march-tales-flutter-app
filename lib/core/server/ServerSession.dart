@@ -107,6 +107,7 @@ class _ServerSession {
         final value = keyValue[1];
         // ignore keys that aren't cookies
         if (key == 'path' || key == 'expires') return;
+        logger.t('[_setCookie] ${key} = ${value}');
         this.cookies[key] = value;
       }
     }
