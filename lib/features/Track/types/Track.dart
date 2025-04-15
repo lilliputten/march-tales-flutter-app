@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
+import 'package:march_tales_app/features/Track/types/UserTrack.dart';
 
 final logger = Logger();
 
@@ -124,6 +125,9 @@ class Track {
   final int published_by_id;
   final int updated_by_id;
   final DateTime updated_at;
+  // UserTrack data (provided only for authorized users)...
+  final UserTrack? user_track;
+  // Related data...
   // XXX FUTURE: To use ids only (full=0) instead of full data (full=2)
   final List<TrackTag> tags;
   final List<TrackRubric> rubrics;
@@ -148,6 +152,9 @@ class Track {
     required this.published_by_id,
     required this.updated_at,
     required this.updated_by_id,
+    // UserTrack data...
+    required this.user_track,
+    // Related data...
     // XXX FUTURE: To use ids only (full=0) instead of full data (full=2)
     required this.rubrics,
     required this.tags,
@@ -181,6 +188,9 @@ class Track {
         published_by_id: json['published_by_id'],
         updated_at: DateTime.parse(json['updated_at'].toString()),
         updated_by_id: json['updated_by_id'],
+        // UserTrack data...
+        user_track: json['user_track'] != null ? UserTrack.fromJson(json['user_track']) : null,
+        // Related data...
         // XXX FUTURE: To use ids only (full=0) instead of full data (full=2)
         rubrics: json.containsKey('rubrics')
             ? List<dynamic>.from(json['rubrics']).map((data) => TrackRubric.fromJson(data)).toList()

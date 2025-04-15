@@ -6,6 +6,7 @@ import 'package:march_tales_app/core/exceptions/ConnectionException.dart';
 import 'package:march_tales_app/core/helpers/addQueryParam.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'package:march_tales_app/features/Track/updaters/updateLocalTrack.dart';
 
 final logger = Logger();
 
@@ -19,7 +20,9 @@ Future<Track> fetchNextTrackDetails(
   try {
     final uri = Uri.parse(url);
     final jsonData = await serverSession.get(uri);
-    return Track.fromJson(jsonData);
+    final track = Track.fromJson(jsonData);
+    await updateLocalTrack(track);
+    return track;
   } catch (err, stacktrace) {
     final String msg = 'Error fetching next track details with an url $url: $err';
     logger.e('${msg} url $url: $err', error: err, stackTrace: stacktrace);

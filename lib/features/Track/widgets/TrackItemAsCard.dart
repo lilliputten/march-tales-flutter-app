@@ -149,16 +149,19 @@ List<Widget> _trackItemAsCardDetailItems({
       ),
     ),
     // TrackFavoriteIcon(track: track),
-    TrackItemControls(
-      track: track,
-      isActiveTrack: isActiveTrack,
-      isAlreadyPlayed: isAlreadyPlayed,
-      isPlaying: isPlaying,
-      progress: progress,
-      isFavorite: isFavorite,
-      fullView: fullView,
-    ),
-  ];
+    !compact
+        ? TrackItemControls(
+            track: track,
+            isActiveTrack: isActiveTrack,
+            isAlreadyPlayed: isAlreadyPlayed,
+            isPlaying: isPlaying,
+            progress: progress,
+            isFavorite: isFavorite,
+            fullView: fullView,
+            compact: compact,
+          )
+        : null,
+  ].nonNulls.toList();
 }
 
 List<Widget> _trackItemAsCardItemsHorizontal({
@@ -177,8 +180,9 @@ List<Widget> _trackItemAsCardItemsHorizontal({
 }) {
   // final double height = width / previewDimensionsRatio;
   final double thumbWidth = min(200, width / 5);
+  final double thumbHeight = thumbWidth / previewDimensionsRatio;
   return [
-    TrackImageThumbnail(track: track, width: thumbWidth, borderRadius: compact ? 5 : 10),
+    TrackImageThumbnail(track: track, width: thumbWidth, height: thumbHeight, borderRadius: compact ? 5 : 10),
     ..._trackItemAsCardDetailItems(
       width: width,
       detailsOpacity: detailsOpacity,

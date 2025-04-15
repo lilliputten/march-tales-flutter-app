@@ -8,6 +8,7 @@ import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/core/singletons/userStateEvents.dart';
 import 'package:march_tales_app/core/types/UserStateUpdate.dart';
+import 'package:march_tales_app/features/Track/api-methods/postToggleFavorite.dart';
 import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTracksByIds.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
@@ -49,7 +50,7 @@ mixin FavoritesState {
         tracks.add(track);
       }
     }
-    tracks.sort((a, b) => a.title.compareTo(b.title));
+    // tracks.sort((a, b) => a.title.compareTo(b.title));
     return tracks;
   }
 
@@ -59,26 +60,28 @@ mixin FavoritesState {
     final jsonData = await serverSession.get(Uri.parse(url));
     final List<int> ids =
         jsonData['ids'] != null ? List<dynamic>.from(jsonData['ids']).map((id) => id as int).toList() : [];
-    // logger.t('[FavoritesState:_loadServerFavoriteIds] done ids=${ids}');
+    logger.t('[FavoritesState:_loadServerFavoriteIds] done ids=${ids}');
     return ids;
   }
 
   _loadLocalFavoriteIds() async {
     final trackInfos = await tracksInfoDb.getFavorites();
     // logger.t('[FavoritesState:_loadLocalFavoriteIds] trackInfos=${trackInfos}');
-    final ids = trackInfos.map((trackInfo) => trackInfo.id);
-    // logger.t('[FavoritesState:_loadLocalFavoriteIds] done ids=${ids}');
-    return ids.toList();
+    final ids = trackInfos.map((trackInfo) => trackInfo.id).toList();
+    logger.t('[FavoritesState:_loadLocalFavoriteIds] done ids=${ids}');
+    return ids;
   }
 
   _loadFavoriteIds() async {
-    if (this.isAuthorized()) {
-      final ids = await this._loadServerFavoriteIds();
-      return ids;
-    } else {
-      final ids = await this._loadLocalFavoriteIds();
-      return ids;
-    }
+    List<int> ids = this.isAuthorized() ? await this._loadServerFavoriteIds() : await this._loadLocalFavoriteIds();
+    // logger.t('[_loadFavoriteIds] ${ids}');
+    return ids;
+  }
+
+  clearFavorites() {
+    this._favoriteIds = [];
+    this._favoriteTracksData = {};
+    this.notifyListeners();
   }
 
   loadFavorites() async {
@@ -105,35 +108,17 @@ mixin FavoritesState {
     return this._favoriteIds.contains(id);
   }
 
-  sendToggleFavoriteRequest({
-    required int id,
-    required bool favorite,
-  }) async {
-    final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/tracks/${id}/toggle-favorite/';
-    try {
-      final uri = Uri.parse(url);
-      final jsonData = await serverSession.post(uri, body: {'value': favorite});
-      // NOTE: Returns the list of all actual favorite tracks. Could be used to actualize local data.
-      return jsonData;
-    } catch (err, stacktrace) {
-      final String msg = 'Error incrementing track played count with an url $url: $err';
-      logger.e(msg, error: err, stackTrace: stacktrace);
-      debugger();
-      showErrorToast(msg);
-      throw Exception(msg);
-    }
-  }
-
   setFavorite(int id, bool favorite) async {
     final prevFavorite = this._favoriteIds.contains(id);
     if (prevFavorite != favorite) {
       try {
+        final timestamp = DateTime.now();
         final List<Future<dynamic>> futures = [
-          tracksInfoDb.setFavorite(id, favorite),
+          tracksInfoDb.setFavorite(id, favorite, timestamp: timestamp),
         ];
         if (this.isAuthorized()) {
           // Send data to the server
-          futures.add(this.sendToggleFavoriteRequest(id: id, favorite: favorite));
+          futures.add(postToggleFavorite(id: id, favorite: favorite, timestamp: timestamp));
         }
         if (favorite) {
           this._favoriteIds.add(id);

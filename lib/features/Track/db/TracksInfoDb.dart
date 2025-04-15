@@ -10,7 +10,13 @@ import 'package:sqflite/sqflite.dart';
 import 'TrackInfo.dart';
 import 'TracksInfoDbStructure.dart';
 
-enum TracksInfoDbUpdateType { incrementPlayedCount, updatePosition, setFavorite, save }
+enum TracksInfoDbUpdateType {
+  updatePlayedCount,
+  incrementPlayedCount,
+  updatePosition,
+  setFavorite,
+  save,
+}
 
 // XXX FUTURE: To extract the event manager to the dedicated module in `lib/core/singletons/`?
 class TracksInfoDbUpdate extends EventArgs {
@@ -36,7 +42,7 @@ class TracksInfoDb {
       batch.execute(createCommand);
       await batch.commit();
     } catch (err, stacktrace) {
-      logger.e('[TracksInfoDb] onCreate: Error: ${err}', error: err, stackTrace: stacktrace);
+      logger.e('[_createDatabase] Error: ${err}', error: err, stackTrace: stacktrace);
       debugger();
       rethrow;
     }
@@ -65,9 +71,8 @@ class TracksInfoDb {
             batch.execute('ALTER TABLE ${tracksInfoDbName} ADD lastUpdatedMs INTEGER');
           }
           if (oldVersion < 5) {
-            final tempTableName = '${tracksInfoDbName}_temp';
+            final tempTableName = '${tracksInfoDbName}_temp_under_5';
             final createTempTableCommand = getTracksInfoDbCreateCommand(tempTableName);
-            debugger();
             batch.execute(createTempTableCommand);
             final oldColumns = 'id, position, playedCount, lastUpdatedMs, lastPlayedMs';
             final insertCommand =
@@ -75,24 +80,33 @@ class TracksInfoDb {
             batch.execute(insertCommand);
             batch.execute('DROP TABLE ${tracksInfoDbName}');
             batch.execute('ALTER TABLE ${tempTableName} RENAME TO ${tracksInfoDbName};');
-            debugger();
-            // batch.execute(
-            //     'ALTER TABLE ${tracksInfoDbName} ADD favorite INTEGER DEFAULT(0)');
+            // batch.execute('ALTER TABLE ${tracksInfoDbName} ADD favorite INTEGER DEFAULT(0)');
+          }
+          if (oldVersion == 5 || oldVersion == 6) {
+            final tempTableName = '${tracksInfoDbName}_temp_5';
+            final createTempTableCommand = getTracksInfoDbCreateCommand(tempTableName);
+            batch.execute(createTempTableCommand);
+            final oldColumns = 'id, favorite, position, lastUpdatedMs, lastPlayedMs';
+            final insertCommand =
+                'INSERT INTO ${tempTableName} ($oldColumns) SELECT $oldColumns FROM ${tracksInfoDbName}';
+            batch.execute(insertCommand);
+            batch.execute('DROP TABLE ${tracksInfoDbName}');
+            batch.execute('ALTER TABLE ${tempTableName} RENAME TO ${tracksInfoDbName};');
           }
           // etc...
           await batch.commit();
         } catch (err, stacktrace) {
-          logger.e('[TracksInfoDb] onUpgrade: Error: ${err}', error: err, stackTrace: stacktrace);
+          logger.e('[initializeDB] onUpgrade: Error: ${err}', error: err, stackTrace: stacktrace);
           debugger();
           rethrow;
         }
       },
       /* // UNUSED: Other handlers
        * onConfigure: (database) async {
-       *   logger.t('[TracksInfoDb] onConfigure: Start: database=${database}');
+       *   logger.t('[initializeDB] onConfigure: Start: database=${database}');
        * },
        * onOpen: (database) async {
-       *   logger.t('[TracksInfoDb] onOpen: Start: database=${database}');
+       *   logger.t('[initializeDB] onOpen: Start: database=${database}');
        * },
        */
     );
@@ -101,14 +115,15 @@ class TracksInfoDb {
 
   // End-user api
 
-  Future<TrackInfo> incrementPlayedCount(int id, {DateTime? now}) async {
+  Future<TrackInfo> incrementPlayedCount(int id, {DateTime? timestamp}) async {
     try {
-      final _now = now ??= DateTime.now();
+      final now = DateTime.now();
       return this.db.transaction((txn) async {
         final trackInfo = await this.getOrCreate(id, txn: txn);
-        trackInfo.playedCount += 1;
-        trackInfo.lastPlayed = _now;
-        trackInfo.lastUpdated = _now;
+        trackInfo.totalPlayedCount += 1;
+        trackInfo.localPlayedCount += 1;
+        trackInfo.lastPlayed = timestamp ?? now;
+        trackInfo.lastUpdated = now;
         final _ = await this.insert(trackInfo, txn: txn);
         this
             .updateEvents
@@ -116,23 +131,51 @@ class TracksInfoDb {
         return trackInfo;
       });
     } catch (err, stacktrace) {
-      logger.e('[TracksInfoDb] incrementPlayedCount: Error: ${err}', error: err, stackTrace: stacktrace);
+      logger.e('[incrementPlayedCount] Error: ${err}', error: err, stackTrace: stacktrace);
       debugger();
       rethrow;
     }
   }
 
-  Future<TrackInfo> updatePosition(int id, {Duration? position, DateTime? now}) async {
+  Future<TrackInfo> updatePlayedCount(int id,
+      {int? totalPlayedCount, int? localPlayedCount, DateTime? timestamp}) async {
     try {
-      final _now = now ??= DateTime.now();
+      final now = DateTime.now();
+      return this.db.transaction((txn) async {
+        final trackInfo = await this.getOrCreate(id, txn: txn);
+        if (totalPlayedCount != null) {
+          trackInfo.totalPlayedCount = totalPlayedCount;
+        }
+        if (localPlayedCount != null) {
+          trackInfo.localPlayedCount = localPlayedCount;
+        }
+        trackInfo.lastPlayed = timestamp ?? now;
+        trackInfo.lastUpdated = now;
+        final _ = await this.insert(trackInfo, txn: txn);
+        this
+            .updateEvents
+            .broadcast(TracksInfoDbUpdate(trackInfo: trackInfo, type: TracksInfoDbUpdateType.updatePlayedCount));
+        return trackInfo;
+      });
+    } catch (err, stacktrace) {
+      logger.e('[updatePlayedCount] Error: ${err}', error: err, stackTrace: stacktrace);
+      debugger();
+      rethrow;
+    }
+  }
+
+  Future<TrackInfo> updatePosition(int id, Duration? position, {DateTime? timestamp}) async {
+    try {
+      final now = DateTime.now();
       return this.db.transaction((txn) async {
         final trackInfo = await this.getOrCreate(id, txn: txn);
         // final newTrackInfo = TrackInfo.clone
         if (position != null) {
           trackInfo.position = position;
         }
-        trackInfo.lastPlayed = _now; // ???
-        trackInfo.lastUpdated = _now;
+        trackInfo.lastPlayed = timestamp ?? now; // ???
+        trackInfo.lastUpdated = now;
+        logger.t('[updatePosition] id=${id} timestamp=${timestamp} now=${now}');
         final _ = await this.insert(trackInfo, txn: txn);
         this
             .updateEvents
@@ -140,43 +183,44 @@ class TracksInfoDb {
         return trackInfo;
       });
     } catch (err, stacktrace) {
-      logger.e('[TracksInfoDb] updatePosition: Error: ${err}', error: err, stackTrace: stacktrace);
+      logger.e('[updatePosition] Error: ${err}', error: err, stackTrace: stacktrace);
       debugger();
       rethrow;
     }
   }
 
-  Future<TrackInfo> setFavorite(int id, bool favorite, {DateTime? now}) async {
+  Future<TrackInfo> setFavorite(int id, bool favorite, {DateTime? timestamp}) async {
     try {
-      final _now = now ??= DateTime.now();
+      final now = DateTime.now();
       return this.db.transaction((txn) async {
         final trackInfo = await this.getOrCreate(id, txn: txn);
         trackInfo.favorite = favorite;
-        trackInfo.lastUpdated = _now;
+        trackInfo.lastFavorited = timestamp ?? now;
+        trackInfo.lastUpdated = now;
         final _ = await this.insert(trackInfo, txn: txn);
         this.updateEvents.broadcast(TracksInfoDbUpdate(trackInfo: trackInfo, type: TracksInfoDbUpdateType.setFavorite));
         return trackInfo;
       });
     } catch (err, stacktrace) {
-      logger.e('[TracksInfoDb] updatePosition: Error: ${err}', error: err, stackTrace: stacktrace);
+      logger.e('[updatePosition] Error: ${err}', error: err, stackTrace: stacktrace);
       debugger();
       rethrow;
     }
   }
 
-  Future<TrackInfo> save(int id, TrackInfo trackInfo, {DateTime? now}) async {
+  Future<TrackInfo> save(int id, TrackInfo trackInfo, {DateTime? timestamp}) async {
     try {
-      final _now = now ??= DateTime.now();
+      final now = DateTime.now();
       return this.db.transaction((txn) async {
-        trackInfo.lastPlayed = _now; // ???
-        trackInfo.lastUpdated = _now;
+        // trackInfo.lastPlayed = _now; // ???
+        trackInfo.lastUpdated = timestamp ?? now;
         final _ = await this.insert(trackInfo, txn: txn);
         this.updateEvents.broadcast(TracksInfoDbUpdate(trackInfo: trackInfo, type: TracksInfoDbUpdateType.save));
         // final testTrackInfo = await this.getById(id, txn: txn);
         return trackInfo;
       });
     } catch (err, stacktrace) {
-      logger.e('[TracksInfoDb] updatePosition: Error: ${err}', error: err, stackTrace: stacktrace);
+      logger.e('[updatePosition] Error: ${err}', error: err, stackTrace: stacktrace);
       debugger();
       rethrow;
     }
@@ -185,14 +229,16 @@ class TracksInfoDb {
   // Low-level api
 
   TrackInfo createNewRecord(int id) {
-    final now = DateTime.now();
+    // final now = DateTime.now();
     final TrackInfo trackInfo = TrackInfo(
       id: id, // track.id
       favorite: false,
-      playedCount: 0, // track.played_count (but only for current user!).
+      totalPlayedCount: 0, // track.played_count
+      localPlayedCount: 0, // usetTrack.played_count (current user!)
       position: Duration.zero, // position
-      lastUpdated: now, // DateTime.now()
-      lastPlayed: now, // DateTime.now()
+      lastUpdated: DateTime.fromMillisecondsSinceEpoch(0), // DateTime.now()
+      lastPlayed: DateTime.fromMillisecondsSinceEpoch(0),
+      lastFavorited: DateTime.fromMillisecondsSinceEpoch(0),
     );
     return trackInfo;
   }
@@ -224,7 +270,7 @@ class TracksInfoDb {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     } catch (err, stacktrace) {
-      logger.e('[TracksInfoDb] insert: Error: ${err}', error: err, stackTrace: stacktrace);
+      logger.e('[insert] Error: ${err}', error: err, stackTrace: stacktrace);
       debugger();
       rethrow;
     }

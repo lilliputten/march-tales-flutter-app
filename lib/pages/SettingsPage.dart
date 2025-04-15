@@ -10,6 +10,7 @@ import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/components/LoginButton.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
+import 'package:march_tales_app/features/Track/updaters/clearLocalTracks.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'package:march_tales_app/supportedLocales.dart';
 import 'SettingsPage.i18n.dart';
@@ -299,18 +300,33 @@ class AuthInfo extends StatelessWidget {
     final userName = appState.getUserName();
 
     final theme = Theme.of(context);
+    final AppColors appColors = theme.extension<AppColors>()!;
     final buttonTextStyle = theme.textTheme.bodyMedium!.copyWith(color: appColors.onBrandColor);
     final textStyle = theme.textTheme.bodyMedium!;
     final ButtonStyle buttonStyle = TextButton.styleFrom(
       textStyle: buttonTextStyle,
       backgroundColor: appColors.brandColor,
     );
+    // final smallStyle = theme.textTheme.bodySmall!;
+    final linkStyle = textStyle.copyWith(
+      decoration: TextDecoration.underline,
+      color: appColors.brandColor, // Colors.blue,
+      decorationColor: appColors.brandColor,
+      fontWeight: FontWeight.bold,
+    );
 
     logout() async {
       final String signoutUrl = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/logout/';
-      await serverSession.get(Uri.parse(signoutUrl));
+      final result = await serverSession.get(Uri.parse(signoutUrl));
+      logger.t('[logout] result=${result}');
+      // Clear data...
       serverSession.updateSessionId('');
+      // Clear favorites
+      appState.clearFavorites();
+      // Clear local tracks info
+      await clearLocalTracks();
       appState.setUser();
+      // debugger();
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           showCloseIcon: true,
@@ -338,6 +354,13 @@ class AuthInfo extends StatelessWidget {
             ),
           ],
         ),
+        InkWell(
+          onTap: () => launchUrl(Uri.parse('${AppConfig.TALES_SERVER_HOST}/profile/')),
+          child: Text(
+            'Open your profile on the web site'.i18n,
+            style: linkStyle,
+          ),
+        ),
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
@@ -346,6 +369,32 @@ class AuthInfo extends StatelessWidget {
             icon: Icon(Icons.logout, color: appColors.onBrandColor),
             label: Text('Log out'.i18n, style: buttonTextStyle),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class LoginBlock extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+    final locale = appState.currentLocale;
+    final theme = Theme.of(context);
+    final style = theme.textTheme.bodySmall!;
+    return Column(
+      spacing: 10,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: Text(
+            'Log in to be able to view your favorites and listen to audio on different devices.'.i18n,
+            style: style,
+            textAlign: TextAlign.center,
+          ),
+        ),
+        LoginButton(
+          locale: locale,
         ),
       ],
     );
@@ -361,7 +410,7 @@ class AuthBlock extends StatelessWidget {
       spacing: 10,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        isAuthorized ? AuthInfo() : LoginButton(),
+        isAuthorized ? AuthInfo() : LoginBlock(),
       ],
     );
   }

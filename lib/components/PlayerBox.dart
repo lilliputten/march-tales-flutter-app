@@ -18,7 +18,8 @@ import 'package:march_tales_app/core/constants/player.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/singletons/playingTrackEvents.dart';
 import 'package:march_tales_app/core/types/PlayingTrackUpdate.dart';
-import 'package:march_tales_app/features/Track/api-methods/incrementPlayedCount.dart';
+import 'package:march_tales_app/features/Track/api-methods/postIncrementPlayedCount.dart';
+import 'package:march_tales_app/features/Track/api-methods/postUpdatePosition.dart';
 import 'package:march_tales_app/features/Track/db/TracksInfoDb.dart';
 import 'package:march_tales_app/features/Track/loaders/loadTrackDetails.dart';
 import 'package:march_tales_app/features/Track/trackConstants.dart';
@@ -29,15 +30,20 @@ import 'PlayerBox/common.dart';
 
 final logger = Logger();
 
+const useLocalDelays = true;
+const saveServerPositionDelayMs = useLocalDelays && AppConfig.DEBUG ? 1 * 1000 : 10 * 1000;
+
 // NOTE: This module shouldn't use `AppState` due to one-way control flow (it's used in `ActivePlayerState`)
 
 class PlayerBox extends StatefulWidget {
   final bool show;
+  final bool isAuthorized;
   final NavigatorState? navigatorState;
 
   const PlayerBox({
     super.key,
     this.show = true,
+    this.isAuthorized = true,
     this.navigatorState,
   });
 
@@ -57,6 +63,7 @@ class PlayerBoxState extends State<PlayerBox> {
   bool _isPaused = false;
   bool __listenerInstalled = false;
   Timer? __activeTimer;
+  int savedServerPositionAtMs = 0;
 
   @override
   void dispose() {
@@ -111,7 +118,7 @@ class PlayerBoxState extends State<PlayerBox> {
     });
   }
 
-  void _savePlayingPosition(Duration? position, {bool notify = true}) {
+  void _savePlayingPosition(Duration? position, {bool notify = true, bool forceServerUpdate = false}) async {
     setState(() {
       this._position = position;
     });
@@ -119,9 +126,19 @@ class PlayerBoxState extends State<PlayerBox> {
       this._sendBroadcastUpdate(PlayingTrackUpdateType.position);
     }
     // Save position to local db
-    tracksInfoDb.updatePosition(this._track!.id, position: position ?? Duration.zero); // await!
+    final timestamp = DateTime.now();
+    tracksInfoDb.updatePosition(this._track!.id, position ?? Duration.zero,
+        timestamp: timestamp); // this is await function, we don't wait for the finish
     // XXX FUTURE: 2025.03.01, 21:06 -- Update position on the server
     // XXX FUTURE: Involve last saved position and save once in a period, eg, 5 secs
+    final int timestampMs = timestamp.millisecondsSinceEpoch;
+    if (this._track != null &&
+        this._position != null &&
+        this.widget.isAuthorized &&
+        (forceServerUpdate || timestampMs - this.savedServerPositionAtMs >= saveServerPositionDelayMs)) {
+      await postUpdatePosition(id: this._track!.id, position: this._position!, timestamp: timestamp);
+      this.savedServerPositionAtMs = timestampMs;
+    }
   }
 
   Future<void> _loadTrackPosition() async {
@@ -155,9 +172,10 @@ class PlayerBoxState extends State<PlayerBox> {
     final id = this._track!.id;
     try {
       // Increment the count simultaneously on the server and in the local database...
+      final timestamp = DateTime.now();
       final List<Future> futures = [
-        incrementPlayedCount(id: id),
-        tracksInfoDb.incrementPlayedCount(this._track!.id),
+        postIncrementPlayedCount(id: id, timestamp: timestamp),
+        tracksInfoDb.incrementPlayedCount(this._track!.id, timestamp: timestamp),
       ];
       final results = await Future.wait(futures);
       // Get and store udpated server track data
@@ -179,6 +197,7 @@ class PlayerBoxState extends State<PlayerBox> {
       try {
         final track = await loadTrackDetails(id);
         this._track = track;
+        logger.t('[PlayerBox:_loadPlayingTrackDetails] track=${track}');
         await this._setTrack(track, notify: notify);
       } catch (err, stacktrace) {
         final String msg = 'Error loading currently playing track data.';
@@ -210,20 +229,15 @@ class PlayerBoxState extends State<PlayerBox> {
     final PlayerState playerState = this._player.playerState;
     final bool playing = playerState.playing;
     final ProcessingState processingState = playerState.processingState;
-    // logger.t('[PlayerBox:_playerStateHandler] playing=${playing} processingState=${processingState}');
-    // final position = this._player.position;
-    // this._savePlayingPosition(position, notify: false);
     // Update only if player is playing or completed
     PlayingTrackUpdateType? updateType; // = PlayingTrackUpdateType.position;
     final isCurrentlyPlaying = this._isPlaying && !this._isPaused;
     if (playing) {
       // Really playing and...
       if (!isCurrentlyPlaying) {
-        // logger.t('[PlayerBox:_playerStateHandler] set state: playing');
         this._setPlayingStatus(notify: false);
         updateType = PlayingTrackUpdateType.playingStatus;
       } else if (processingState == ProcessingState.completed) {
-        // logger.t('[PlayerBox:_playerStateHandler] set state: finished');
         this._pausePlayback(notify: false);
         this._setPausedStatus(notify: false);
         // Set position to the full duration value: as sign of the finished playback
@@ -234,7 +248,6 @@ class PlayerBoxState extends State<PlayerBox> {
     } else {
       // Not really playing and...
       if (isCurrentlyPlaying) {
-        // logger.t('[PlayerBox:_playerStateHandler] set state: paused');
         this._setPausedStatus(notify: false);
         updateType = PlayingTrackUpdateType.pausedStatus;
       }

@@ -8,6 +8,7 @@ import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/addQueryParam.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/features/Track/loaders/LoadTracksListResults.dart';
+import 'package:march_tales_app/features/Track/updaters/updateLocalTrack.dart';
 
 final formatter = YamlFormatter();
 final logger = Logger();
@@ -33,7 +34,9 @@ Future<LoadTracksListResults> loadTracksByIds(
   try {
     final uri = Uri.parse(url);
     final jsonData = await serverSession.get(uri);
-    return LoadTracksListResults.fromJson(jsonData);
+    final results = LoadTracksListResults.fromJson(jsonData);
+    await updateLocalTracks(results.results);
+    return results;
   } catch (err, stacktrace) {
     final String msg = 'Error fetching tracks with an url $url: $err';
     logger.e(msg, error: err, stackTrace: stacktrace);

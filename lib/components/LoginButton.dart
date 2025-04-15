@@ -14,6 +14,7 @@ import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
+import 'package:march_tales_app/features/Track/updaters/syncLocalTracksWithServer.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 import 'LoginButton.i18n.dart';
 
@@ -21,6 +22,13 @@ final logger = Logger();
 final formatter = YamlFormatter();
 
 class LoginButton extends StatefulWidget {
+  const LoginButton({
+    super.key,
+    required this.locale,
+  });
+
+  final String locale;
+
   @override
   State<LoginButton> createState() => _LoginButtonState();
 }
@@ -29,7 +37,7 @@ class _LoginButtonState extends State<LoginButton> {
   // @see https://inappwebview.dev/docs/in-app-browsers/in-app-browser
   final LoginBrowser browser = new LoginBrowser();
 
-  AppState? _appState;
+  late AppState? _appState;
 
   CookieManager cookieManager = CookieManager.instance();
 
@@ -50,7 +58,6 @@ class _LoginButtonState extends State<LoginButton> {
 
   onFinished(String session) async {
     serverSession.updateSessionId(session);
-    // final List<Cookie> cookies = await cookieManager.getCookies(url: webUrl);
     final csrftoken = await cookieManager.getCookie(url: webUrl, name: 'csrftoken');
     final sessionId = await cookieManager.getCookie(url: webUrl, name: 'sessionid');
     if (csrftoken?.value.isNotEmpty) {
@@ -62,6 +69,7 @@ class _LoginButtonState extends State<LoginButton> {
     // Get account data...
     try {
       await Init.loadServerStatus();
+      await syncLocalTracksWithServer(_appState!.getUserId());
       Future.delayed(Duration.zero, () {
         if (context.mounted) {
           // ignore: use_build_context_synchronously
@@ -80,7 +88,6 @@ class _LoginButtonState extends State<LoginButton> {
       throw Exception(msg);
     } finally {
       this._appState?.setUser(userId: Init.userId ?? 0, userName: Init.userName ?? '', userEmail: Init.userEmail ?? '');
-      // logger.t('[onFinished] isSuccess cookies=${cookies} userId=${Init.userId} userEmail=${Init.userEmail} userName=${Init.userName}');
     }
   }
 
@@ -92,7 +99,7 @@ class _LoginButtonState extends State<LoginButton> {
 
     this._appState = context.read<AppState>();
 
-    final locale = serverSession.getLocale();
+    final locale = this.widget.locale; // serverSession.getLocale();
     final csrfToken = serverSession.getCSRFToken();
     final sessionId = serverSession.getSessionId();
 
@@ -110,6 +117,21 @@ class _LoginButtonState extends State<LoginButton> {
     } catch (err, stacktrace) {
       final String msg = 'Can not initialize in-app browser ${err}';
       logger.e('[LoginButton:initState] error ${msg}', error: err, stackTrace: stacktrace);
+      debugger();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final locale = this.widget.locale; // serverSession.getLocale();
+    try {
+      if (locale.isNotEmpty) {
+        cookieManager.setCookie(url: webUrl, name: 'django_language', value: locale);
+      }
+    } catch (err, stacktrace) {
+      final String msg = 'Can not initialize in-app browser with updated parameters ${err}';
+      logger.e('[LoginButton:didChangeDependencies] error ${msg}', error: err, stackTrace: stacktrace);
       debugger();
     }
   }
@@ -136,7 +158,7 @@ class _LoginButtonState extends State<LoginButton> {
           );
         },
         icon: Icon(Icons.login, color: appColors.onBrandColor),
-        label: Text('Log in'.i18n, style: style),
+        label: Text('Log in or sign up'.i18n, style: style),
       ),
     );
   }

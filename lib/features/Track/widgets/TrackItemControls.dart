@@ -18,6 +18,7 @@ class TrackItemControls extends StatelessWidget {
     required this.progress,
     this.isFavorite = false,
     this.fullView = false,
+    this.compact = false,
   });
 
   final Track track;
@@ -27,13 +28,14 @@ class TrackItemControls extends StatelessWidget {
   final double progress;
   final bool isFavorite;
   final bool fullView;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         // Show favorite button if it's a full view mode
-        fullView
+        !compact
             ? TrackItemFavoriteControl(
                 track: track,
                 // isActiveTrack: isActiveTrack,
