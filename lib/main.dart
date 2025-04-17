@@ -30,8 +30,8 @@ class MyHttpOverrides extends HttpOverrides {
 
 /// Check enviroment variables
 void checkEnvironmentVariables() {
-  print("GOOGLE_CLIENT_ID: ${AppConfig.GOOGLE_CLIENT_ID}");
-  print("GOOGLE_CLIENT_SECRET: ${AppConfig.GOOGLE_CLIENT_SECRET}");
+  // print("GOOGLE_CLIENT_ID: ${AppConfig.GOOGLE_CLIENT_ID}");
+  // print("GOOGLE_CLIENT_SECRET: ${AppConfig.GOOGLE_CLIENT_SECRET}");
   print("LOCAL: ${AppConfig.LOCAL}");
   print("DEBUG: ${AppConfig.DEBUG}");
   if (AppConfig.GOOGLE_CLIENT_ID.isEmpty) {

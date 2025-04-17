@@ -97,8 +97,8 @@ class RecentDetails extends StatelessWidget {
       spacing: 10,
       children: [
         _mostRecentTrack(recentResults: this.recentResults),
-        _popularTracks(recentResults: this.recentResults),
         _randomTrack(recentResults: this.recentResults),
+        _popularTracks(recentResults: this.recentResults),
       ].nonNulls.toList(),
     );
   }

@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:march_tales_app/shared/states/FilterState.dart';
 import 'ActivePlayerState.dart';
 import 'FavoritesState.dart';
+import 'FilterState.dart';
 import 'LocaleState.dart';
 import 'NavigationState.dart';
+import 'RecentsState.dart';
 import 'ThemeState.dart';
 import 'TrackState.dart';
 import 'UserState.dart';
@@ -20,6 +21,7 @@ class AppState extends ChangeNotifier
         LocaleState,
         NavigationState,
         ThemeState,
+        RecentsState,
         TrackState {
   SharedPreferences prefs;
 

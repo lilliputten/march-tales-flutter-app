@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:i18n_extension/i18n_extension.dart';
@@ -92,6 +94,7 @@ class RootAppState extends State<RootApp> {
       final List<Future> futures = [
         this._appState.loadFavorites(),
         this._appState.reloadTracks(),
+        this._appState.loadRecentsData(),
       ];
       await Future.wait<dynamic>(futures);
       setState(() {
@@ -99,7 +102,7 @@ class RootAppState extends State<RootApp> {
       });
     } catch (err, stacktrace) {
       logger.e('Can not finalize initialization: $err', error: err, stackTrace: stacktrace);
-      // debugger();
+      debugger();
       setState(() {
         this._error = err;
       });

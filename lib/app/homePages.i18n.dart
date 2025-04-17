@@ -8,7 +8,7 @@ extension Localization on String {
       {
         'ru': {
           'Home': 'Главное',
-          'Tracks': 'Треки',
+          'Tracks': 'Записи',
           'Favorites': 'Избранное',
           'Generator': 'Генератор',
           'Settings': 'Настройки',

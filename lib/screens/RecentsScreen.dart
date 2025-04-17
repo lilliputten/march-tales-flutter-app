@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 
 import 'package:march_tales_app/app/ErrorBlock.dart';
 import 'package:march_tales_app/components/LoadingSplash.dart';
-import 'package:march_tales_app/core/exceptions/ConnectionException.dart';
-import 'package:march_tales_app/core/helpers/showErrorToast.dart';
-import 'package:march_tales_app/features/Track/loaders/RecentResults.dart';
-import 'package:march_tales_app/features/Track/loaders/loadRecents.dart';
 import 'package:march_tales_app/screens/views/RecentsScreenView.dart';
-import 'RecentsScreen.dart.i18n.dart';
+import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
@@ -21,63 +18,55 @@ class RecentsScreen extends StatefulWidget {
     this.scrollController,
   });
 
-  @override
-  State<RecentsScreen> createState() => RecentsScreenState();
+  @override State<RecentsScreen> createState() => _RecentsScreenState();
 }
 
-class RecentsScreenState extends State<RecentsScreen> {
-  late Future dataFuture;
+class _RecentsScreenState extends State<RecentsScreen> {
 
-  late RecentResults? recentResults;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    this._loadData();
-  }
-
-  _loadDataFuture() async {
-    try {
-      /* // DEBUG
-       * if (AppConfig.LOCAL) {
-       *   await Future.delayed(Duration(seconds: 2));
-       * }
-       * throw new Exception('Test error');
-       */
-      final data = await loadRecents();
-      logger.t(
-          '[_loadDataFuture] recentTracks=${data.recentTracks} popularTracks=${data.popularTracks} mostRecentTrack=${data.mostRecentTrack} randomTrack=${data.randomTrack}');
-      setState(() {
-        this.recentResults = data;
-      });
-      return data;
-    } catch (err, stacktrace) {
-      final String msg = 'Error loading recent data.';
-      logger.e('${msg}: $err', error: err, stackTrace: stacktrace);
-      setState(() {
-        this.recentResults = null;
-      });
-      final translatedMsg = msg.i18n;
-      showErrorToast(translatedMsg);
-      throw ConnectionException(translatedMsg);
-    }
-  }
-
-  _reloadData() {
-    // XXX: Clear state?
-    this._loadData();
-  }
-
-  _loadData() {
-    setState(() {
-      this.dataFuture = this._loadDataFuture();
-    });
-  }
+  /*
+   * late Future recentsFuture;
+   * late RecentResults? recentResults;
+   * @override
+   * void didChangeDependencies() {
+   *   super.didChangeDependencies();
+   *   this._loadData();
+   * }
+   * _loadDataFuture() async {
+   *   try {
+   *     final data = await loadRecents();
+   *     logger.t(
+   *         '[_loadDataFuture] recentTracks=${data.recentTracks} popularTracks=${data.popularTracks} mostRecentTrack=${data.mostRecentTrack} randomTrack=${data.randomTrack}');
+   *     setState(() {
+   *       this.recentResults = data;
+   *     });
+   *     return data;
+   *   } catch (err, stacktrace) {
+   *     final String msg = 'Error loading recent data.';
+   *     logger.e('${msg}: $err', error: err, stackTrace: stacktrace);
+   *     setState(() {
+   *       this.recentResults = null;
+   *     });
+   *     final translatedMsg = msg.i18n;
+   *     showErrorToast(translatedMsg);
+   *     throw ConnectionException(translatedMsg);
+   *   }
+   * }
+   * _reloadData() {
+   *   // XXX: Clear state?
+   *   this._loadData();
+   * }
+   * _loadData() {
+   *   setState(() {
+   *     this.recentsFuture = this._loadDataFuture();
+   *   });
+   * }
+   */
 
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
     return FutureBuilder(
-      future: this.dataFuture,
+      future: appState.recentsFuture,
       builder: (context, snapshot) {
         final isReady = snapshot.connectionState == ConnectionState.done;
         final isError = isReady && snapshot.error != null;
@@ -86,14 +75,14 @@ class RecentsScreenState extends State<RecentsScreen> {
         if (isError) {
           return ErrorBlock(
             error: snapshot.error,
-            onRetry: this._reloadData,
+            onRetry: () {
+              appState.reloadRecentsData();
+            },
           );
         } else if (isReady && hasData) {
           return RecentsScreenView(
-            recentResults: snapshot.data,
+            recentResults: snapshot.data!,
             scrollController: this.widget.scrollController,
-            // isLoading: !isReady,
-            // onLoadNext: this._loadData,
           );
         } else {
           return LoadingSplash();
