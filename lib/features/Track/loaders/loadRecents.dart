@@ -17,7 +17,7 @@ Future<RecentResults> loadRecents({
 }) async {
   // DEBUG
   if (AppConfig.LOCAL) {
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 1));
   }
   query = addQueryParam(query, 'full', full, ifAbsent: true);
   final String url = '${AppConfig.TALES_SERVER_HOST}${AppConfig.TALES_API_PREFIX}/recents/${query}';

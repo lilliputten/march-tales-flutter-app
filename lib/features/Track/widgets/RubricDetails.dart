@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
 
+import 'package:march_tales_app/blocks/SectionTitle.dart';
 import 'package:march_tales_app/components/CustomBackButton.dart';
 import 'package:march_tales_app/components/CustomRouteButton.dart';
-import 'package:march_tales_app/components/SectionTitle.dart';
 import 'package:march_tales_app/components/data-driven/ShowTracksListBlockLoader.dart';
 import 'package:march_tales_app/core/config/AppConfig.dart';
 import 'package:march_tales_app/features/Track/types/Rubric.dart';
