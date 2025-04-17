@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'package:march_tales_app/app/AppColors.dart';
 import 'package:march_tales_app/blocks/NoTracksInfo.dart';
+import 'package:march_tales_app/components/LoadingSplash.dart';
 import 'package:march_tales_app/features/Track/widgets/TracksList.dart';
 import 'package:march_tales_app/shared/states/AppState.dart';
 
@@ -19,9 +19,6 @@ class TracksPage extends StatelessWidget {
     final tracksHasBeenLoaded = appState.tracksHasBeenLoaded;
     final tracksIsLoading = appState.tracksIsLoading;
     final tracks = appState.tracks;
-
-    final theme = Theme.of(context);
-    final AppColors appColors = theme.extension<AppColors>()!;
 
     if (tracksLoadError != null) {
       // XXX FUTURE: Display the error inside the RefreshIndicator to allow refresh data?
@@ -51,7 +48,7 @@ class TracksPage extends StatelessWidget {
         children: [
           Expanded(
             child: Center(
-              child: CircularProgressIndicator(strokeWidth: 2, color: appColors.brandColor),
+              child: LoadingSplash(),
             ),
           ),
         ],

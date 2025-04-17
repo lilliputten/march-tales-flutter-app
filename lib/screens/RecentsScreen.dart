@@ -10,57 +10,13 @@ import 'package:march_tales_app/shared/states/AppState.dart';
 
 final logger = Logger();
 
-class RecentsScreen extends StatefulWidget {
+class RecentsScreen extends StatelessWidget {
   final ScrollController? scrollController;
 
   const RecentsScreen({
     super.key,
     this.scrollController,
   });
-
-  @override
-  State<RecentsScreen> createState() => _RecentsScreenState();
-}
-
-class _RecentsScreenState extends State<RecentsScreen> {
-  /*
-   * late Future recentsFuture;
-   * late RecentResults? recentResults;
-   * @override
-   * void didChangeDependencies() {
-   *   super.didChangeDependencies();
-   *   this._loadData();
-   * }
-   * _loadDataFuture() async {
-   *   try {
-   *     final data = await loadRecents();
-   *     logger.t(
-   *         '[_loadDataFuture] recentTracks=${data.recentTracks} popularTracks=${data.popularTracks} mostRecentTrack=${data.mostRecentTrack} randomTrack=${data.randomTrack}');
-   *     setState(() {
-   *       this.recentResults = data;
-   *     });
-   *     return data;
-   *   } catch (err, stacktrace) {
-   *     final String msg = 'Error loading recent data.';
-   *     logger.e('${msg}: $err', error: err, stackTrace: stacktrace);
-   *     setState(() {
-   *       this.recentResults = null;
-   *     });
-   *     final translatedMsg = msg.i18n;
-   *     showErrorToast(translatedMsg);
-   *     throw ConnectionException(translatedMsg);
-   *   }
-   * }
-   * _reloadData() {
-   *   // XXX: Clear state?
-   *   this._loadData();
-   * }
-   * _loadData() {
-   *   setState(() {
-   *     this.recentsFuture = this._loadDataFuture();
-   *   });
-   * }
-   */
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +38,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
         } else if (isReady && hasData) {
           return RecentsScreenView(
             recentResults: snapshot.data!,
-            scrollController: this.widget.scrollController,
+            scrollController: this.scrollController,
           );
         } else {
           return LoadingSplash();

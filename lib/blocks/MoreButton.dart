@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
+import 'package:march_tales_app/components/LoadingSplash.dart';
 import 'MoreButton.i18n.dart';
 
 class MoreButton extends StatelessWidget {
@@ -27,13 +28,7 @@ class MoreButton extends StatelessWidget {
           foregroundColor: WidgetStatePropertyAll<Color>(color),
         ),
         onPressed: isLoading ? null : this.onLoadNext,
-        icon: isLoading
-            ? SizedBox(
-                height: iconSize,
-                width: iconSize,
-                child: CircularProgressIndicator(color: color, strokeWidth: 2),
-              )
-            : Icon(Icons.arrow_circle_down, size: iconSize, color: color),
+        icon: isLoading ? LoadingSplash() : Icon(Icons.arrow_circle_down, size: iconSize, color: color),
         label: Text(isLoading ? 'Loading...'.i18n : 'Show more...'.i18n),
       ),
     );

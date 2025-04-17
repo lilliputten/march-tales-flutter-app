@@ -9,6 +9,7 @@
 
 - Added new navigation tab and page (home, 'recents').
 - Added recent data state, screen & details components with data reload feature (via `RefreshIndicator`).
+- Used standard `LoadingSplash` instead of `CircularProgressIndicator` widget wherever possible.
 
 See:
 
