@@ -18,11 +18,11 @@ class RecentsScreen extends StatefulWidget {
     this.scrollController,
   });
 
-  @override State<RecentsScreen> createState() => _RecentsScreenState();
+  @override
+  State<RecentsScreen> createState() => _RecentsScreenState();
 }
 
 class _RecentsScreenState extends State<RecentsScreen> {
-
   /*
    * late Future recentsFuture;
    * late RecentResults? recentResults;
