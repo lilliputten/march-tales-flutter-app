@@ -4,7 +4,9 @@ extension Localization on String {
   static var _t = Translations.byLocale('en') +
       {
         'ru': {
-          'The most recent': 'Свежее',
+          'The most recent': 'Самое свежее',
+          'Random': 'Случайное',
+          'Most popular': 'Самое популярное',
         },
       };
   String get i18n => localize(this, _t);

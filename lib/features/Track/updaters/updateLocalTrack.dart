@@ -13,11 +13,6 @@ final logger = Logger();
  * loadTracksByIds
  * loadTracksList
  * LoadTracksListResults
- *
- * fetchNextTrackDetails, getTrackFromStateOrLoad, loadTrackDetails, loadTracksByIds, loadTracksList, LoadTracksListResults
- * \<\(fetchNextTrackDetails\|getTrackFromStateOrLoad\|loadTrackDetails\|loadTracksByIds\|loadTracksList\|LoadTracksListResults\)\>
- * \b(fetchNextTrackDetails|getTrackFromStateOrLoad|loadTrackDetails|loadTracksByIds|loadTracksList|LoadTracksListResults)\b
- *
  */
 
 Future<bool> updateLocalTrack(Track track) async {
