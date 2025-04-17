@@ -38,13 +38,11 @@ Future<bool> updateLocalTrack(Track track) async {
     updated = true;
     logger.t(
         '[updateLocalTrack] played_count: track=${track.id} ${userTrack.played_count} <= ${trackInfo.localPlayedCount}, ${userTrack.played_at!} <= ${trackInfo.lastPlayed}');
-    debugger();
     tracksInfoDb.updatePlayedCount(track.id,
         localPlayedCount: userTrack.played_count, totalPlayedCount: track.played_count, timestamp: userTrack.played_at);
     if (userTrack.position != null && userTrack.position != trackInfo.position) {
       logger.t(
           '[updateLocalTrack] position: track=${track.id} ${userTrack.position} <= ${trackInfo.position}, ${userTrack.played_at!} <= ${trackInfo.lastPlayed}');
-      debugger();
       tracksInfoDb.updatePosition(track.id, userTrack.position, timestamp: userTrack.played_at);
     }
   }
@@ -54,7 +52,6 @@ Future<bool> updateLocalTrack(Track track) async {
       updated = true;
       logger.t(
           '[updateLocalTrack] favorite: track=${track.id} ${userTrack.is_favorite} <= ${trackInfo.favorite}, ${userTrack.favorited_at!} <= ${trackInfo.lastFavorited}');
-      debugger();
       tracksInfoDb.setFavorite(track.id, userTrack.is_favorite!, timestamp: userTrack.favorited_at);
     }
   }

@@ -7,6 +7,7 @@ extension Localization on String {
       sharedTranslationsData +
       {
         'ru': {
+          'Home': 'Главное',
           'Tracks': 'Треки',
           'Favorites': 'Избранное',
           'Generator': 'Генератор',
