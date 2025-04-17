@@ -1,9 +1,20 @@
 <!--
  @since 2025.03.19, 22:43
- @changed 2025.04.15, 15:53
+ @changed 2025.04.17, 20:35
 -->
 
 # CHANGELOG
+
+## [v.0.1.11](https://github.com/lilliputten/march-tales-flutter-app/releases/tag/v.0.1.11) - 2025.04.17
+
+- Added new navigation tab and page (home, 'recents').
+- Added recent data state, screen & details components with data reload feature (via `RefreshIndicator`).
+
+See:
+
+- [Issue #61: Add the 'Home' screen with data from recents api results](https://github.com/lilliputten/march-tales-flutter-app/issues/61)
+- [Compare with previous tag](https://github.com/lilliputten/march-tales-flutter-app/compare/march-tales-app-v.0.1.10...v.0.1.11)
+- [Release](https://github.com/lilliputten/march-tales-flutter-app/releases/tag/v.0.1.11)
 
 ## [v.0.1.10](https://github.com/lilliputten/march-tales-flutter-app/releases/tag/v.0.1.10) - 2025.04.15
 
