@@ -54,7 +54,7 @@ class TopFilterBoxState extends State<TopFilterBox> with IsRootStateMixin {
 
     final isRoot = this.isRoot();
     final pageIndex = appState.getNavigationTabIndex();
-    final isTracksPage = pageIndex == HomePages.root.index;
+    final isTracksPage = pageIndex == HomePages.tracks.index;
     // final isPlayingAndNotPaused = appState.isPlayingAndNotPaused();
     final showHideable = isRoot && isTracksPage;
 

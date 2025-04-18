@@ -13,7 +13,7 @@ final logger = Logger();
 
 enum HomePages {
   recents,
-  root,
+  tracks,
   favorites,
   settings,
 }

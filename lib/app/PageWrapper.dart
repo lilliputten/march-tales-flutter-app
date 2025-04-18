@@ -33,8 +33,9 @@ class PageWrapper extends StatelessWidget {
     final appState = context.watch<AppState>();
 
     final isSettingsPage = pageIndex == HomePages.settings.index;
-    final hidableNavigation = !isSettingsPage; // appState.isHidableNavigation();
-    final showPlayer = hidableNavigation;
+    final isHomePage = pageIndex == 0;
+    final hidableNavigation = !isSettingsPage && !isHomePage; // appState.isHidableNavigation();
+    final showPlayer = !isSettingsPage;
 
     final theme = Theme.of(context);
     final AppColors appColors = theme.extension<AppColors>()!;
