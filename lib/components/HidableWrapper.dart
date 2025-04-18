@@ -16,6 +16,7 @@ class HidableWrapper extends StatelessWidget {
     required this.child,
   });
 
+  /// Only wrap the content -- it'll be always vusuke
   final bool wrap;
   final bool show;
   final bool bypass;
