@@ -10,7 +10,7 @@ import 'package:march_tales_app/features/Track/widgets/TrackItem.dart';
 
 final logger = Logger();
 
-const double scrollGap = 20;
+const double scrollGap = 0;
 
 typedef FutureCallback = Future<void> Function();
 
@@ -67,10 +67,11 @@ class TracksListState extends State<TracksList> with ScrollControllerProviderMix
     if (atBottom && !this.widget.isLoading && onLoadNext != null) {
       await onLoadNext();
       this.scrollController.animateTo(
-            pixels + 20,
-            duration: Duration(seconds: 1),
-            curve: Curves.linear,
-          );
+        // Use a half screen size?
+        pixels + 200,
+        duration: Duration(seconds: 1),
+        curve: Curves.linear,
+      );
     }
   }
 

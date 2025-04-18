@@ -1,6 +1,6 @@
 #!/bin/sh
 # @desc Create apk/aab build
-# @changed 2025.04.15, 15:23
+# @changed 2025.04.18, 21:41
 
 if [ $# -lt 1 ]; then
   echo "Usage: $0 [--apk] [--aab]"
@@ -46,7 +46,7 @@ if [[ "$ARGS" =~ .*--aab.* ]]; then
   AAB_FOLDER="build/app/outputs/bundle/release"
   echo "Generating aab bundle $PROJECT_INFO #${VERSION_CODE}..."
   DEBUG_INFO_PATH="build/app/intermediates/merged_native_libs/release/out/lib"
-  DEBUG_INFO_ARC="debug-symbols-${VERSION}-${VERSION_CODE}.zip"
+  DEBUG_INFO_ARC="debug-symbols-${VERSION_CODE}-${VERSION}.zip"
   flutter build appbundle \
     --build-name=$VERSION \
     --dart-define-from-file=.env \
