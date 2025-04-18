@@ -6,8 +6,11 @@ const double _loadingSplashSize = 48;
 const double _loadingSplashStrokeWidth = 2;
 
 class LoadingSplash extends StatelessWidget {
+  final double size;
+
   const LoadingSplash({
     super.key,
+    this.size = _loadingSplashSize,
   });
 
   @override
@@ -22,8 +25,8 @@ class LoadingSplash extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
-          height: _loadingSplashSize,
-          width: _loadingSplashSize,
+          height: this.size,
+          width: this.size,
           child: CircularProgressIndicator(color: color, strokeWidth: _loadingSplashStrokeWidth),
         ),
       ],

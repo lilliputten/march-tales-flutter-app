@@ -27,7 +27,7 @@ class RecentsScreen extends StatelessWidget {
         final isReady = snapshot.connectionState == ConnectionState.done;
         final isError = isReady && snapshot.error != null;
         final hasData = !isError && snapshot.data != null;
-        logger.t('[RecentsScreen] data=${snapshot.data} isReady=${isReady} error=${snapshot.error}');
+        // logger.t('[RecentsScreen] data=${snapshot.data} isReady=${isReady} error=${snapshot.error}');
         if (isError) {
           return ErrorBlock(
             error: snapshot.error,

@@ -5,6 +5,11 @@
 
 # CHANGELOG
 
+## Ongoing
+
+- Added automatic scrolling of the tracks list.
+- Added a statistics section on the main screen.
+
 ## [v.0.1.11](https://github.com/lilliputten/march-tales-flutter-app/releases/tag/v.0.1.11) - 2025.04.17
 
 - Added new navigation tab and page (home, 'recents').

@@ -10,6 +10,10 @@ import 'package:march_tales_app/features/Track/widgets/TrackItem.dart';
 
 final logger = Logger();
 
+const double scrollGap = 20;
+
+typedef FutureCallback = Future<void> Function();
+
 class TracksList extends StatefulWidget {
   final List<Track> tracks;
   final int count;
@@ -17,7 +21,7 @@ class TracksList extends StatefulWidget {
   final bool asFavorite;
   final bool useScrollController;
   final RefreshCallback? onRefresh;
-  final void Function()? onLoadNext;
+  final FutureCallback? onLoadNext;
   final bool fullView;
   final bool compact;
 
@@ -39,6 +43,37 @@ class TracksList extends StatefulWidget {
 }
 
 class TracksListState extends State<TracksList> with ScrollControllerProviderMixin {
+  late ScrollController scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    this.scrollController = this.getScrollController();
+    this.scrollController.addListener(this.scrollHandler);
+  }
+
+  scrollHandler() async {
+    final tracksCount = this.widget.tracks.length;
+    final hasMoreTracks = this.widget.count > tracksCount;
+    if (!hasMoreTracks) {
+      return;
+    }
+    final position = this.scrollController.position;
+    final maxScrollExtent = position.maxScrollExtent;
+    final pixels = position.pixels;
+    final diff = (pixels + scrollGap) - maxScrollExtent;
+    final atBottom = diff >= 0;
+    final onLoadNext = this.widget.onLoadNext;
+    if (atBottom && !this.widget.isLoading && onLoadNext != null) {
+      await onLoadNext();
+      this.scrollController.animateTo(
+            pixels + 20,
+            duration: Duration(seconds: 1),
+            curve: Curves.linear,
+          );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -118,10 +153,18 @@ class TracksListView extends StatelessWidget {
       itemCount: showItems,
       itemBuilder: (context, i) {
         if (i == tracksCount) {
-          return MoreButton(onLoadNext: this.onLoadNext, isLoading: this.isLoading);
+          return MoreButton(
+            onLoadNext: this.onLoadNext,
+            isLoading: this.isLoading,
+            // onlyLoader: true,
+          );
         } else {
           return TrackItem(
-              track: this.tracks[i], fullView: this.fullView, compact: this.compact, asFavorite: this.asFavorite);
+            track: this.tracks[i],
+            fullView: this.fullView,
+            compact: this.compact,
+            asFavorite: this.asFavorite,
+          );
         }
       },
     );

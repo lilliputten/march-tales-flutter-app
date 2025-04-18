@@ -31,6 +31,7 @@ mixin TrackState {
   int availableTracksCount = 0;
   int tracksLimit = defaultTracksDownloadLimit;
   List<Track> tracks = [];
+  Future<LoadTracksListResults>? _loadTracksFuture;
   // XXX: Store loading handler to allow cancelling?
 
   List<Track> getTracks() {
@@ -106,7 +107,14 @@ mixin TrackState {
     }
   }
 
-  Future<LoadTracksListResults> loadNextTracks() async {
+  Future<LoadTracksListResults> loadNextTracks() {
+    if (!this.tracksIsLoading || this._loadTracksFuture == null) {
+      this._loadTracksFuture = this._loadNextTracks();
+    }
+    return this._loadTracksFuture!;
+  }
+
+  Future<LoadTracksListResults> _loadNextTracks() async {
     try {
       tracksIsLoading = true;
       notifyListeners();

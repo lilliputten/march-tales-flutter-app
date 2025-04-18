@@ -81,8 +81,8 @@ class TracksPage extends StatelessWidget {
             onRefresh: () async {
               await appState.reloadTracks();
             },
-            onLoadNext: () {
-              appState.loadNextTracks();
+            onLoadNext: () async {
+              await appState.loadNextTracks();
             },
           ),
         ),
