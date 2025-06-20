@@ -1,18 +1,20 @@
 <!--
  @since 2025.03.19, 22:43
- @changed 2025.04.18, 21:11
+ @changed 2025.06.21, 02:17
 -->
 
 # CHANGELOG
 
-## [v.0.1.12](https://github.com/lilliputten/march-tales-flutter-app/releases/tag/v.0.1.12) - 2025.04.18
+## [v.0.1.12](https://github.com/lilliputten/march-tales-flutter-app/releases/tag/v.0.1.12) - 2025.06.21
 
-- Added automatic scrolling of the tracks list.
+- Added automatic scrolling of the tracks list (issue #56).
 - Added a statistics section on the main screen.
 - Added ability to hide floating player.
+- Updated "recent" widgets: statistics moved to the bottom of the main page, styled as normal buttons.
 
 See:
 
+- [Issue #56: Implement automatic loading of tracks when scrolling](https://github.com/lilliputten/march-tales-flutter-app/issues/61)
 - [Issue #61: Add the 'Home' screen with data from recents api results](https://github.com/lilliputten/march-tales-flutter-app/issues/61)
 - [Compare with previous tag](https://github.com/lilliputten/march-tales-flutter-app/compare/march-tales-app-v.0.1.11...v.0.1.12)
 - [Release](https://github.com/lilliputten/march-tales-flutter-app/releases/tag/v.0.1.12)

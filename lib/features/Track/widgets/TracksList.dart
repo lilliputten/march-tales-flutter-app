@@ -67,11 +67,11 @@ class TracksListState extends State<TracksList> with ScrollControllerProviderMix
     if (atBottom && !this.widget.isLoading && onLoadNext != null) {
       await onLoadNext();
       this.scrollController.animateTo(
-        // Use a half screen size?
-        pixels + 200,
-        duration: Duration(seconds: 1),
-        curve: Curves.linear,
-      );
+            // Use a half screen size?
+            pixels + 200,
+            duration: Duration(seconds: 1),
+            curve: Curves.linear,
+          );
     }
   }
 

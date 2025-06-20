@@ -28,14 +28,18 @@ Widget _stats({
   final theme = Theme.of(context);
   final style = theme.textTheme.bodyMedium!;
   final AppColors appColors = theme.extension<AppColors>()!;
+  final Color iconColor = Colors.white; // appColors.brandColor;
   final ButtonStyle buttonStyle = OutlinedButton.styleFrom(
-    alignment: AlignmentDirectional.centerStart,
-    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    minimumSize: Size.zero,
-    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 0),
     textStyle: style,
-    foregroundColor: appColors.brandColor,
-    // side: BorderSide(width: 1.0, color: appColors.brandColor),
+    backgroundColor: appColors.brandColor,
+
+    // alignment: AlignmentDirectional.centerStart,
+    // tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    // minimumSize: Size.zero,
+    // padding: EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+    // textStyle: style,
+    // foregroundColor: appColors.brandColor,
+    side: BorderSide(width: 1.0, color: appColors.brandColor),
   );
 
   final navigatorState = navigatorKey.currentState;
@@ -58,7 +62,7 @@ Widget _stats({
           spacing: 0,
           children: [
             // Tracks button
-            TextButton.icon(
+            FilledButton.icon(
               style: buttonStyle,
               onPressed: () {
                 appState.updateNavigationTabIndex(HomePages.tracks.index);
@@ -67,7 +71,7 @@ Widget _stats({
                   return route.isFirst;
                 });
               },
-              icon: Icon(Icons.headphones, color: appColors.brandColor),
+              icon: Icon(Icons.headphones, color: iconColor),
               label: Wrap(
                 spacing: 5,
                 alignment: WrapAlignment.start,
@@ -84,7 +88,7 @@ Widget _stats({
                 ],
               ),
             ),
-            TextButton.icon(
+            OutlinedButton.icon(
               style: buttonStyle,
               onPressed: () {
                 Navigator.restorablePushNamed(
@@ -93,7 +97,7 @@ Widget _stats({
                   // arguments: arguments,
                 );
               },
-              icon: Icon(Icons.people, color: appColors.brandColor),
+              icon: Icon(Icons.people, color: iconColor),
               label: Wrap(
                 spacing: 5,
                 crossAxisAlignment: WrapCrossAlignment.center,
@@ -117,7 +121,7 @@ Widget _stats({
                   RubricsListScreen.routeName,
                 );
               },
-              icon: Icon(Icons.shelves, color: appColors.brandColor),
+              icon: Icon(Icons.shelves, color: iconColor),
               label: Wrap(
                 spacing: 5,
                 crossAxisAlignment: WrapCrossAlignment.center,
@@ -141,7 +145,7 @@ Widget _stats({
                   TagsListScreen.routeName,
                 );
               },
-              icon: Icon(Icons.tag, color: appColors.brandColor),
+              icon: Icon(Icons.tag, color: iconColor),
               label: Wrap(
                 spacing: 5,
                 crossAxisAlignment: WrapCrossAlignment.center,
@@ -254,10 +258,10 @@ class RecentDetails extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 10,
       children: [
-        _stats(recentResults: this.recentResults, context: context),
         _mostRecentTrack(recentResults: this.recentResults),
         _randomTrack(recentResults: this.recentResults),
         _popularTracks(recentResults: this.recentResults),
+        _stats(recentResults: this.recentResults, context: context),
       ].nonNulls.toList(),
     );
   }
