@@ -55,9 +55,7 @@ class TrackInfo {
         lastPlayed: DateTime.fromMillisecondsSinceEpoch(data['lastPlayedMs']),
         lastFavorited: DateTime.fromMillisecondsSinceEpoch(data['lastFavoritedMs']),
       );
-      logger.t(
-          '[TrackInfo:fromMap] lastPlayedMs=${data['lastPlayedMs']} lastPlayed=${trackInfo.lastPlayed} data=${data} trackInfo=${trackInfo}');
-      // debugger();
+      // logger.t('[TrackInfo:fromMap] lastPlayedMs=${data['lastPlayedMs']} lastPlayed=${trackInfo.lastPlayed} data=${data} trackInfo=${trackInfo}');
       return trackInfo;
     } catch (err, stacktrace) {
       final String msg = 'Can not parse track info data: $err';

@@ -24,6 +24,21 @@ mixin ActivePlayerState {
 
   bool isPlaying = false;
   bool isPaused = false;
+  bool isPlayerVisible = true;
+
+  hidePlayer() {
+    if (this.isPlayerVisible) {
+      this.isPlayerVisible = false;
+      this.notifyListeners();
+    }
+  }
+
+  showPlayer() {
+    if (!this.isPlayerVisible) {
+      this.isPlayerVisible = true;
+      this.notifyListeners();
+    }
+  }
 
   bool isPlayingAndNotPaused() {
     return this.isPlaying && !this.isPaused;

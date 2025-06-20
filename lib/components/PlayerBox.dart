@@ -39,12 +39,14 @@ class PlayerBox extends StatefulWidget {
   final bool show;
   final bool isAuthorized;
   final NavigatorState? navigatorState;
+  final VoidCallback showPlayer;
 
   const PlayerBox({
     super.key,
     this.show = true,
     this.isAuthorized = true,
     this.navigatorState,
+    required this.showPlayer,
   });
 
   @override
@@ -129,8 +131,6 @@ class PlayerBoxState extends State<PlayerBox> {
     final timestamp = DateTime.now();
     tracksInfoDb.updatePosition(this._track!.id, position ?? Duration.zero,
         timestamp: timestamp); // this is await function, we don't wait for the finish
-    // XXX FUTURE: 2025.03.01, 21:06 -- Update position on the server
-    // XXX FUTURE: Involve last saved position and save once in a period, eg, 5 secs
     final int timestampMs = timestamp.millisecondsSinceEpoch;
     if (this._track != null &&
         this._position != null &&
@@ -143,7 +143,6 @@ class PlayerBoxState extends State<PlayerBox> {
 
   Future<void> _loadTrackPosition() async {
     if (this._track != null) {
-      // XXX FUTURE: Load data from the server if isAuthorized
       final trackInfo = await tracksInfoDb.getById(this._track!.id);
       setState(() {
         this._position = trackInfo?.position; // ?? Duration.zero;
@@ -327,6 +326,7 @@ class PlayerBoxState extends State<PlayerBox> {
       this._ensurePlayerListener();
       this._player.play(); // Returns the playback Future
       this._ensureTimer();
+      this.widget.showPlayer();
     } catch (err, stacktrace) {
       logger.e('[PlayerBox:_startPlayback] ${err}', error: err, stackTrace: stacktrace);
       debugger();
@@ -415,6 +415,7 @@ class PlayerBoxState extends State<PlayerBox> {
       if (play) {
         this._startPlayback(notify: false);
       }
+      this.widget.showPlayer();
       if (notify) {
         this._sendBroadcastUpdate(PlayingTrackUpdateType.track);
       }

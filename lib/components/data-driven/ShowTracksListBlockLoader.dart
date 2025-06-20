@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/app/ErrorBlock.dart';
+import 'package:march_tales_app/components/LoadingSplash.dart';
 import 'package:march_tales_app/components/data-driven/views/TracksListBlockWithTitle.dart';
 import 'package:march_tales_app/core/exceptions/ConnectionException.dart';
 import 'package:march_tales_app/core/helpers/showErrorToast.dart';
@@ -99,14 +100,17 @@ class ShowTracksListBlockLoaderState extends State<ShowTracksListBlockLoader> {
             error: snapshot.error,
             onRetry: this._reloadData,
           );
+        } else if (isReady && hasData) {
+          return TracksListBlockWithTitle(
+            title: this.widget.title,
+            tracks: hasData ? this._tracks : [],
+            count: hasData ? this._count : 0,
+            isLoading: !isReady,
+            onLoadNext: this._loadData,
+          );
+        } else {
+          return LoadingSplash();
         }
-        return TracksListBlockWithTitle(
-          title: this.widget.title,
-          tracks: hasData ? this._tracks : [],
-          count: hasData ? this._count : 0,
-          isLoading: !isReady,
-          onLoadNext: this._loadData,
-        );
       },
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:march_tales_app/components/SectionTitle.dart';
+import 'package:march_tales_app/blocks/SectionTitle.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
 import 'package:march_tales_app/features/Track/widgets/TracksListBlock.dart';
 

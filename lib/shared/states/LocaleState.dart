@@ -10,6 +10,7 @@ mixin LocaleState {
   SharedPreferences? getPrefs(); // From `AppState`
   reloadAllTracks({bool notify = true}); // From `TrackState`
   reloadFavoritesData(); // From `FavoritesState`
+  reloadRecentsData({bool notify = true}); // From `RecentsState`
 
   /// Language
 
@@ -34,6 +35,7 @@ mixin LocaleState {
       await Future.wait<dynamic>([
         this.reloadAllTracks(),
         this.reloadFavoritesData(),
+        this.reloadRecentsData(),
       ]);
     }
   }

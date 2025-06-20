@@ -34,9 +34,6 @@ class ThumbnailImage extends StatelessWidget {
     final imageWidth = width != 0 ? width : height * previewDimensionsRatio;
     final imageHeight = height != 0 ? height : width / previewDimensionsRatio;
 
-    // final previewHalfSize = min(imageWidth, imageHeight) / 2;
-    // final previewProgressPadding = previewHalfSize / 2; // - 16;
-
     final placeholder = ThumbPlaceholder(width: imageWidth, height: imageHeight);
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
@@ -48,12 +45,6 @@ class ThumbnailImage extends StatelessWidget {
         fit: BoxFit.cover,
         placeholder: (context, url) => placeholder,
         errorWidget: (context, url, error) => placeholder,
-        // placeholder: (context, url) => Padding(
-        //   padding: EdgeInsets.all(previewProgressPadding),
-        //   child: CircularProgressIndicator(strokeWidth: 1, color: appColors.brandColor),
-        // ),
-        // errorWidget: (context, url, error) =>
-        //     Icon(Icons.error, color: theme.primaryColor.withValues(alpha: 0.5), size: previewHalfSize),
       ),
     );
   }
