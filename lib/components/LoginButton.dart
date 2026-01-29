@@ -104,6 +104,7 @@ class _LoginButtonState extends State<LoginButton> {
     final sessionId = serverSession.getSessionId();
 
     try {
+      // NOTE: Important: it forces a 'minimal mode' -- server will render only content without decorations
       cookieManager.setCookie(url: webUrl, name: 'mobile_auth', value: 'true');
       if (locale.isNotEmpty) {
         cookieManager.setCookie(url: webUrl, name: 'django_language', value: locale);

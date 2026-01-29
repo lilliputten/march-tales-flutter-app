@@ -7,7 +7,8 @@ import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 
 final logger = Logger();
 
-final loginSuccessReg = RegExp(r'^/login-success/([A-z0-9_-]+)/');
+final loginSuccessReg = RegExp(r'^(?:/\w\w)?/login-success/([A-z0-9_-]+)/'); // New scheme: with an optional locale prefix (new site behavior)
+// final loginSuccessReg = RegExp(r'^/login-success/([A-z0-9_-]+)/'); // Old scheme: strictly without any prefixes
 
 class LoginBrowser extends InAppBrowser {
   LoginBrowser({
