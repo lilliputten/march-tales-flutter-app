@@ -64,6 +64,7 @@ class TrackFullViewExtraBlock extends StatelessWidget {
     final labelColor = basicColor.withValues(alpha: labelAlpha);
     final textStyle = style.copyWith(color: basicColor);
 
+    logger.d('[RubricsInlineList] track=${track} series_id=${track.series_id} series_order=${track.series_order}');
     debugger();
 
     final items = [
