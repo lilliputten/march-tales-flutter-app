@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:logger/logger.dart';
 import 'package:test/test.dart';
 
