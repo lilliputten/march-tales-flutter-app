@@ -1,9 +1,27 @@
 <!--
  @since 2025.03.19, 22:43
- @changed 2025.06.21, 02:17
+ @changed 2026.05.15, 02:11
 -->
 
 # CHANGELOG
+
+## [v.0.1.13](https://github.com/lilliputten/march-tales-flutter-app/releases/tag/v.0.1.13) - 2026.05.15
+
+Added support for track series.
+
+Update version to 0.1.13 and add track series info block.
+
+- Add `Series` data class and `TrackSeriesInfoBlock` widget.
+- Add `TrackSeriesInfoBlock` to the `TrackFullViewExtraBlock`.
+- Use `series.track_ids` instead of `series.tracks` in `TrackSeriesInfoBlock`.
+- Add `series_order` and `series_id` fields to `Track` data class.
+- Fix broken tests.
+- Minor changes for optional series data.
+
+See:
+
+- [Compare with previous tag](https://github.com/lilliputten/march-tales-flutter-app/compare/march-tales-app-v.0.1.12...v.0.1.13)
+- [Release](https://github.com/lilliputten/march-tales-flutter-app/releases/tag/v.0.1.13)
 
 ## [v.0.1.12](https://github.com/lilliputten/march-tales-flutter-app/releases/tag/v.0.1.12) - 2025.06.21
 
