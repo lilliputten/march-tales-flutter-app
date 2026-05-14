@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -61,6 +63,8 @@ class TrackFullViewExtraBlock extends StatelessWidget {
     final basicColor = basicColorBase;
     final labelColor = basicColor.withValues(alpha: labelAlpha);
     final textStyle = style.copyWith(color: basicColor);
+
+    debugger();
 
     final items = [
       // Author

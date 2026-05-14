@@ -59,6 +59,13 @@
       "program": "${file}"
     },
     {
+      "name": "Dart: Run Specific Test",
+      "request": "launch",
+      "type": "dart",
+      "program": "test/Track_test.dart",
+      "flutterMode": "debug"
+    },
+    {
       "name": "Dart: Run all Tests",
       "type": "dart",
       "request": "launch",

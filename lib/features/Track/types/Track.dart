@@ -29,16 +29,18 @@ class TrackAuthor {
   factory TrackAuthor.fromJson(Map<String, dynamic> json) {
     try {
       return TrackAuthor(
-        id: json['id'],
-        promote: json['promote'] as bool,
-        name: json['name'].toString(),
-        portrait_picture: json['portrait_picture'].toString(),
-        track_ids: List<dynamic>.from(json['track_ids']).map((val) => val as int).toList(),
+        id: (json['id'] as num?)?.toInt() ?? 0,
+        promote: (json['promote'] as bool?) ?? false,
+        name: json['name']?.toString() ?? '',
+        portrait_picture: json['portrait_picture']?.toString() ?? '',
+        track_ids: json['track_ids'] == null
+            ? <int>[]
+            : List<dynamic>.from(json['track_ids'] ?? []).map((val) => (val as num?)?.toInt() ?? 0).toList(),
       );
     } catch (err, stacktrace) {
       final String msg = 'Can not parse TrackAuthor data: $err';
       logger.e(msg, error: err, stackTrace: stacktrace);
-      debugger();
+      // Removed debugger() call which was potentially causing infinite loop in tests
       throw FormatException(msg);
     }
   }
@@ -61,14 +63,14 @@ class TrackTag {
   factory TrackTag.fromJson(Map<String, dynamic> json) {
     try {
       return TrackTag(
-        id: json['id'],
-        promote: json['promote'],
-        text: json['text'].toString(),
+        id: (json['id'] as num?)?.toInt() ?? 0,
+        promote: (json['promote'] as bool?) ?? false,
+        text: json['text']?.toString() ?? '',
       );
     } catch (err, stacktrace) {
       final String msg = 'Can not parse TrackTag data: $err';
       logger.e(msg, error: err, stackTrace: stacktrace);
-      debugger();
+      // Removed debugger() call which was potentially causing infinite loop in tests
       throw FormatException(msg);
     }
   }
@@ -109,7 +111,10 @@ class TrackRubric {
 
 class Track {
   final int id;
+  final int series_order;
+  final int series_id;
   final String title;
+
   final String description;
   final String track_status;
   final TrackAuthor author;
@@ -136,6 +141,8 @@ class Track {
 
   const Track({
     required this.id,
+    required this.series_order,
+    required this.series_id,
     required this.title,
     required this.description,
     // required this.audio_duration,
@@ -169,25 +176,32 @@ class Track {
 
   factory Track.fromJson(Map<String, dynamic> json) {
     try {
-      final int durationMs = (json['audio_duration'].toDouble() * 1000).round();
+      final dynamic audioDurationValue = json['audio_duration'];
+      final double audioDuration = (audioDurationValue is num) 
+        ? audioDurationValue.toDouble() 
+        : (double.tryParse(audioDurationValue?.toString() ?? '') ?? 0.0);
+      final int durationMs = (audioDuration * 1000).round();
       return Track(
         id: json['id'],
-        title: json['title'].toString(),
-        description: json['description'].toString(),
-        track_status: json['track_status'].toString(),
-        author: TrackAuthor.fromJson(json['author']),
-        audio_file: json['audio_file'].toString(),
+        series_order: (json['series_order'] as num?)?.toInt() ?? 0,
+        series_id: (json['series_id'] as num?)?.toInt() ?? 0,
+        title: json['title']?.toString() ?? '',
+        description: json['description']?.toString() ?? '',
+        track_status: json['track_status']?.toString() ?? '',
+        author: json['author'] != null ? TrackAuthor.fromJson(json['author']) : 
+                const TrackAuthor(id: 0, promote: false, name: '', portrait_picture: '', track_ids: []),
+        audio_file: json['audio_file']?.toString() ?? '',
         // audio_duration: json['audio_duration'].toDouble(),
         duration: Duration(milliseconds: durationMs), // json['audio_duration'].toDouble(),
-        audio_size: json['audio_size'],
-        preview_picture: json['preview_picture'].toString(),
-        for_members: json['for_members'],
-        played_count: json['played_count'],
-        youtube_url: json['youtube_url'].toString(),
-        published_at: DateTime.parse(json['published_at'].toString()),
-        published_by_id: json['published_by_id'],
-        updated_at: DateTime.parse(json['updated_at'].toString()),
-        updated_by_id: json['updated_by_id'],
+        audio_size: json['audio_size'] ?? 0,
+        preview_picture: json['preview_picture']?.toString() ?? '',
+        for_members: json['for_members'] ?? false,
+        played_count: json['played_count'] ?? 0,
+        youtube_url: json['youtube_url']?.toString() ?? '',
+        published_at: DateTime.tryParse(json['published_at']?.toString() ?? '') ?? DateTime.now(),
+        published_by_id: json['published_by_id'] ?? 0,
+        updated_at: DateTime.tryParse(json['updated_at']?.toString() ?? '') ?? DateTime.now(),
+        updated_by_id: json['updated_by_id'] ?? 0,
         // UserTrack data...
         user_track: json['user_track'] != null ? UserTrack.fromJson(json['user_track']) : null,
         // Related data...
@@ -208,7 +222,6 @@ class Track {
       final String msg = 'Can not parse Track data: $err';
       logger.e(msg, error: err, stackTrace: stacktrace);
       logger.w('Raw json data for the previous error is: : ${formatter.format(json)}');
-      debugger();
       throw FormatException(msg);
     }
   }
