@@ -62,7 +62,7 @@
       "name": "Dart: Run Specific Test",
       "request": "launch",
       "type": "dart",
-      "program": "test/Track_test.dart",
+      "program": "test/widget_test.dart",
       "flutterMode": "debug"
     },
     {

@@ -1,7 +1,5 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'dart:developer';
-
 import 'package:logger/logger.dart';
 
 import 'package:march_tales_app/core/helpers/YamlFormatter.dart';
@@ -92,14 +90,14 @@ class TrackRubric {
   factory TrackRubric.fromJson(Map<String, dynamic> json) {
     try {
       return TrackRubric(
-        id: json['id'],
-        promote: json['promote'],
-        text: json['text'].toString(),
+        id: (json['id'] as num?)?.toInt() ?? 0,
+        promote: (json['promote'] as bool?) ?? false,
+        text: json['text']?.toString() ?? '',
       );
     } catch (err, stacktrace) {
       final String msg = 'Can not parse TrackRubric data: $err';
       logger.e(msg, error: err, stackTrace: stacktrace);
-      debugger();
+      // Removed debugger() call which was potentially causing infinite loop in tests
       throw FormatException(msg);
     }
   }
@@ -177,9 +175,9 @@ class Track {
   factory Track.fromJson(Map<String, dynamic> json) {
     try {
       final dynamic audioDurationValue = json['audio_duration'];
-      final double audioDuration = (audioDurationValue is num) 
-        ? audioDurationValue.toDouble() 
-        : (double.tryParse(audioDurationValue?.toString() ?? '') ?? 0.0);
+      final double audioDuration = (audioDurationValue is num)
+          ? audioDurationValue.toDouble()
+          : (double.tryParse(audioDurationValue?.toString() ?? '') ?? 0.0);
       final int durationMs = (audioDuration * 1000).round();
       return Track(
         id: json['id'],
@@ -188,8 +186,9 @@ class Track {
         title: json['title']?.toString() ?? '',
         description: json['description']?.toString() ?? '',
         track_status: json['track_status']?.toString() ?? '',
-        author: json['author'] != null ? TrackAuthor.fromJson(json['author']) : 
-                const TrackAuthor(id: 0, promote: false, name: '', portrait_picture: '', track_ids: []),
+        author: json['author'] != null
+            ? TrackAuthor.fromJson(json['author'])
+            : const TrackAuthor(id: 0, promote: false, name: '', portrait_picture: '', track_ids: []),
         audio_file: json['audio_file']?.toString() ?? '',
         // audio_duration: json['audio_duration'].toDouble(),
         duration: Duration(milliseconds: durationMs), // json['audio_duration'].toDouble(),

@@ -48,45 +48,42 @@ void main() {
       throw Exception(msg);
     }
   });
-  /*
-   * group('Track details', () {
-   *   test('TrackTag list should be created from a dynamic list (parsed json)', () {
-   *     final list = [
-   *       {
-   *         'id': 1,
-   *         'text': 'First tag',
-   *       },
-   *       {
-   *         'id': 2,
-   *         'text': 'Second tag',
-   *       },
-   *     ];
-   *     try {
-   *       final trackTags = list.map((data) => TrackTag.fromJson(data)).toList();
-   *       expect(trackTags[0].id, 1);
-   *     } catch (err, stacktrace) {
-   *       final String msg = 'Failed test';
-   *       logger.e(msg, error: err, stackTrace: stacktrace);
-   *       debugger();
-   *       throw Exception(msg);
-   *     }
-   *   });
-   *   test('TrackAuthor should be created from a dynamic data (parsed json)', () {
-   *     final data = {
-   *       'id': 1,
-   *       'name': 'Test Author',
-   *     };
-   *     try {
-   *       final trackAuthor = TrackAuthor.fromJson(data);
-   *       expect(trackAuthor.id, 1);
-   *     } catch (err, stacktrace) {
-   *       final String msg = 'Failed test';
-   *       logger.e(msg, error: err, stackTrace: stacktrace);
-   *       debugger();
-   *       throw Exception(msg);
-   *     }
-   *   });
-   * });
-   */
+  group('Track details', () {
+    test('TrackTag list should be created from a dynamic list (parsed json)', () {
+      final list = [
+        {
+          'id': 1,
+          'text': 'First tag',
+        },
+        {
+          'id': 2,
+          'text': 'Second tag',
+        },
+      ];
+      try {
+        final trackTags = list.map((data) => TrackTag.fromJson(data)).toList();
+        expect(trackTags[0].id, 1);
+      } catch (err, stacktrace) {
+        final String msg = 'Failed test';
+        logger.e(msg, error: err, stackTrace: stacktrace);
+        debugger();
+        throw Exception(msg);
+      }
+    });
+    test('TrackAuthor should be created from a dynamic data (parsed json)', () {
+      final data = {
+        'id': 1,
+        'name': 'Test Author',
+      };
+      try {
+        final trackAuthor = TrackAuthor.fromJson(data);
+        expect(trackAuthor.id, 1);
+      } catch (err, stacktrace) {
+        final String msg = 'Failed test';
+        logger.e(msg, error: err, stackTrace: stacktrace);
+        debugger();
+        throw Exception(msg);
+      }
+    });
+  });
 }
-
