@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
@@ -10,6 +8,7 @@ import 'package:march_tales_app/core/helpers/showErrorToast.dart';
 import 'package:march_tales_app/core/server/ServerSession.dart';
 import 'package:march_tales_app/features/Track/types/Series.dart';
 import 'package:march_tales_app/features/Track/types/Track.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackSeriesItemWidget.dart';
 import 'TrackSeriesInfoBlock.i18n.dart';
 
 final logger = Logger();
@@ -87,13 +86,14 @@ class _TrackSeriesInfoBlockState extends State<TrackSeriesInfoBlock> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final style = theme.textTheme.bodyMedium!;
+    // final styleSmall = theme.textTheme.bodySmall!;
     final double basicAlpha = 1;
     final double labelAlpha = basicAlpha / 2;
     final textColor = colorScheme.onSurface;
     final basicColorBase = textColor;
     final basicColor = basicColorBase;
     final labelColor = basicColor.withValues(alpha: labelAlpha);
-    final textStyle = style.copyWith(color: basicColor);
+    // final textStyle = style.copyWith(color: basicColor);
 
     return FutureBuilder<Series>(
       future: _seriesFuture,
@@ -144,10 +144,10 @@ class _TrackSeriesInfoBlockState extends State<TrackSeriesInfoBlock> {
         }
 
         final series = snapshot.data!;
-        // final currentTrackIndex = series.track_ids.indexOf(widget.track.id);
 
-        logger.d('[RubricsInlineList] series=${series}');
-        // debugger();
+        if (series.track_ids.isEmpty) {
+          return Container();
+        }
 
         return Container(
           margin: EdgeInsets.symmetric(vertical: 8.0),
@@ -165,67 +165,47 @@ class _TrackSeriesInfoBlockState extends State<TrackSeriesInfoBlock> {
                   ],
                 ),
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: series.tracks.length,
-                itemBuilder: (context, index) {
-                  final track = series.tracks[index];
-                  final position = index + 1;
-
-                  return GestureDetector(
-                    onTap: () {
-                      if (track.id != widget.track.id) {
-                        // Navigate to the corresponding track
-                        Navigator.pushNamed(
-                          context,
-                          '/track/${track.id}', // Adjust this route according to your app's routing
-                        );
-                      }
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                      margin: EdgeInsets.only(bottom: 8.0),
-                      decoration: BoxDecoration(
-                        color: track.id == widget.track.id
-                            ? Theme.of(context).primaryColor.withValues(alpha: 0.1)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(4.0),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(4.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Theme.of(context).dividerColor,
-                              ),
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            child: Text(
-                              '$position/${series.tracks.length}',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ),
-                          SizedBox(width: 8.0),
-                          Expanded(
-                            child: Text(
-                              track.title,
-                              style: TextStyle(
-                                fontWeight: track.id == widget.track.id ? FontWeight.bold : FontWeight.normal,
-                              ),
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+              TrackItemsList(
+                series: series,
+                currentTrackId: widget.track.id,
               ),
             ],
           ),
+        );
+      },
+    );
+  }
+}
+
+class TrackItemsList extends StatefulWidget {
+  final Series series;
+  final int currentTrackId;
+
+  const TrackItemsList({
+    super.key,
+    required this.series,
+    required this.currentTrackId,
+  });
+
+  @override
+  State<TrackItemsList> createState() => _TrackItemsListState();
+}
+
+class _TrackItemsListState extends State<TrackItemsList> {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: widget.series.track_ids.length,
+      itemBuilder: (context, index) {
+        final trackId = widget.series.track_ids[index];
+        final position = index + 1;
+        return TrackSeriesItemWidget(
+          trackId: trackId,
+          position: position,
+          totalTracks: widget.series.track_ids.length,
+          isCurrentTrack: trackId == widget.currentTrackId,
         );
       },
     );
