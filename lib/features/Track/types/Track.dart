@@ -109,8 +109,8 @@ class TrackRubric {
 
 class Track {
   final int id;
-  final int series_order;
-  final int series_id;
+  final int? series_order;
+  final int? series_id;
   final String title;
 
   final String description;

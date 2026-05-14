@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
@@ -32,7 +34,7 @@ class _TrackSeriesInfoBlockState extends State<TrackSeriesInfoBlock> {
   @override
   void initState() {
     super.initState();
-    if (widget.track.series_id > 0) {
+    if (widget.track.series_id != null) {
       _loadSeriesData();
     }
   }
@@ -43,7 +45,7 @@ class _TrackSeriesInfoBlockState extends State<TrackSeriesInfoBlock> {
       _error = null;
     });
 
-    _seriesFuture = _fetchSeriesData(widget.track.series_id);
+    _seriesFuture = _fetchSeriesData(widget.track.series_id!);
     _seriesFuture.then((_) {
       if (mounted) {
         setState(() {
@@ -78,9 +80,20 @@ class _TrackSeriesInfoBlockState extends State<TrackSeriesInfoBlock> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.track.series_id <= 0) {
+    if (widget.track.series_id == null) {
       return Container(); // Return nothing if no series_id
     }
+
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final style = theme.textTheme.bodyMedium!;
+    final double basicAlpha = 1;
+    final double labelAlpha = basicAlpha / 2;
+    final textColor = colorScheme.onSurface;
+    final basicColorBase = textColor;
+    final basicColor = basicColorBase;
+    final labelColor = basicColor.withValues(alpha: labelAlpha);
+    final textStyle = style.copyWith(color: basicColor);
 
     return FutureBuilder<Series>(
       future: _seriesFuture,
@@ -133,6 +146,9 @@ class _TrackSeriesInfoBlockState extends State<TrackSeriesInfoBlock> {
         final series = snapshot.data!;
         // final currentTrackIndex = series.track_ids.indexOf(widget.track.id);
 
+        logger.d('[RubricsInlineList] series=${series}');
+        // debugger();
+
         return Container(
           margin: EdgeInsets.symmetric(vertical: 8.0),
           child: Column(
@@ -140,9 +156,13 @@ class _TrackSeriesInfoBlockState extends State<TrackSeriesInfoBlock> {
             children: [
               Padding(
                 padding: EdgeInsets.only(bottom: 8.0),
-                child: Text(
-                  'Series: ${series.title}'.i18n,
-                  style: Theme.of(context).textTheme.headlineSmall,
+                child: Wrap(
+                  spacing: 10,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text('Series:'.i18n, style: style.copyWith(color: labelColor)),
+                    Text(series.title),
+                  ],
                 ),
               ),
               ListView.builder(

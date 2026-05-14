@@ -1,9 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:logger/logger.dart';
+import 'package:march_tales_app/features/Track/widgets/TrackSeriesInfoBlock.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:march_tales_app/app/AppColors.dart';
@@ -64,8 +63,8 @@ class TrackFullViewExtraBlock extends StatelessWidget {
     final labelColor = basicColor.withValues(alpha: labelAlpha);
     final textStyle = style.copyWith(color: basicColor);
 
-    logger.d('[RubricsInlineList] track=${track} series_id=${track.series_id} series_order=${track.series_order}');
-    debugger();
+    // logger.d('[RubricsInlineList] track=${track} series_id=${track.series_id} series_order=${track.series_order}');
+    // debugger();
 
     final items = [
       // Author
@@ -114,6 +113,8 @@ class TrackFullViewExtraBlock extends StatelessWidget {
                 TagsInlineList(tags: track.tags, active: true),
               ],
             ),
+      // Series
+      track.series_id == null ? null : TrackSeriesInfoBlock(track: track),
     ].nonNulls;
 
     return Column(
